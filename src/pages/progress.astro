@@ -1,0 +1,14 @@
+---
+import Base from '@/layouts/Base.astro';
+import Dashboard from '@/components/islands/Dashboard';
+import { chapters, phases } from '@/data/chapters';
+const chs = chapters.map((c) => ({ id: c.id, num: c.num, short: c.short, slug: c.slug, accent: c.accent.dark }));
+---
+
+<Base title="Progress" description="Your progress, streak and quiz scores. Export, import or reset.">
+  <div class="mx-auto max-w-5xl pt-8 sm:pt-12">
+    <span class="eyebrow">Progress</span>
+    <h1 class="mt-2 mb-6 text-3xl font-bold tracking-tight sm:text-4xl">Your dashboard</h1>
+    <Dashboard chapters={chs} phases={phases.map((p) => ({ n: p.n, title: p.title, chapters: p.chapters, lab: p.lab }))} client:load />
+  </div>
+</Base>

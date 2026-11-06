@@ -1,0 +1,15 @@
+---
+import Base from '@/layouts/Base.astro';
+import ExamMode from '@/components/islands/ExamMode';
+import { chapters } from '@/data/chapters';
+const core = chapters.filter((c) => c.id !== 'levelup').map((c) => ({ id: Number(c.id), num: c.num, short: c.short }));
+---
+
+<Base title="Exam mode" description="A random, timed multiple-choice exam drawn from the chapters you pick.">
+  <div class="mx-auto max-w-3xl pt-8 sm:pt-12">
+    <span class="eyebrow">Exam mode</span>
+    <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Test yourself under a clock</h1>
+    <p class="mt-3 mb-6 text-muted">Questions are drawn at random from every topic's quick check in the chapters you choose. No feedback until you submit, just like the real thing.</p>
+    <ExamMode chapters={core} client:load />
+  </div>
+</Base>
