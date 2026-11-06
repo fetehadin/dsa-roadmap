@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://dsa.fetehadin.com/sitemap-index.xml
