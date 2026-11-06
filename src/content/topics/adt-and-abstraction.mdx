@@ -1,0 +1,121 @@
+---
+title: ADTs & Abstraction
+chapter: 1
+order: 2
+time: 30
+difficulty: easy
+summary: An Abstract Data Type says WHAT operations exist; a data structure says HOW they are built. Separating the two is the key idea of this course.
+keywords: [ADT, abstraction, interface, implementation, encapsulation]
+viz:
+  - id: adt-stack
+    title: One interface, two implementations
+    caption: Push a few values, then pop. The caller's view never changes; only the hidden storage does.
+code:
+  - file: adt-stack
+    title: a Stack ADT with two implementations
+complexity:
+  rows:
+    - ['push / pop / top (array implementation)', 'O(1)']
+    - ['push / pop / top (linked implementation)', 'O(1)']
+    - ['Maximum size', 'array: fixed · linked list: limited only by memory']
+  note: The ADT promises the operations; each implementation decides their cost. That is why we analyse implementations, not ADTs.
+videos:
+  - id: 92S4zgXN17o
+    why: The second half explains ADTs with the list example, exactly the "interface vs implementation" split.
+  - id: F1F2imiOJfk
+    why: Shows the stack as an ADT before any code. A preview of Chapter 5.
+exam:
+  questions:
+    - Define Abstract Data Type (ADT). Give one example and list its operations.
+    - What is abstraction? Why is it useful in programming?
+    - Differentiate between an ADT and a data structure.
+    - Explain how a C++ class supports abstraction and encapsulation.
+  mistakes:
+    - Saying an ADT "is" an array. An ADT has no storage details at all; an array can only *implement* one.
+    - Listing implementation details (like `top` index) as part of the ADT's definition.
+    - Forgetting error conditions. "pop on an empty stack is an error" IS part of the ADT.
+quiz:
+  - q: An Abstract Data Type specifies…
+    options: ['the data and the operations, but not how they are implemented', 'the exact memory layout', 'the C++ code of each operation', 'only the data, not the operations']
+    answer: 0
+    explain: An ADT is a logical description, a "contract". Implementation is the data structure's job.
+  - q: Which is an implementation (a data structure), not an ADT?
+    options: ['Stack', 'Queue', 'List', 'Singly linked list with a head pointer']
+    answer: 3
+    explain: '"Singly linked list with a head pointer" describes how the data is stored, so it is a data structure that can implement the List ADT.'
+  - q: In C++, which feature hides implementation details from users of a class?
+    options: ['`public` members', '`private` members', '`#include`', '`cout`']
+    answer: 1
+    explain: Private members can only be used inside the class. Users must go through the public interface; that is encapsulation.
+  - q: You replace an array-based stack with a linked-list stack. What must change in code that only uses push/pop?
+    options: ['Everything', 'Only the type name it is created with', 'All pop calls', 'All push calls']
+    answer: 1
+    explain: Because the client depends only on the ADT's operations, swapping implementations does not affect it.
+practice:
+  trace:
+    task: Write the ADT specification (data + operations + error conditions) for a **Queue**, without writing any code.
+    solution: |
+      **Data:** an ordered collection; items leave in the order they arrived (FIFO).
+
+      **Operations:** `enqueue(x)` adds at the rear, `dequeue()` removes and returns the front item, `front()` returns the front item without removing it, `isEmpty()`, `size()`.
+
+      **Errors:** `dequeue()` / `front()` on an empty queue; `enqueue` on a full queue (bounded implementations only).
+  implement:
+    task: Write a `Counter` class whose value can only change through `increment()`, `decrement()` (never below 0) and `reset()`, and read through `get()`.
+    hint: Keep `int value` private. The rule "never below 0" lives inside `decrement()`; that is abstraction protecting an invariant.
+    solution: |
+      ```cpp
+      class Counter {
+          int value = 0;
+      public:
+          void increment() { value++; }
+          void decrement() { if (value > 0) value--; }
+          void reset() { value = 0; }
+          int get() const { return value; }
+      };
+      ```
+  problems:
+    - name: Implement Stack using Queues
+      url: https://leetcode.com/problems/implement-stack-using-queues/
+      level: easy
+      hint: The Stack ADT does not care what is underneath. Can you meet its contract using only queue operations?
+      solution: After each push of x into a queue of size k, rotate the queue k times (pop front, push back) so x is at the front.
+    - name: Design Parking System
+      url: https://leetcode.com/problems/design-parking-system/
+      level: easy
+      hint: Decide the interface first (`addCar`), then the hidden data (three counters).
+checklist:
+  - I can define ADT and abstraction in my own words.
+  - I can explain the difference between an ADT and a data structure.
+  - I can write an ADT specification (data, operations, errors) for stack and queue.
+  - I can use private members to hide implementation details in C++.
+slides: []
+---
+
+Think of a **TV remote**. You know *what* the buttons do: power, volume up, next channel. You have no idea *how* the infrared signal is encoded, and you don't need to. If the manufacturer redesigns the circuit board, you keep pressing the same buttons.
+
+**Abstraction** means showing only what matters to the user and hiding the rest.
+
+### Abstract Data Type (ADT)
+
+An **ADT** is the "remote control" view of a data type. It describes:
+
+1. **the data** it holds (logically, e.g. "an ordered collection"),
+2. **the operations** allowed on it (e.g. `push`, `pop`, `top`, `isEmpty`),
+3. **the rules and error conditions** (e.g. "pop on an empty stack is an error").
+
+It says nothing about arrays, pointers or memory.
+
+### Data structure
+
+A **data structure** is the *circuit board*: a concrete way to store the data so the ADT's operations work. The Stack ADT can be implemented with an array **or** a linked list. Both are valid data structures for the same ADT.
+
+| | ADT | Data structure |
+|---|---|---|
+| Answers | *What* can I do? | *How* is it stored? |
+| Level | Logical | Physical / implementation |
+| Example | Stack, Queue, List | Array-based stack, linked list |
+
+### In C++
+
+A `class` makes this concrete: the **public** member functions are the ADT's interface, and the **private** members are the implementation. Hiding them is called **encapsulation**. Code that uses the class cannot break its internal rules.

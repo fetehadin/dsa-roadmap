@@ -1,0 +1,102 @@
+---
+title: What Is a Data Structure?
+chapter: 1
+order: 1
+time: 30
+difficulty: easy
+summary: A data structure is a way of organising data in memory so the operations you need are fast. Learn how they are classified and what makes a good one.
+keywords: [classification, primitive, non-primitive, linear, non-linear, static, dynamic]
+viz:
+  - id: classify
+    title: The classification tree
+code:
+  - file: data-structures-intro
+    title: one of each kind
+complexity:
+  rows:
+    - ['Array: read item i', 'O(1)']
+    - ['Array: insert at the front', 'O(n): shift everything']
+    - ['Linked list: insert at the front', 'O(1)']
+    - ['Linked list: read item i', 'O(n): walk from the head']
+  note: There is no "best" data structure, only the best one **for the operations you do most**. This table is the whole reason the course exists.
+videos:
+  - id: 92S4zgXN17o
+    why: Six minutes that set up the whole course, including the ADT idea you meet next.
+exam:
+  questions:
+    - Define a data structure. Give two examples of linear and two of non-linear data structures.
+    - Differentiate between primitive and non-primitive data structures with examples.
+    - What is the difference between static and dynamic data structures? Classify array and linked list.
+    - List the characteristics (operations) of a data structure.
+  mistakes:
+    - Calling a stack "non-linear". Stacks and queues are linear; only trees and graphs are non-linear here.
+    - Saying an array is dynamic. A C++ array has a fixed size; `vector` and linked lists are dynamic.
+    - Confusing a data structure (how data is stored) with an algorithm (the steps that use it).
+quiz:
+  - q: Which of these is a **non-linear** data structure?
+    options: ['Queue', 'Stack', 'Tree', 'Array']
+    answer: 2
+    explain: In a tree, one node can lead to several children. Queue, stack and array are all sequences.
+  - q: 'An `int marks[50];` in C++ is best described as:'
+    options: ['Primitive and dynamic', 'Non-primitive, linear and static', 'Non-primitive, non-linear and dynamic', 'Primitive and static']
+    answer: 1
+    explain: An array holds many values (non-primitive), in a sequence (linear), with a size fixed at compile time (static).
+  - q: Which structure can grow and shrink at run time one item at a time without copying?
+    options: ['A plain C++ array', 'A linked list', 'A 2-D array', 'An `int`']
+    answer: 1
+    explain: Each linked-list node is created with `new` and removed with `delete` when needed.
+  - q: Choosing a data structure mainly depends on…
+    options: ['how many lines of code it needs', 'which operations must be fast', 'the programming language', 'whether it is linear']
+    answer: 1
+    explain: Arrays give O(1) indexing, linked lists give O(1) front insertion, and so on. Pick for your most frequent operations.
+practice:
+  trace:
+    task: 'Classify each as primitive/non-primitive, linear/non-linear, static/dynamic: `char`, `int a[10]`, `vector<string>`, a family tree, a road map between cities, a printer queue.'
+    solution: |
+      - `char`: primitive
+      - `int a[10]`: non-primitive, linear, static
+      - `vector<string>`: non-primitive, linear, dynamic
+      - family tree: non-primitive, non-linear (tree), usually dynamic
+      - road map: non-primitive, non-linear (graph)
+      - printer queue: non-primitive, linear (queue)
+  implement:
+    task: Write a program that stores 5 temperatures in an array and the same values in a `vector`. Then add a 6th value to both. What happens with the array?
+    hint: You cannot add a 6th element to `double t[5]`; writing `t[5]` is out of bounds. The vector just calls `push_back`.
+  problems:
+    - name: Contains Duplicate
+      url: https://leetcode.com/problems/contains-duplicate/
+      level: easy
+      hint: Compare a double loop over an array (O(n²)) with a `set` that remembers what you have seen (O(n)). Same problem, different data structure.
+      solution: Insert each number into an `unordered_set<int>`; if it is already there, return true.
+    - name: Two Sum
+      url: https://leetcode.com/problems/two-sum/
+      level: easy
+      hint: For each number x you need to know quickly whether `target - x` appeared before. Which structure answers "have I seen this?" in O(1)?
+      solution: Use an `unordered_map<int,int>` from value to index while scanning once.
+checklist:
+  - I can define a data structure in one sentence.
+  - I can draw the classification tree from memory.
+  - I can classify any structure as linear/non-linear and static/dynamic.
+  - I can explain why there is no single best data structure.
+slides: [1LTAaL6u2_Ba3RFnQh3FcSJdxNDQawz2b-yvHEaO9zsc]
+---
+
+Think of a **kitchen**. You could throw every ingredient into one big box, but then finding the salt takes forever. So you use a spice rack (quick to grab by position), a fridge with shelves (grouped by type) and a stack of plates (you only ever take the top one). Same food, different **organisation**, and each one makes a different job fast.
+
+A **data structure** is exactly that for a program: *a way of storing and organising data in memory so that the operations we need are efficient.*
+
+### How we classify them
+
+- **Primitive**: built into the language, holds one value: `int`, `float`, `char`, `bool`.
+- **Non-primitive**: built from primitives, holds a collection.
+  - **Linear**: items form a sequence; each has at most one "next": arrays, linked lists, stacks, queues.
+  - **Non-linear**: one item can connect to many: trees, graphs.
+- **Static vs dynamic** (a separate question): is the size fixed when the program is compiled (array), or can it change while running (linked list, `vector`)?
+
+### Characteristics: what we do with a data structure
+
+Every structure is judged by how well it supports a few standard operations: **traversing** (visit every item), **searching**, **inserting**, **deleting**, **sorting** and **merging**. When we analyse a structure, we ask "how much time and memory does each of these cost?"
+
+### Data structure vs algorithm
+
+A data structure is the *shelf*; an algorithm is the *recipe*. Binary search (an algorithm) only works because the data sits in a sorted array (a data structure). Good programs pick both together.

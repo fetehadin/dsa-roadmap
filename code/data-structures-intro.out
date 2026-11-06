@@ -1,0 +1,5 @@
+age=20 grade=A
+marks has fixed size 5
+scores grew to 6
+list: 1 -> 2
+stack top=2, queue front=1

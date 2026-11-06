@@ -1,0 +1,123 @@
+---
+title: Arrays & 2-D Arrays (Review)
+chapter: 1
+order: 3
+time: 35
+difficulty: easy
+summary: Arrays store items side by side in memory, which is why reading any index is instant. 2-D arrays are stored row by row.
+keywords: [array, index, contiguous, row-major, matrix, address]
+viz:
+  - id: array-memory
+    title: Address of a[i]
+    caption: Read different indexes, including one that is out of range.
+  - id: matrix-memory
+    title: A 2-D array in memory (row-major)
+code:
+  - file: arrays
+    title: 1-D and 2-D arrays
+complexity:
+  rows:
+    - ['Access a[i]', 'O(1)']
+    - ['Search (unsorted)', 'O(n)']
+    - ['Insert / delete at position i', 'O(n): shift items']
+    - ['Insert / delete at the end', 'O(1) if there is space']
+    - ['Traverse an R × C matrix', 'O(R·C)']
+  space: O(n) for n items
+  note: 'Address formula (row-major): `&m[i][j] = base + (i × COLS + j) × sizeof(type)`.'
+videos:
+  - id: 92S4zgXN17o
+    why: Uses the array as its first example and explains contiguous memory.
+  - id: B31LgI4Y4DQ
+    why: Full course backup. Skim the array and memory parts if you need more practice with C/C++ arrays.
+exam:
+  questions:
+    - An int array starts at address 1000 and `sizeof(int)` = 4. What is the address of `a[7]`?
+    - A `float m[5][8]` starts at 2000 (`sizeof(float)` = 4). Find the address of `m[3][6]` in row-major order.
+    - Why is accessing `a[i]` O(1) but inserting at the front O(n)?
+    - Write a function to find the sum of each row of a 2-D array.
+  mistakes:
+    - Using 1-based indexes. C++ arrays start at 0, so the last valid index is n − 1.
+    - 'Writing `a[n]` (out of bounds). C++ does not check, so it silently corrupts memory.'
+    - Using `sizeof(a)/sizeof(a[0])` inside a function. There, `a` is a pointer, so the trick gives the wrong size. Pass `n` instead.
+    - Mixing up rows and columns in the address formula (multiply the row index by the number of COLUMNS).
+quiz:
+  - q: '`int a[10]` starts at address 500 and `sizeof(int)` = 4. Where is `a[6]`?'
+    options: ['506', '520', '524', '530']
+    answer: 2
+    explain: 500 + 6 × 4 = 524.
+  - q: 'In `int m[3][4]`, how many elements come before `m[2][1]` in memory (row-major)?'
+    options: ['3', '7', '9', '6']
+    answer: 2
+    explain: 2 × 4 + 1 = 9 elements come before it.
+  - q: Why is reading `a[i]` constant time?
+    options: ['The array is sorted', 'The address is computed with one multiply and one add', 'C++ caches arrays', 'Arrays are dynamic']
+    answer: 1
+    explain: Items are contiguous, so the address is base + i × size. No searching is needed.
+  - q: What does this print?
+    code: "int a[4] = {5, 2, 8};\ncout << a[3];"
+    options: ['8', 'Garbage', '0', 'Compile error']
+    answer: 2
+    explain: With an initializer list, any missing elements are set to 0.
+practice:
+  trace:
+    task: '`int m[4][5]` starts at address 3000 with 4-byte ints. Compute the address of `m[2][3]` and of `m[3][4]`.'
+    solution: |
+      - `m[2][3]`: offset = 2 × 5 + 3 = 13, address = 3000 + 13 × 4 = **3052**
+      - `m[3][4]`: offset = 3 × 5 + 4 = 19, address = 3000 + 19 × 4 = **3076** (the last element)
+  implement:
+    task: Write `void transpose(int a[3][3])` that swaps rows and columns in place, and a `main()` that prints the matrix before and after.
+    hint: Only swap the upper triangle, `a[i][j]` with `a[j][i]` for `j > i`. Otherwise you swap everything twice and end up back where you started.
+    solution: |
+      ```cpp
+      void transpose(int a[3][3]) {
+          for (int i = 0; i < 3; i++)
+              for (int j = i + 1; j < 3; j++)
+                  swap(a[i][j], a[j][i]);
+      }
+      ```
+  problems:
+    - name: Running Sum of 1d Array
+      url: https://leetcode.com/problems/running-sum-of-1d-array/
+      level: easy
+      hint: Each output is the previous output plus the current item. One loop, O(n).
+    - name: Richest Customer Wealth
+      url: https://leetcode.com/problems/richest-customer-wealth/
+      level: easy
+      hint: Sum each row of the 2-D array, keep the maximum.
+    - name: Matrix Diagonal Sum
+      url: https://leetcode.com/problems/matrix-diagonal-sum/
+      level: easy
+      hint: Primary diagonal is `m[i][i]`, the other is `m[i][n-1-i]`. Don't count the centre twice when n is odd.
+checklist:
+  - I can compute the address of a[i] and m[i][j] by hand.
+  - I can explain why array access is O(1) and insertion is O(n).
+  - I can loop over a 2-D array row by row.
+  - I know why out-of-bounds access is dangerous in C++.
+slides: [1LTAaL6u2_Ba3RFnQh3FcSJdxNDQawz2b-yvHEaO9zsc]
+---
+
+Picture a **row of numbered lockers** in a corridor. Every locker is the same size and they sit right next to each other. If locker 0 is at the start of the corridor and each is 4 steps wide, you can walk straight to locker 7: it's 28 steps away. You never open lockers 0 to 6 on the way.
+
+That is an **array**: same-type items stored **contiguously** (side by side) in memory.
+
+### Why access is instant
+
+The compiler knows three things: the **base address** (where `a[0]` lives), the **size of one item**, and the **index**. So
+
+`address of a[i] = base + i × sizeof(type)`
+
+One multiplication and one addition, for any `i`: **O(1) random access**.
+
+### The price you pay
+
+- **Fixed size**: `int a[100]` is static. Need 101? Make a new array and copy.
+- **Insert / delete in the middle is O(n)**: every item after the gap must shift.
+- **No bounds checking**: `a[100]` on a 100-item array compiles and runs, but reads or overwrites whatever is next in memory.
+
+### 2-D arrays
+
+A matrix `int m[R][C]` *looks* like a grid, but memory is one long line. C++ stores it **row by row (row-major)**:
+
+`address of m[i][j] = base + (i × C + j) × sizeof(type)`
+
+So looping `i` (rows) outside and `j` (columns) inside walks memory in order. That is the natural and fastest way.
