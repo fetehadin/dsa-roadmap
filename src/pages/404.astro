@@ -1,0 +1,12 @@
+---
+import Base from '@/layouts/Base.astro';
+---
+
+<Base title="Page not found">
+  <div class="mx-auto grid max-w-xl place-items-center gap-4 py-24 text-center">
+    <span class="font-mono text-6xl font-bold text-accent">404</span>
+    <p class="text-lg text-muted">This node points to <code class="font-mono">nullptr</code>.</p>
+    <div class="flex gap-2"><a href="/" class="btn btn-primary">Home</a><button id="s404" class="btn">Search</button></div>
+  </div>
+  <script>document.getElementById('s404')?.addEventListener('click', () => document.getElementById('open-search')?.click());</script>
+</Base>

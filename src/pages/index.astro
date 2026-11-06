@@ -1,0 +1,79 @@
+---
+import Base from '@/layouts/Base.astro';
+import ChapterGrid from '@/components/ChapterGrid.astro';
+import Continue from '@/components/islands/Continue';
+import { allTopics } from '@/lib/catalog';
+import { CORE_RULE } from '@/data/chapters';
+import { Eye, Code2, ListChecks, Target, BookOpen, Zap } from '@lucide/astro';
+
+const topics = await allTopics();
+const core = topics.filter((t) => t.data.chapter !== 'levelup');
+const hours = Math.round(core.reduce((s, t) => s + t.data.time, 0) / 60);
+const stats = [
+  ['8', 'chapters'],
+  [String(core.length), 'topics'],
+  ['~16', 'weeks'],
+  ['0', 'sign-ups'],
+];
+const loop = [
+  { icon: Eye, t: 'Watch it move', d: 'Step through every algorithm with the code line lit up as it runs.' },
+  { icon: Code2, t: 'Read real C++', d: 'Every snippet compiles with g++ -std=c++17 and shows its output.' },
+  { icon: Target, t: 'Check yourself', d: 'Quick quizzes, exam-style questions and the classic mistakes.' },
+  { icon: ListChecks, t: 'Prove it', d: 'Trace by hand, implement it, solve 2–3 problems, tick "I can…".' },
+];
+---
+
+<Base title="DSA Roadmap">
+  <section class="relative pt-12 pb-10 sm:pt-20">
+    <div class="pointer-events-none absolute inset-x-0 -top-10 -z-10 h-80 bg-[radial-gradient(60%_60%_at_30%_30%,color-mix(in_oklab,var(--accent)_22%,transparent),transparent)]" aria-hidden="true"></div>
+    <span class="eyebrow">CoSc3111 · AAU · C++</span>
+    <h1 class="mt-3 max-w-3xl text-4xl leading-[1.08] font-bold tracking-tight text-balance sm:text-6xl">
+      Data structures &amp; algorithms, <span class="text-accent">one visual step at a time.</span>
+    </h1>
+    <p class="mt-5 max-w-2xl text-lg text-muted">A free study roadmap that follows your instructor's outline, at exam depth and never deeper. Animations synced to C++, exam lenses, quizzes and three labs. Your progress stays in this browser.</p>
+    <div class="mt-7 flex flex-wrap gap-3">
+      <a href="/learn/ch1" class="btn btn-primary !px-5 !py-2.5"><BookOpen size={17} /> Start Chapter 1</a>
+      <a href="/guide" class="btn !px-5 !py-2.5">How to use this guide</a>
+    </div>
+    <dl class="mt-10 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-4">
+      {stats.map(([n, l]) => (
+        <div class="card px-4 py-3">
+          <dt class="sr-only">{l}</dt>
+          <dd class="font-mono text-2xl font-bold">{n}</dd>
+          <dd class="text-sm text-muted">{l}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+
+  <section class="grid gap-3 sm:grid-cols-[1.2fr_1fr]" aria-label="Your progress">
+    <Continue client:load />
+    <p class="card flex items-center gap-3 p-4 text-sm"><Zap size={20} class="shrink-0 text-[var(--r-compare)]" /> <span><b>The rule:</b> {CORE_RULE}</span></p>
+  </section>
+
+  <section class="mt-14" aria-labelledby="how">
+    <h2 id="how" class="text-2xl font-bold tracking-tight">Every topic, the same loop</h2>
+    <p class="mt-2 text-muted">About {hours} hours of guided study across {core.length} topics. Each page has the same order, so you always know where you are.</p>
+    <ol class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {loop.map((s, i) => (
+        <li class="card p-4">
+          <div class="flex items-center gap-2"><span class="grid size-8 place-items-center rounded-lg bg-accent-soft text-accent"><s.icon size={16} /></span><span class="font-mono text-xs text-faint">0{i + 1}</span></div>
+          <div class="mt-3 font-semibold">{s.t}</div>
+          <p class="mt-1 text-sm text-muted">{s.d}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="mt-14" aria-labelledby="plan">
+    <h2 id="plan" class="mb-1 text-2xl font-bold tracking-tight">The 16-week plan</h2>
+    <p class="mb-6 text-muted">Short on time? Stretch the plan. Don't skip chapters: each one builds on the last.</p>
+    <ChapterGrid />
+  </section>
+
+  <section class="mt-14 grid gap-3 sm:grid-cols-3">
+    <a href="/exam" class="card p-5 hover:border-line-strong"><div class="font-semibold">Exam mode →</div><p class="mt-1 text-sm text-muted">A random timed quiz across the chapters you choose.</p></a>
+    <a href="/cheatsheets" class="card p-5 hover:border-line-strong"><div class="font-semibold">Cheat sheets →</div><p class="mt-1 text-sm text-muted">One printable page per chapter, plus the master Big-O table.</p></a>
+    <a href="/level-up" class="card p-5 hover:border-line-strong"><div class="font-semibold">Level Up →</div><p class="mt-1 text-sm text-muted">Interview patterns built on the course. Optional.</p></a>
+  </section>
+</Base>

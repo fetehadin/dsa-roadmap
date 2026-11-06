@@ -1,0 +1,42 @@
+---
+import { chapters, phases } from '@/data/chapters';
+import { allTopics } from '@/lib/catalog';
+import ChapterRing from './islands/ChapterRing';
+import { FlaskConical } from '@lucide/astro';
+
+const topics = await allTopics();
+const count = (id: unknown) => topics.filter((t) => t.data.chapter === id).length;
+---
+
+<div class="grid gap-8">
+  {phases.map((p) => (
+    <section aria-labelledby={`phase-${p.n}`}>
+      <div class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <h2 id={`phase-${p.n}`} class="text-lg font-semibold">Phase {p.n}: {p.title}</h2>
+        <span class="chip">{p.weeks}</span>
+      </div>
+      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {p.chapters.map((id) => {
+          const c = chapters.find((x) => x.id === id)!;
+          return (
+            <a href={`/learn/${c.slug}`} class="card group flex flex-col gap-3 p-4 transition-colors hover:border-line-strong" style={`--accent-d:${c.accent.dark};--accent-l:${c.accent.light}`}>
+              <div class="flex items-start justify-between gap-3">
+                <span class="font-mono text-2xl font-bold text-accent">{c.num}</span>
+                <ChapterRing id={c.id} client:visible />
+              </div>
+              <div>
+                <div class="font-semibold group-hover:text-accent">{c.title}</div>
+                <p class="mt-1 line-clamp-2 text-sm text-muted">{c.blurb}</p>
+              </div>
+              <div class="mt-auto flex flex-wrap gap-1.5"><span class="chip">{c.weeks}</span><span class="chip">{count(c.id)} topics</span></div>
+            </a>
+          );
+        })}
+        <a href={`/labs/${p.lab}`} class="card group flex flex-col justify-center gap-2 border-dashed p-4 transition-colors hover:border-line-strong">
+          <span class="flex items-center gap-2 text-sm font-medium text-muted group-hover:text-fg"><FlaskConical size={16} /> Phase {p.n} mini-project</span>
+          <span class="text-xs text-faint">Combine this phase's structures in one console program.</span>
+        </a>
+      </div>
+    </section>
+  ))}
+</div>
