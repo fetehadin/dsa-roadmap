@@ -1,0 +1,19 @@
+Ranking:
+  1. Hana 91 (A)
+  2. Sara 91 (A)
+  3. Liya 85 (A)
+  4. Meron 77 (B)
+  5. Abebe 72 (B)
+  6. Yonas 66 (C)
+  7. Dawit 58 (C)
+  8. Kebede 40 (D)
+Average: 72.5
+
+Operation counts (n = 8):
+  selection  comparisons 28, swaps 7
+  bubble     comparisons 25, swaps 13
+  insertion  comparisons 19, shifts 13
+
+search Liya: 85 (3 steps)
+search Yonas: 66 (4 steps)
+search Tigist: not found (4 steps)

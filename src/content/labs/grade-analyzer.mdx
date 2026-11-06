@@ -1,0 +1,47 @@
+---
+title: 'Lab 1: Grade Analyzer'
+phase: 1
+summary: Read student scores, rank them with all three simple sorts, compare their operation counts, and binary-search students by name.
+time: 3–4 hours
+starter: labs/grade-analyzer-starter
+solution: labs/grade-analyzer
+sampleInput: labs/grade-analyzer
+milestones:
+  - Read n and n lines of "name score" into an array of structs.
+  - Implement selection sort (highest score first) and count comparisons and swaps.
+  - Implement bubble sort with the early-exit flag, counting the same way.
+  - Implement insertion sort, counting comparisons and shifts. Check that all three rankings agree.
+  - Print the ranking with letter grades and the class average.
+  - Sort a copy by name, then binary-search every remaining input name and print the number of steps.
+  - 'Bonus: explain in a comment why bubble and insertion keep Hana before Sara (stability) and whether selection does.'
+uses: [selection-sort, bubble-sort, insertion-sort, binary-search, counting-time-units]
+---
+
+## The task
+
+Your department wants a tiny console tool for marking. Given a list of students and scores, it must:
+
+1. **Rank** the students from highest to lowest score.
+2. Do the ranking **three times**, with selection, bubble and insertion sort, and **report how many comparisons and swaps (or shifts) each one made** on the same data. This is Chapter 2's analysis in practice.
+3. Print each student's **letter grade** (A ≥ 85, B ≥ 70, C ≥ 55, D ≥ 40, else F) and the class **average**.
+4. **Binary-search** students by name. Binary search needs sorted data, so sort a copy **by name** first.
+
+## Input format
+
+```text
+n
+name score      (n lines, names have no spaces)
+query names     (until end of input)
+```
+
+## Rules
+
+- Use plain arrays of `struct Student`. No `std::sort`, no `std::vector` for the sorting part.
+- Each sort works on its **own copy** of the input so the counts are fair.
+- Ties: students with the same score stay in **input order** in the printed ranking. Print the insertion-sort result, which is stable.
+
+## Questions to answer in your report
+
+- Which sort made the fewest comparisons on the sample? Why?
+- What happens to the counts if the input is already sorted? Reversed? Try it.
+- How many steps can binary search take at most for 8 students? For 1,000?

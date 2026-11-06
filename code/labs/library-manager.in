@@ -1,0 +1,20 @@
+ADD 30 Data Structures in C++
+ADD 10 Introduction to Algorithms
+ADD 20 The C++ Programming Language
+ADD 10 Duplicate
+LIST
+REMOVE 20
+LIST
+UNDO
+UNDO
+LIST
+REQUEST Hana 30
+REQUEST Dawit 10
+REQUEST Liya 30
+REQUEST Sara 99
+SERVE
+SERVE
+SERVE
+RETURN 30
+SERVE
+LIST

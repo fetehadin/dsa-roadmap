@@ -1,0 +1,7 @@
+Buildings (BST inorder): Admin Cafeteria Clinic Dorm Gate Lab Library Stadium 
+route Gate -> Stadium (3 hops): Gate > Library > Lab > Stadium
+route Admin -> Dorm (3 hops): Admin > Library > Cafeteria > Dorm
+no route from Gate to Clinic
+nearest to Library: Admin(1) Cafeteria(1) Gate(1) Lab(1) Dorm(2) Stadium(2)
+DFS order from Gate: Gate Admin Library Cafeteria Dorm Stadium Lab
+reachable A-Z: Admin Cafeteria Dorm Gate Lab Library Stadium

@@ -1,0 +1,16 @@
+8
+Library Cafeteria Gate Lab Stadium Dorm Clinic Admin
+8
+Gate Admin
+Gate Library
+Admin Library
+Library Lab
+Library Cafeteria
+Cafeteria Dorm
+Dorm Stadium
+Lab Stadium
+ROUTE Gate Stadium
+ROUTE Admin Dorm
+ROUTE Gate Clinic
+NEAREST Library
+REACH Gate

@@ -1,0 +1,45 @@
+---
+title: 'Lab 3: Campus Navigator'
+phase: 3
+summary: Store buildings in a BST, paths in a graph, find routes with BFS, explore with DFS, and sort results with merge sort and quick sort.
+time: 6–8 hours
+starter: labs/campus-navigator-starter
+solution: labs/campus-navigator
+sampleInput: labs/campus-navigator
+milestones:
+  - Insert building names into a BST (name → id). Print them with an inorder traversal.
+  - Read the paths and build an undirected adjacency list, looking each name up in the BST.
+  - 'ROUTE a b: BFS from a with a parent array; print the fewest-hops path or "no route".'
+  - 'NEAREST a: BFS distances to every reachable building, merge-sorted by hops, then name.'
+  - 'REACH a: DFS order from a, then the same names quick-sorted A to Z.'
+  - 'Bonus: add weighted paths (metres) and explain why BFS no longer gives the shortest walk.'
+uses: [bst, tree-traversals, graph-representation, bfs-dfs, merge-sort, quick-sort]
+---
+
+## The task
+
+New students get lost. Build a console navigator for campus:
+
+1. **Buildings** live in a **BST keyed by name**, so lookups are O(log n) on a balanced tree, and an inorder walk lists them A to Z for free.
+2. **Paths** between buildings form an **undirected graph**, stored as an **adjacency list**.
+3. **BFS** gives the route with the fewest hops. **DFS** tells you everything reachable.
+4. Results are **sorted**: nearest buildings with **merge sort** (stable, by hops then name) and reachable names with **quick sort**.
+
+## Input format
+
+```text
+n
+name1 name2 … nameN         (single-word names)
+m
+a b                         (m lines: a path between buildings a and b)
+ROUTE a b | NEAREST a | REACH a     (commands until end of input)
+```
+
+Visit neighbours in **alphabetical order** so your output matches the sample.
+
+## Questions to answer in your report
+
+- Why is the inorder traversal of the BST sorted?
+- What is the time complexity of ROUTE in terms of V and E?
+- The Clinic has no paths. What do BFS and DFS do with it, and why?
+- Would an adjacency matrix be a better choice here? Count the cells vs the list entries.

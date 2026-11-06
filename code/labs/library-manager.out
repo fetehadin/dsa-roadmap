@@ -1,0 +1,25 @@
+added #30
+added #10
+added #20
+#10 already exists
+  #10 Introduction to Algorithms
+  #20 The C++ Programming Language
+  #30 Data Structures in C++
+removed #20
+  #10 Introduction to Algorithms
+  #30 Data Structures in C++
+undo: restored #20
+undo: removed #20 again
+  #10 Introduction to Algorithms
+  #30 Data Structures in C++
+Hana queued for #30 (1 waiting)
+Dawit queued for #10 (2 waiting)
+Liya queued for #30 (3 waiting)
+#99 not in library
+Hana borrows Data Structures in C++
+Dawit borrows Introduction to Algorithms
+Liya: #30 is out, back to the end of the line
+returned #30
+Liya borrows Data Structures in C++
+  #10 Introduction to Algorithms [borrowed]
+  #30 Data Structures in C++ [borrowed]

@@ -1,0 +1,45 @@
+---
+title: 'Lab 2: Library Manager'
+phase: 2
+summary: A linked list of books, an undo stack for add/remove, and a circular request queue for borrowing, driven by text commands.
+time: 5–6 hours
+starter: labs/library-manager-starter
+solution: labs/library-manager
+sampleInput: labs/library-manager
+milestones:
+  - Implement the Library linked list with find, sorted add (dummy node), remove and list.
+  - Free every node in a destructor. Run with -fsanitize=address to prove there are no leaks.
+  - Add the UndoStack (a linked-list stack) and make UNDO reverse the last ADD or REMOVE.
+  - Add the RequestQueue as a circular array of size 8 and handle REQUEST and SERVE.
+  - Requests for a borrowed book go back to the end of the queue. Add RETURN.
+  - 'Bonus: make UNDO itself undoable (a redo stack).'
+uses: [singly-linked-list, stack-list, circular-queue, pointers-and-memory]
+---
+
+## The task
+
+Build the back-office tool for a small department library. Three data structures, each doing the job it is best at:
+
+| Need | Structure | Why |
+| --- | --- | --- |
+| The catalogue, kept in id order, with inserts and deletes anywhere | **singly linked list** | no shifting on insert/delete |
+| "Undo my last change" | **stack** | the most recent change is undone first (LIFO) |
+| Students waiting to borrow | **circular queue** | first come, first served (FIFO), fixed memory |
+
+## Commands (one per line)
+
+| Command | Effect |
+| --- | --- |
+| `ADD id title…` | add a book (reject duplicate ids); push onto the undo stack |
+| `REMOVE id` | remove a book; push onto the undo stack (keep the title!) |
+| `UNDO` | reverse the last ADD or REMOVE |
+| `REQUEST name id` | enqueue a borrow request (only for books that exist) |
+| `SERVE` | dequeue the oldest request: lend the book, or re-queue the request if it is out |
+| `RETURN id` | mark a book as returned |
+| `LIST` | print the catalogue in id order |
+
+## Rules
+
+- Write your own list, stack and queue. No `std::list`, `std::stack` or `std::queue`.
+- Every `new` has a matching `delete`. Check with `g++ -std=c++17 -fsanitize=address`.
+- Never crash on bad input: unknown ids, empty undo, empty queue, full queue.
