@@ -1,0 +1,32 @@
+---
+import Base from '@/layouts/Base.astro';
+import { glossary } from '@/data/glossary';
+import { chapters } from '@/data/chapters';
+import { slug } from '@/lib/slug';
+
+const groups = chapters.map((c) => ({ c, terms: glossary.filter((g) => g.ch === c.id).sort((a, b) => a.term.localeCompare(b.term)) })).filter((g) => g.terms.length);
+---
+
+<Base title="Glossary" description={`${glossary.length} DSA terms in plain English, grouped by chapter.`}>
+  <div class="mx-auto max-w-3xl pt-8 sm:pt-12">
+    <span class="eyebrow">Glossary</span>
+    <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">{glossary.length} terms, plain English</h1>
+    <p class="mt-3 text-muted">Grouped by chapter. Press <span class="kbd">⌘K</span> to search any of them.</p>
+    <nav class="mt-5 flex flex-wrap gap-1.5" aria-label="Chapters">
+      {groups.map(({ c }) => <a href={`#${c.slug}`} class="chip hover:text-fg">{c.num} {c.short}</a>)}
+    </nav>
+    {groups.map(({ c, terms }) => (
+      <section id={c.slug} class="mt-10 scroll-mt-20" style={`--accent-d:${c.accent.dark};--accent-l:${c.accent.light}`}>
+        <h2 class="flex items-center gap-2 text-lg font-semibold"><span class="font-mono text-accent">{c.num}</span> {c.title}</h2>
+        <dl class="mt-3 grid gap-2">
+          {terms.map((t) => (
+            <div id={slug(t.term)} class="card scroll-mt-20 p-4 target:border-accent">
+              <dt class="font-semibold">{t.term}</dt>
+              <dd class="mt-1 text-sm text-muted">{t.def} {t.see && <a href={`/learn/${t.see}`} class="whitespace-nowrap text-accent hover:underline">Learn →</a>}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+    ))}
+  </div>
+</Base>

@@ -1,0 +1,52 @@
+---
+import { chapterById, type ChapterId } from '@/data/chapters';
+import { glossary } from '@/data/glossary';
+import { allTopics, topicNum, topicUrl } from '@/lib/catalog';
+import { mdi } from '@/lib/md';
+
+interface Props {
+  id: ChapterId;
+}
+const ch = chapterById(Astro.props.id);
+const topics = await Promise.all(
+  (await allTopics())
+    .filter((t) => t.data.chapter === ch.id)
+    .map(async (t) => ({
+      t,
+      rows: await Promise.all(t.data.complexity.rows.map(async ([k, v]) => [await mdi(k), await mdi(v)])),
+      mistakes: await Promise.all(t.data.exam.mistakes.slice(0, 3).map((m) => mdi(m))),
+    })),
+);
+const terms = glossary.filter((g) => g.ch === ch.id);
+---
+
+<section class="cheatsheet break-after-page" style={`--accent-d:${ch.accent.dark};--accent-l:${ch.accent.light}`}>
+  <header class="flex items-baseline gap-3 border-b-2 border-accent pb-2">
+    <span class="font-mono text-2xl font-bold text-accent">{ch.num}</span>
+    <h2 class="text-xl font-bold">{ch.title}</h2>
+    <span class="ml-auto font-mono text-xs text-faint">dsa.fetehadin.com</span>
+  </header>
+  <div class="mt-4 grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-2 print:grid-cols-2">
+    {topics.map(({ t, rows, mistakes }) => (
+      <div class="card min-w-0 break-inside-avoid p-3 print:shadow-none">
+        <a href={topicUrl(t.id)} class="font-semibold hover:text-accent"><span class="font-mono text-xs text-accent">{topicNum(t)}</span> {t.data.title}</a>
+        <p class="mt-1 text-xs text-muted">{t.data.summary}</p>
+        <table class="md mt-2 w-full table-fixed text-xs [overflow-wrap:anywhere] [&_code]:whitespace-normal [&_td]:!whitespace-normal">
+          <tbody>
+            {rows.map(([k, v]) => <tr class="border-t border-line"><td class="py-1 pr-2 text-muted" set:html={k} /><td class="py-1 font-mono" set:html={v} /></tr>)}
+            {t.data.complexity.space && <tr class="border-t border-line"><td class="py-1 pr-2 text-muted">Space</td><td class="py-1 font-mono">{t.data.complexity.space}</td></tr>}
+            {t.data.complexity.stable != null && <tr class="border-t border-line"><td class="py-1 pr-2 text-muted">Stable · in-place</td><td class="py-1 font-mono">{t.data.complexity.stable ? 'yes' : 'no'} · {t.data.complexity.inPlace ? 'yes' : 'no'}</td></tr>}
+          </tbody>
+        </table>
+        <ul class="md mt-2 grid gap-0.5 text-xs">
+          {mistakes.map((m) => <li class="flex gap-1.5"><span class="text-[var(--r-swap)]">✗</span><span set:html={m} /></li>)}
+        </ul>
+      </div>
+    ))}
+  </div>
+  {terms.length > 0 && (
+    <dl class="mt-4 grid gap-x-6 gap-y-1 text-xs sm:grid-cols-2 print:grid-cols-2">
+      {terms.map((g) => <div class="break-inside-avoid"><dt class="inline font-semibold">{g.term}:</dt> <dd class="inline text-muted">{g.def}</dd></div>)}
+    </dl>
+  )}
+</section>

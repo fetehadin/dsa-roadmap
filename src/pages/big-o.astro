@@ -1,0 +1,89 @@
+---
+import Base from '@/layouts/Base.astro';
+import { allTopics, topicNum, topicUrl } from '@/lib/catalog';
+import { chapterById } from '@/data/chapters';
+import { mdi } from '@/lib/md';
+import { Printer } from '@lucide/astro';
+
+const sorts = [
+  ['selection-sort', 'Selection', 'n²', 'n²', 'n²', '1', 'no', 'yes'],
+  ['bubble-sort', 'Bubble (with flag)', 'n', 'n²', 'n²', '1', 'yes', 'yes'],
+  ['insertion-sort', 'Insertion', 'n', 'n²', 'n²', '1', 'yes', 'yes'],
+  ['shell-sort', 'Shell (n/2 gaps)', 'n log n', '≈ n^1.5', 'n²', '1', 'no', 'yes'],
+  ['merge-sort', 'Merge', 'n log n', 'n log n', 'n log n', 'n', 'yes', 'no'],
+  ['quick-sort', 'Quick', 'n log n', 'n log n', 'n²', 'log n', 'no', 'yes'],
+  ['heap-sort', 'Heap', 'n log n', 'n log n', 'n log n', '1', 'no', 'yes'],
+];
+const ops = [
+  ['Array', 'O(1)', 'O(n)', 'O(n)', 'O(n)', 'arrays'],
+  ['Sorted array', 'O(1)', 'O(log n)', 'O(n)', 'O(n)', 'binary-search'],
+  ['Singly linked list', 'O(n)', 'O(n)', 'O(1) at head', 'O(1) at head', 'singly-linked-list'],
+  ['Doubly linked list', 'O(n)', 'O(n)', 'O(1) at either end', 'O(1) given the node', 'doubly-linked-list'],
+  ['Stack', '–', '–', 'O(1) push', 'O(1) pop', 'stack-array'],
+  ['Queue (circular / list)', '–', '–', 'O(1) enqueue', 'O(1) dequeue', 'circular-queue'],
+  ['BST (balanced / skewed)', '–', 'O(log n) / O(n)', 'O(log n) / O(n)', 'O(log n) / O(n)', 'bst'],
+  ['Max-heap', 'O(1) max', 'O(n)', 'O(log n)', 'O(log n) max', 'heap-sort'],
+  ['Hash table (avg / worst)', '–', 'O(1) / O(n)', 'O(1) / O(n)', 'O(1) / O(n)', 'hashing'],
+];
+const growth = ['1', 'log n', 'n', 'n log n', 'n²', 'n³', '2ⁿ', 'n!'];
+const topics = await Promise.all(
+  (await allTopics()).filter((t) => t.data.chapter !== 'levelup').map(async (t) => ({ t, rows: await Promise.all(t.data.complexity.rows.map(async ([k, v]) => [await mdi(k), await mdi(v)])) })),
+);
+---
+
+<Base title="Big-O master table" description="Every sort, every data structure operation and every topic's complexity on one printable page.">
+  <div class="pt-8 sm:pt-12">
+    <div class="flex flex-wrap items-end gap-3">
+      <div>
+        <span class="eyebrow">Cheat sheet</span>
+        <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Big-O master table</h1>
+      </div>
+      <button class="no-print btn btn-sm ml-auto" onclick="window.print()"><Printer size={14} /> Print</button>
+    </div>
+
+    <p class="mt-4 font-mono text-sm">
+      {growth.map((g, i) => <><span class="rounded bg-soft px-1.5 py-0.5">{g}</span>{i < growth.length - 1 && <span class="px-1 text-faint">&lt;</span>}</>)}
+    </p>
+
+    <h2 class="mt-8 mb-3 text-lg font-semibold">Sorting</h2>
+    <div class="card overflow-x-auto">
+      <table class="w-full min-w-[36rem] text-sm">
+        <thead class="text-left text-xs text-muted"><tr class="border-b border-line">{['Sort', 'Best', 'Average', 'Worst', 'Extra space', 'Stable', 'In-place'].map((h) => <th class="px-3 py-2 font-medium">{h}</th>)}</tr></thead>
+        <tbody class="font-mono">
+          {sorts.map(([s, name, ...r]) => (
+            <tr class="border-b border-line last:border-0">
+              <td class="px-3 py-2 font-sans"><a href={topicUrl(s)} class="hover:text-accent">{name}</a></td>
+              {r.map((x, i) => <td class={`px-3 py-2 ${i >= 4 ? (x === 'yes' ? 'text-[var(--r-done)]' : 'text-[var(--r-swap)]') : ''}`}>{i < 4 ? `O(${x})` : x}</td>)}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="mt-8 mb-3 text-lg font-semibold">Data structure operations</h2>
+    <div class="card overflow-x-auto">
+      <table class="w-full min-w-[40rem] text-sm">
+        <thead class="text-left text-xs text-muted"><tr class="border-b border-line">{['Structure', 'Access', 'Search', 'Insert', 'Delete'].map((h) => <th class="px-3 py-2 font-medium">{h}</th>)}</tr></thead>
+        <tbody>
+          {ops.map(([n, ...r]) => (
+            <tr class="border-b border-line last:border-0">
+              <td class="px-3 py-2"><a href={topicUrl(r[4])} class="hover:text-accent">{n}</a></td>
+              {r.slice(0, 4).map((x) => <td class="px-3 py-2 font-mono text-xs">{x}</td>)}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-2 text-sm text-muted">Graphs: BFS and DFS are O(V + E) with an adjacency list, O(V²) with a matrix. Matrix space O(V²), list space O(V + E).</p>
+
+    <h2 class="mt-8 mb-3 text-lg font-semibold">Every topic</h2>
+    <div class="grid grid-cols-[minmax(0,1fr)] gap-3 sm:grid-cols-2 lg:grid-cols-3 print:grid-cols-3">
+      {topics.map(({ t, rows }) => (
+        <div class="card min-w-0 break-inside-avoid p-3" style={`--accent-d:${chapterById(t.data.chapter).accent.dark};--accent-l:${chapterById(t.data.chapter).accent.light}`}>
+          <a href={topicUrl(t.id)} class="text-sm font-semibold hover:text-accent"><span class="font-mono text-xs text-accent">{topicNum(t)}</span> {t.data.title}</a>
+          <table class="md mt-1.5 w-full table-fixed text-xs [overflow-wrap:anywhere] [&_code]:whitespace-normal [&_td]:!whitespace-normal"><tbody>{rows.map(([k, v]) => <tr class="border-t border-line"><td class="py-1 pr-2 text-muted" set:html={k} /><td class="py-1 font-mono" set:html={v} /></tr>)}</tbody></table>
+        </div>
+      ))}
+    </div>
+  </div>
+</Base>

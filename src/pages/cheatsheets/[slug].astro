@@ -1,0 +1,22 @@
+---
+import Base from '@/layouts/Base.astro';
+import CheatSheet from '@/components/CheatSheet.astro';
+import { chapters, type ChapterId } from '@/data/chapters';
+import { Printer } from '@lucide/astro';
+
+export function getStaticPaths() {
+  return chapters.filter((c) => c.id !== 'levelup').map((c) => ({ params: { slug: c.slug }, props: { id: c.id } }));
+}
+const { id } = Astro.props as { id: ChapterId };
+const ch = chapters.find((c) => c.id === id)!;
+---
+
+<Base title={`Cheat sheet: Ch ${ch.num} ${ch.short}`} description={`One-page summary of ${ch.title}: complexities, pitfalls and terms.`} accent={ch.accent}>
+  <div class="pt-8">
+    <div class="no-print mb-6 flex flex-wrap items-center gap-2">
+      <a href="/cheatsheets" class="text-sm text-muted hover:text-fg">← All cheat sheets</a>
+      <button class="btn btn-sm ml-auto" onclick="window.print()"><Printer size={14} /> Print / save PDF</button>
+    </div>
+    <CheatSheet id={id} />
+  </div>
+</Base>

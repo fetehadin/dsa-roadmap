@@ -1,0 +1,25 @@
+---
+import Base from '@/layouts/Base.astro';
+import CheatSheet from '@/components/CheatSheet.astro';
+import { chapters } from '@/data/chapters';
+import { Printer, Table2 } from '@lucide/astro';
+const core = chapters.filter((c) => c.id !== 'levelup');
+---
+
+<Base title="Cheat sheets" description="Printable one-page summaries of every chapter: complexities, common mistakes, key terms.">
+  <div class="pt-8 sm:pt-12">
+    <div class="no-print">
+      <span class="eyebrow">Cheat sheets</span>
+      <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Revise on one page</h1>
+      <p class="mt-3 max-w-2xl text-muted">Every chapter's costs, top mistakes and terms. Print one chapter, or print this page for all eight.</p>
+      <div class="mt-5 flex flex-wrap gap-2">
+        {core.map((c) => <a href={`/cheatsheets/${c.slug}`} class="chip hover:text-fg">{c.num} {c.short}</a>)}
+        <a href="/big-o" class="chip hover:text-fg"><Table2 size={12} /> Big-O master table</a>
+        <button class="btn btn-sm ml-auto" onclick="window.print()"><Printer size={14} /> Print all</button>
+      </div>
+    </div>
+    <div class="mt-10 grid gap-14">
+      {core.map((c) => <CheatSheet id={c.id} />)}
+    </div>
+  </div>
+</Base>
