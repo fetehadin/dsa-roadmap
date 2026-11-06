@@ -1,4 +1,4 @@
-// Lab 3: Campus Navigator (solution)
+// Lab: Map Navigator (solution)
 #include <iostream>
 #include <string>
 #include <vector>

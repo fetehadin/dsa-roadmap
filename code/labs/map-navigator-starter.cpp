@@ -1,4 +1,4 @@
-// Lab 3: Campus Navigator (starter). Build each part, test it, then move to the next milestone.
+// Lab: Map Navigator (starter). Build each part, test it, then move to the next milestone.
 #include <iostream>
 #include <string>
 #include <vector>

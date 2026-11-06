@@ -1,4 +1,4 @@
-// Lab 1: Grade Analyzer (starter). Fill in every TODO, then compare with the sample output.
+// Lab: Grade Analyzer (starter). Fill in every TODO, then compare with the sample output.
 #include <iostream>
 #include <string>
 using namespace std;

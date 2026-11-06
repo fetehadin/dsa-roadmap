@@ -27,7 +27,9 @@ for (const file of files.sort()) {
   const base = file.slice(0, -4);
   const exe = path.join(build, rel.replace(/[\\/]/g, '_').replace(/\.cpp$/, ''));
   try {
-    execFileSync('g++', ['-std=c++17', '-Wall', '-Wextra', '-O1', '-o', exe, file], { stdio: 'pipe' });
+    execFileSync('g++', ['-std=c++17', '-Wall', '-Wextra', '-O1', '-o', exe, file], {
+      stdio: 'pipe',
+    });
   } catch (e) {
     console.log(`✗ ${rel}: compile error\n${e.stderr}`);
     fail++;
@@ -57,5 +59,7 @@ for (const file of files.sort()) {
     fail++;
   } else console.log(`✓ ${rel}`);
 }
-console.log(fail ? `\n${fail} file(s) failed.` : `\nAll C++ files compile and match their expected output.`);
+console.log(
+  fail ? `\n${fail} file(s) failed.` : `\nAll C++ files compile and match their expected output.`,
+);
 process.exit(fail ? 1 : 0);

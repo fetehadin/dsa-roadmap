@@ -1,8 +1,7 @@
 ---
 title: BFS & DFS
-chapter: 7
+chapter: 6
 order: 4
-time: 60
 difficulty: medium
 summary: Breadth-first search with a queue, depth-first search with recursion or a stack, the visited array, and O(V + E).
 keywords: [BFS, DFS, breadth first, depth first, queue, stack, visited, traversal]
@@ -82,7 +81,7 @@ checklist:
   - I can write BFS with a queue and DFS with recursion.
   - I can explain why graphs need a visited array.
   - I know both are O(V + E) with an adjacency list.
-slides: []
+
 ---
 
 You drop a stone in a pond. The ripples spread out **ring by ring**: everything 1 step away, then 2 steps, then 3. That is **Breadth-First Search**.
@@ -117,4 +116,4 @@ Trees have no cycles, so tree traversals never revisit a node. Graphs can have c
 
 Each vertex is enqueued (or called) once, and each edge is checked once from each end: **O(V + E)** with an adjacency list. With a matrix, finding a vertex's neighbours scans a whole row, so **O(V²)**.
 
-> Tree level-order traversal (Chapter 6) is just BFS on a tree.
+> Tree level-order traversal (Phase 4) is just BFS on a tree.

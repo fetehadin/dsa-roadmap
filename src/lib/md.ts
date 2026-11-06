@@ -4,7 +4,10 @@ import katex from 'katex';
 
 let hl: Promise<Highlighter> | null = null;
 export const highlighter = () =>
-  (hl ??= createHighlighter({ themes: ['github-light', 'github-dark-dimmed'], langs: ['cpp', 'text'] }));
+  (hl ??= createHighlighter({
+    themes: ['github-light', 'github-dark-dimmed'],
+    langs: ['cpp', 'text'],
+  }));
 
 export async function highlight(code: string, lang = 'cpp') {
   const h = await highlighter();

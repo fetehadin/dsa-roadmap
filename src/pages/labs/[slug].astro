@@ -8,7 +8,7 @@ import Checklist from '@/components/islands/Checklist';
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import { allTopics, topicNum, topicUrl } from '@/lib/catalog';
 import { phases, CORE_RULE } from '@/data/chapters';
-import { Clock, Download } from '@lucide/astro';
+import { Download } from '@lucide/astro';
 
 export async function getStaticPaths() {
   return (await getCollection('labs')).map((l) => ({ params: { slug: l.id }, props: { lab: l } }));
@@ -16,7 +16,7 @@ export async function getStaticPaths() {
 const { lab } = Astro.props as { lab: CollectionEntry<'labs'> };
 const d = lab.data;
 const { Content } = await render(lab);
-const ph = phases.find((p) => p.n === d.phase)!;
+const ph = phases.find((p) => p.id === d.phase)!;
 const topics = (await allTopics()).filter((t) => d.uses.includes(t.id));
 const sample = fs.readFileSync(path.resolve('code', `${d.sampleInput}.in`), 'utf8').trimEnd();
 const starterSrc = fs.readFileSync(path.resolve('code', `${d.starter}.cpp`), 'utf8');
@@ -25,26 +25,38 @@ const starterHref = `data:text/plain;charset=utf-8,${encodeURIComponent(starterS
 
 <Base title={d.title} description={d.summary}>
   <article class="mx-auto max-w-4xl pt-8 sm:pt-12">
-    <a href="/labs" class="text-sm text-muted hover:text-fg">← All labs</a>
+    <a href="/labs" class="text-sm text-muted hover:text-fg">
+      ← All labs
+    </a>
     <div class="mt-4 flex flex-wrap gap-2">
-      <span class="eyebrow">Phase {ph.n} lab</span>
-      <span class="chip">{ph.weeks}</span>
-      <span class="chip"><Clock size={12} /> {d.time}</span>
+      <span class="eyebrow">
+        Phase {Number(ph.num)} project · {ph.title}
+      </span>
     </div>
     <h1 class="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">{d.title}</h1>
     <p class="mt-3 max-w-2xl text-lg text-muted">{d.summary}</p>
     <div class="mt-4 flex flex-wrap gap-1.5">
       <span class="text-sm text-muted">Uses:</span>
-      {topics.map((t) => <a href={topicUrl(t.id)} class="chip hover:text-fg">{topicNum(t)} {t.data.title}</a>)}
+      {topics.map((t) => (
+        <a href={topicUrl(t.id)} class="chip hover:text-fg">
+          {topicNum(t)} {t.data.title}
+        </a>
+      ))}
     </div>
 
     <Section n={1} id="spec" title="Spec">
-      <div class="prose"><Content /></div>
+      <div class="prose">
+        <Content />
+      </div>
     </Section>
 
     <Section n={2} id="starter" title="Starter file">
-      <p class="mb-3 text-muted">It compiles as-is. Every <code class="font-mono text-sm">TODO</code> is a milestone below.</p>
-      <a class="btn btn-primary mb-3" href={starterHref} download={`${lab.id}.cpp`}><Download size={15} /> Download {lab.id}.cpp</a>
+      <p class="mb-3 text-muted">
+        It compiles as-is. Every <code class="font-mono text-sm">TODO</code> is a milestone below.
+      </p>
+      <a class="btn btn-primary mb-3" href={starterHref} download={`${lab.id}.cpp`}>
+        <Download size={15} /> Download {lab.id}.cpp
+      </a>
       <CodeBlock file={d.starter} title={`${lab.id}-starter.cpp`} />
     </Section>
 
@@ -53,7 +65,11 @@ const starterHref = `data:text/plain;charset=utf-8,${encodeURIComponent(starterS
     </Section>
 
     <Section n={4} id="sample" title="Sample input & output">
-      <p class="mb-3 text-muted">Save the input as <code class="font-mono text-sm">input.txt</code> and run <code class="font-mono text-sm">./{lab.id} &lt; input.txt</code>. Your output should match the solution's output exactly.</p>
+      <p class="mb-3 text-muted">
+        Save the input as <code class="font-mono text-sm">input.txt</code> and run{' '}
+        <code class="font-mono text-sm">./{lab.id} &lt; input.txt</code>. Your output should match
+        the solution's output exactly.
+      </p>
       <div class="card overflow-hidden">
         <div class="border-b border-line px-4 py-2 font-mono text-xs text-muted">input.txt</div>
         <pre class="overflow-x-auto bg-codebg px-4 py-3 font-mono text-[0.8rem]">{sample}</pre>
@@ -64,7 +80,9 @@ const starterHref = `data:text/plain;charset=utf-8,${encodeURIComponent(starterS
       <p class="mb-3 text-muted">{CORE_RULE} Try for at least an hour before opening this.</p>
       <details class="group">
         <summary class="btn">Show the solution</summary>
-        <div class="mt-4"><CodeBlock file={d.solution} title={`${lab.id}.cpp`} /></div>
+        <div class="mt-4">
+          <CodeBlock file={d.solution} title={`${lab.id}.cpp`} />
+        </div>
       </details>
     </Section>
   </article>

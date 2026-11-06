@@ -14,12 +14,15 @@ const topics = defineCollection({
   loader: glob({ pattern: '**/*.mdx', base: './src/content/topics' }),
   schema: z.object({
     title: z.string(),
-    chapter: z.union([z.number().int().min(1).max(8), z.literal('levelup')]),
+    chapter: z.union([z.number().int().min(1).max(7), z.literal('levelup')]),
     order: z.number(),
-    time: z.number().int(),
     difficulty: z.enum(['easy', 'medium', 'hard']),
     summary: z.string(),
-    viz: z.array(z.object({ id: z.string(), title: z.string().optional(), caption: z.string().optional() })).default([]),
+    viz: z
+      .array(
+        z.object({ id: z.string(), title: z.string().optional(), caption: z.string().optional() }),
+      )
+      .default([]),
     code: z.array(z.object({ file: z.string(), title: z.string() })).min(1),
     complexity: z.object({
       rows: z.array(z.tuple([z.string(), z.string()])),
@@ -28,7 +31,10 @@ const topics = defineCollection({
       inPlace: z.boolean().nullable().optional(),
       note: z.string().optional(),
     }),
-    videos: z.array(z.object({ id: z.string(), why: z.string() })).min(1).max(3),
+    videos: z
+      .array(z.object({ id: z.string(), why: z.string() }))
+      .min(1)
+      .max(3),
     exam: z.object({ questions: z.array(z.string()), mistakes: z.array(z.string()) }),
     quiz: z.array(quizItem).min(3).max(5),
     practice: z.object({
@@ -49,7 +55,6 @@ const topics = defineCollection({
     }),
     checklist: z.array(z.string()).min(3).max(5),
     keywords: z.array(z.string()).default([]),
-    slides: z.array(z.string()).default([]),
   }),
 });
 
@@ -59,7 +64,6 @@ const labs = defineCollection({
     title: z.string(),
     phase: z.number().int(),
     summary: z.string(),
-    time: z.string(),
     starter: z.string(),
     solution: z.string(),
     sampleInput: z.string(),

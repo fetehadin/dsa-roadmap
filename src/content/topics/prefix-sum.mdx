@@ -2,7 +2,6 @@
 title: Prefix Sum
 chapter: levelup
 order: 3
-time: 35
 difficulty: easy
 summary: Precompute running totals once in O(n), then answer any range-sum query with one subtraction in O(1).
 keywords: [prefix sum, cumulative sum, range sum query, subarray sum, interview pattern]
@@ -22,9 +21,9 @@ complexity:
   note: Using size n + 1 with `p[0] = 0` removes the special case for ranges that start at index 0.
 videos:
   - id: yuws7YK0Yng
-    why: The whole pattern in 4 minutes.
+    why: The whole pattern, short and clear.
   - id: 'fFVZt-6sgyo'
-    why: NeetCode combines prefix sums with a hash map (Chapter 8) for Subarray Sum Equals K.
+    why: NeetCode combines prefix sums with a hash map (Phase 5) for Subarray Sum Equals K.
 exam:
   questions:
     - Build the prefix array of a given array and compute a range sum.
@@ -73,7 +72,7 @@ checklist:
   - I can build a prefix-sum array.
   - I can answer a range sum in O(1).
   - I can combine prefix sums with a hash map.
-slides: [1ATUDfM_6uqhwTPe0O8vlifjT-yeVNOd3h_u4qxugfKA]
+
 ---
 
 A **car odometer**. To know how far you drove between Adama and Hawassa, you don't add up every kilometre again. You subtract the odometer reading at Adama from the reading at Hawassa.
@@ -86,6 +85,6 @@ p[i + 1] = p[i] + a[i];
 sum(a[l..r]) = p[r + 1] - p[l];
 ```
 
-Building it is **O(n)**, once. After that, any range sum is **O(1)**. That is the time/space trade-off from Chapter 2: spend O(n) memory to save repeated work.
+Building it is **O(n)**, once. After that, any range sum is **O(1)**. That is the time/space trade-off from Phase 1: spend O(n) memory to save repeated work.
 
-> Built on arrays and time/space trade-offs (Ch1–2). Not on the exam.
+> Built on arrays and time/space trade-offs (Phases 1–2). Optional.

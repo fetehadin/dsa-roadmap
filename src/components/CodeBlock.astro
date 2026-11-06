@@ -23,7 +23,16 @@ const state = {
       language: 'c++',
       source: src,
       compilers: [],
-      executors: [{ compiler: { id: 'g152', options: '-std=c++17 -O1', libs: [] }, arguments: '', argumentsVisible: false, stdin, stdinVisible: !!stdin, compilerOutputVisible: false }],
+      executors: [
+        {
+          compiler: { id: 'g152', options: '-std=c++17 -O1', libs: [] },
+          arguments: '',
+          argumentsVisible: false,
+          stdin,
+          stdinVisible: !!stdin,
+          compilerOutputVisible: false,
+        },
+      ],
     },
   ],
 };
@@ -33,24 +42,48 @@ const lines = src.split('\n').length;
 
 <figure class="codeblock card overflow-hidden" data-code>
   <figcaption class="flex flex-wrap items-center gap-2 border-b border-line px-3 py-2">
-    <span class="flex items-center gap-1.5 font-mono text-xs text-muted"><span class="size-2 rounded-full bg-accent"></span>{title ?? `${file}.cpp`}</span>
+    <span class="flex items-center gap-1.5 font-mono text-xs text-muted">
+      <span class="size-2 rounded-full bg-accent"></span>
+      {title ?? `${file}.cpp`}
+    </span>
     <span class="chip !text-[0.65rem]">{lines} lines · C++17</span>
     <div class="ml-auto flex items-center gap-1">
-      <button class="btn btn-sm" data-copy aria-label={`Copy ${file}.cpp`}><Copy size={14} /><span data-copy-label>Copy</span></button>
-      <a class="btn btn-sm" href={godbolt} target="_blank" rel="noopener" title="Open in Compiler Explorer (runs the code)"><ExternalLink size={14} /><span class="hidden sm:inline">Compiler Explorer</span><span class="sm:hidden">Run</span></a>
-      <a class="btn btn-sm hidden sm:inline-flex" href="https://www.onlinegdb.com/online_c++_compiler" target="_blank" rel="noopener" title="Opens OnlineGDB: paste the copied code">OnlineGDB</a>
+      <button class="btn btn-sm" data-copy aria-label={`Copy ${file}.cpp`}>
+        <Copy size={14} />
+        <span data-copy-label>Copy</span>
+      </button>
+      <a
+        class="btn btn-sm"
+        href={godbolt}
+        target="_blank"
+        rel="noopener"
+        title="Open in Compiler Explorer (runs the code)"
+      >
+        <ExternalLink size={14} />
+        <span class="hidden sm:inline">Compiler Explorer</span>
+        <span class="sm:hidden">Run</span>
+      </a>
+      <a
+        class="btn btn-sm hidden sm:inline-flex"
+        href="https://www.onlinegdb.com/online_c++_compiler"
+        target="_blank"
+        rel="noopener"
+        title="Opens OnlineGDB: paste the copied code"
+      >
+        OnlineGDB
+      </a>
     </div>
   </figcaption>
   <div class="bg-codebg" set:html={html} />
   <textarea hidden data-src set:text={src} />
-  {
-    output !== null && (
-      <div class="border-t border-line bg-soft/60">
-        <div class="flex items-center gap-1.5 px-4 pt-2.5 font-mono text-[0.68rem] tracking-wider text-faint uppercase"><Terminal size={12} /> Expected output{stdin && ' (with sample input)'}</div>
-        <pre class="overflow-x-auto px-4 pt-1 pb-3 font-mono text-[0.8rem] text-[var(--r-done)]">{output}</pre>
+  {output !== null && (
+    <div class="border-t border-line bg-soft/60">
+      <div class="flex items-center gap-1.5 px-4 pt-2.5 font-mono text-[0.68rem] tracking-wider text-faint uppercase">
+        <Terminal size={12} /> Expected output{stdin && ' (with sample input)'}
       </div>
-    )
-  }
+      <pre class="overflow-x-auto px-4 pt-1 pb-3 font-mono text-[0.8rem] text-[var(--r-done)]">{output}</pre>
+    </div>
+  )}
 </figure>
 
 <script>

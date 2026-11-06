@@ -9,7 +9,6 @@ export interface CatalogItem {
   chapter: ChapterId;
   num: string;
   checks: number;
-  time: number;
 }
 
 const chapterIndex = (c: ChapterId | number) => chapters.findIndex((x) => x.id === c);
@@ -17,7 +16,8 @@ const chapterIndex = (c: ChapterId | number) => chapters.findIndex((x) => x.id =
 export async function allTopics(): Promise<Topic[]> {
   const list = await getCollection('topics');
   return list.sort(
-    (a, b) => chapterIndex(a.data.chapter) - chapterIndex(b.data.chapter) || a.data.order - b.data.order,
+    (a, b) =>
+      chapterIndex(a.data.chapter) - chapterIndex(b.data.chapter) || a.data.order - b.data.order,
   );
 }
 
@@ -33,6 +33,5 @@ export async function catalog(): Promise<CatalogItem[]> {
     chapter: t.data.chapter as ChapterId,
     num: topicNum(t),
     checks: t.data.checklist.length,
-    time: t.data.time,
   }));
 }

@@ -1,4 +1,4 @@
-// Lab 2: Library Manager (starter). Implement the three classes, then make main() pass the sample.
+// Lab: Library Manager (starter). Implement the three classes, then make main() pass the sample.
 #include <iostream>
 #include <string>
 using namespace std;

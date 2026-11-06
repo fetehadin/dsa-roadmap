@@ -2,7 +2,6 @@
 title: Monotonic Stack
 chapter: levelup
 order: 5
-time: 50
 difficulty: hard
 summary: A stack kept in sorted (decreasing) order answers "next greater element" and "how far away is it" for every index in one O(n) pass.
 keywords: [monotonic stack, next greater element, daily temperatures, span, circular array, interview pattern]
@@ -21,7 +20,7 @@ complexity:
   note: 'Pop on `<` and equal values do **not** answer each other; pop on `<=` and they do. For circular arrays, loop **twice** (i from 0 to 2n − 1, index i % n), pushing only in the first lap.'
 videos:
   - id: Dq_ObZwTY_Q
-    why: The data structure itself, explained in under 6 minutes.
+    why: The data structure itself, explained briefly.
   - id: cTBiBSnjO3c
     why: NeetCode's Daily Temperatures, the span version of this page.
 exam:
@@ -80,7 +79,7 @@ checklist:
   - I can run a monotonic stack by hand.
   - I can compute next greater and its distance.
   - I can handle equal values and circular arrays.
-slides: [1RrPRDycXJ0Fh3djRVLo2bzNNHx4ljGC4IDvWyIVOvIM]
+
 ---
 
 People stand in a line, all looking right. For each person, who is the **first taller person** they can see?
@@ -104,4 +103,4 @@ Each index is pushed once and popped at most once, so the whole thing is **O(n)*
 
 Also see the **LeetCode monotonic problems**: Car Fleet, Remove K Digits, Sum of Subarray Minimums, 132 Pattern, Shortest Subarray with Sum ≥ K (monotonic **queue**).
 
-> Built on Chapter 5 (stacks). Not on the exam.
+> Built on Phase 2 (stacks). Optional.

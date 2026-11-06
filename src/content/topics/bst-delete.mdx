@@ -1,8 +1,7 @@
 ---
 title: BST Delete (3 Cases)
-chapter: 6
-order: 3
-time: 45
+chapter: 4
+order: 4
 difficulty: hard
 summary: Deleting a leaf, a node with one child, and a node with two children by copying the inorder successor. The most-asked BST exam question.
 keywords: [BST, delete, remove, inorder successor, predecessor, three cases]
@@ -82,7 +81,7 @@ checklist:
   - I can delete a node with one child.
   - I can delete a node with two children using the inorder successor.
   - I can write the recursive delete function from memory.
-slides: []
+
 ---
 
 Removing someone from an **org chart**. If they manage nobody, just remove them. If they manage one person, that person reports to their old boss. If they manage two teams, you need a replacement who fits between both teams. That is the whole idea.
@@ -104,7 +103,7 @@ You cannot bypass a node with two children. Instead, find a value that can **sit
 1. Copy the successor's value into the node.
 2. Delete the successor from the right subtree. It has no left child, so this is case 1 or 2.
 
-(Using the **inorder predecessor**, the largest on the left, also works. Use whichever your instructor uses.)
+(Using the **inorder predecessor**, the largest on the left, also works. Both are correct; pick one and be consistent.)
 
 ### Why the code is short
 

@@ -1,8 +1,7 @@
 ---
 title: Tree Traversals
-chapter: 6
-order: 4
-time: 45
+chapter: 4
+order: 2
 difficulty: medium
 summary: Preorder, inorder and postorder (depth-first, recursive) and level order (breadth-first, with a queue). Know them by hand and in code.
 keywords: [traversal, preorder, inorder, postorder, level order, BFS, DFS, recursion]
@@ -23,7 +22,7 @@ videos:
   - id: gm8DUJJhmY4
     why: Preorder, inorder, postorder with recursion, traced on a real tree.
   - id: '86g8jAQug04'
-    why: Level order with a queue. This is the same idea as BFS in Chapter 7.
+    why: Level order with a queue. This is the same idea as BFS in Phase 6.
 exam:
   questions:
     - Give the preorder, inorder, postorder and level-order traversals of a drawn tree.
@@ -85,7 +84,7 @@ checklist:
   - I can write recursive pre/in/postorder from memory.
   - I can write level order with a queue.
   - I know inorder of a BST is sorted.
-slides: []
+
 ---
 
 You are visiting every room in a building. **Depth-first** means you go down one corridor to the end before trying the next. **Breadth-first** means you visit every room on floor 1 before going to floor 2.
@@ -119,4 +118,4 @@ Move the `cout` line up for preorder, down for postorder.
 
 ### Level order (breadth-first)
 
-Use a **queue**: push the root; repeatedly pop a node, print it, push its left and right children. The queue makes sure nodes come out level by level, left to right. This is BFS, which you will meet again on graphs in Chapter 7.
+Use a **queue**: push the root; repeatedly pop a node, print it, push its left and right children. The queue makes sure nodes come out level by level, left to right. This is BFS, which you will meet again on graphs in Phase 6.

@@ -2,7 +2,7 @@
 
 # DSA Roadmap · [dsa.fetehadin.com](https://dsa.fetehadin.com)
 
-A free, static study site for **Data Structures & Algorithms (CoSc3111, AAU, 3rd year)** in **C++**. It follows the official course outline at exam depth: visual step-throughs synced to code, exam lenses, quizzes, practice problems, three labs, and progress saved in `localStorage`. No backend, no login.
+A free, self-paced roadmap to **data structures and algorithms in C++**, for students, self-taught developers and interview prep. Seven phases, from foundations to algorithm design: every topic opens a side panel with an explanation, a C++ snippet, complexity and practice ideas, and links to a full lesson with step-through visuals, quizzes and problems. Progress is saved in `localStorage`. No backend, no login.
 
 > Don't just watch: implement it yourself, then solve 2–3 problems.
 
@@ -32,7 +32,8 @@ Quality gates (run them all before you push):
 code/                 C++ for every topic (*.cpp + expected *.out, optional *.in); labs/ has starters and solutions
 src/content/topics/   one MDX per topic: frontmatter = all structured content, body = the mental model
 src/content/labs/     one MDX per lab
-src/data/             chapters, phases, videos (verified IDs + lengths), glossary
+src/data/             chapters.ts (the 7 phases), roadmap.ts (coming-soon nodes), videos, glossary
+src/components/Roadmap.astro   the roadmap, side panel / bottom sheet, progress (vanilla script, no extra libraries)
 src/viz/              the step engine: algos/*.ts yield frames, Player.tsx plays them, views.tsx draws them
 src/components/       TopicPage (the 11-section template), CodeBlock, islands/ (React: quiz, checklist, exam, dashboard…)
 src/pages/            routes, plus llms.txt, llms-full.txt, /learn/<slug>.md, search.json, exam-pool.json
@@ -42,13 +43,14 @@ src/pages/            routes, plus llms.txt, llms-full.txt, /learn/<slug>.md, se
 
 **Progress** lives under one `localStorage` key (`dsa-roadmap:v1`). Every access is wrapped in `try/catch`; when storage is blocked, the site keeps state in memory and the Progress page warns the user.
 
-## Add a topic in 5 minutes
+## Add a topic
 
 1. **Code.** Write `code/my-topic.cpp` with a tiny `main()`. Run `npm run check:cpp -- my-topic --update` to create `my-topic.out`, read it, and fix anything that looks wrong.
-2. **Page.** Copy an existing file in `src/content/topics/` (for example `bubble-sort.mdx`) to `my-topic.mdx`. Set `chapter`, `order`, `time`, `difficulty`, `summary`, and `code: [{ file: my-topic, title: my-topic.cpp }]`. The file name becomes the URL (`/learn/my-topic`).
+2. **Page.** Copy an existing file in `src/content/topics/` (for example `bubble-sort.mdx`) to `my-topic.mdx`. Set `chapter` (phase 1–7, or `levelup`), `order`, `difficulty`, `summary`, and `code: [{ file: my-topic, title: my-topic.cpp }]`. The file name becomes the URL (`/learn/my-topic`).
 3. **Content.** Fill in `complexity`, `exam`, 3–5 `quiz` items (`answer` is a 0-based index), `practice` (trace, implement, 2–4 problems) and 3–5 `checklist` lines. The body is the plain-English mental model. The schema in `src/content.config.ts` rejects missing pieces at build time.
 4. **Video.** Add the ID to `src/data/videos.ts` (title, channel, seconds), reference it under `videos:`, then run `npm run check:links`.
-5. **Visual (optional).** Reuse an existing `viz` id (see `src/viz/registry.ts`), or add an `Algo` to a module in `src/viz/algos/` and register its id in `index`.
+5. **Roadmap.** The topic appears on the roadmap automatically in phase `chapter`, at position `order`. If a `coming soon` node in `src/data/roadmap.ts` has the same slug, delete it there.
+6. **Visual (optional).** Reuse an existing `viz` id (see `src/viz/registry.ts`), or add an `Algo` to a module in `src/viz/algos/` and register its id in `index`.
 
 Run `npm run build`. Navigation, search, prev/next, cheat sheets, the Big-O table, exam mode, `llms.txt` and the raw `.md` all pick the new topic up automatically.
 
@@ -73,4 +75,4 @@ The C++ and link checks need `g++` and the network, so run them locally (or in C
 
 ## Credits
 
-Class slides belong to their authors and are linked as "Original slides"; all code here is rewritten in C++. Videos are embedded from their creators' channels (mycodeschool, Abdul Bari, Michael Sambol, NeetCode and others, credited on each page). Textbook: Goodrich, Tamassia & Mount, *Data Structures and Algorithms in C++*.
+Videos are embedded from their creators' channels (mycodeschool, Abdul Bari, Michael Sambol, NeetCode and others, credited on each page). Textbook: Goodrich, Tamassia & Mount, *Data Structures and Algorithms in C++*.

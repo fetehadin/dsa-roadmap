@@ -1,8 +1,7 @@
 ---
 title: Circular Queue
-chapter: 5
-order: 5
-time: 40
+chapter: 2
+order: 8
 difficulty: medium
 summary: Let front and rear wrap around with the modulo operator, so freed slots are reused. All operations O(1) on a fixed array.
 keywords: [circular queue, ring buffer, modulo, wrap around, front, rear, count]
@@ -77,7 +76,7 @@ checklist:
   - I can write enqueue and dequeue with modulo wrap-around.
   - I can tell full from empty.
   - I can trace front and rear as they wrap.
-slides: [1RrPRDycXJ0Fh3djRVLo2bzNNHx4ljGC4IDvWyIVOvIM]
+
 ---
 
 Picture a **revolving sushi belt** with N plates. The chef places food on the next empty plate; diners take food from the oldest plate. When the chef reaches the end of the belt, they just carry on at the start. Nothing is wasted.
@@ -98,7 +97,7 @@ With only `front` and `rear`, a full ring and an empty ring can look the same. T
 1. **Keep a `count`** (this page): empty when `count == 0`, full when `count == N`.
 2. **Leave one slot unused**: empty when `front == rear`, full when `(rear + 1) % N == front`.
 
-Your instructor may use either. Know both.
+Textbooks and interviewers use both. Know both.
 
 ### Printing in order
 

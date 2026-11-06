@@ -2,25 +2,43 @@
 import Base from '@/layouts/Base.astro';
 import { getCollection } from 'astro:content';
 import { phases } from '@/data/chapters';
-import { FlaskConical, Clock, ArrowRight } from '@lucide/astro';
+import { FlaskConical, ArrowRight } from '@lucide/astro';
 const labs = (await getCollection('labs')).sort((a, b) => a.data.phase - b.data.phase);
 ---
 
-<Base title="Labs" description="Three C++ console projects, one per phase: Grade Analyzer, Library Manager, Campus Navigator.">
+<Base
+  title="Labs"
+  description="Three C++ console projects: Library Manager, Grade Analyzer and Map Navigator."
+>
   <div class="mx-auto max-w-4xl pt-8 sm:pt-12">
     <span class="eyebrow">Labs</span>
     <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Build something real</h1>
-    <p class="mt-3 max-w-2xl text-lg text-muted">One console project at the end of each phase. Each lab combines that phase's data structures into a working tool. Start from the starter file, tick off the milestones, and only open the solution once yours works.</p>
+    <p class="mt-3 max-w-2xl text-lg text-muted">
+      Three console projects placed along the roadmap. Each one combines the structures you just
+      learned into a working tool. Start from the starter file, tick off the milestones, and only
+      open the solution once yours works.
+    </p>
     <ol class="mt-8 grid gap-4">
       {labs.map((l) => {
-        const ph = phases.find((p) => p.n === l.data.phase)!;
+        const ph = phases.find((p) => p.id === l.data.phase)!;
         return (
           <li>
-            <a href={`/labs/${l.id}`} class="card group flex gap-4 p-5 transition-colors hover:border-line-strong">
-              <span class="grid size-12 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent"><FlaskConical size={22} /></span>
+            <a
+              href={`/labs/${l.id}`}
+              class="card group flex gap-4 p-5 transition-colors hover:border-line-strong"
+            >
+              <span class="grid size-12 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent">
+                <FlaskConical size={22} />
+              </span>
               <span class="min-w-0 flex-1">
-                <span class="flex flex-wrap gap-1.5"><span class="chip">Phase {ph.n} · {ph.weeks}</span><span class="chip"><Clock size={11} /> {l.data.time}</span></span>
-                <span class="mt-2 block text-lg font-semibold group-hover:text-accent">{l.data.title}</span>
+                <span class="flex flex-wrap gap-1.5">
+                  <span class="chip">
+                    After phase {Number(ph.num)}: {ph.title}
+                  </span>
+                </span>
+                <span class="mt-2 block text-lg font-semibold group-hover:text-accent">
+                  {l.data.title}
+                </span>
                 <span class="mt-1 block text-sm text-muted">{l.data.summary}</span>
               </span>
               <ArrowRight size={18} class="mt-1 shrink-0 text-faint group-hover:text-accent" />

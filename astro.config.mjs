@@ -10,6 +10,7 @@ import { unified } from '@astrojs/markdown-remark';
 export default defineConfig({
   site: 'https://dsa.fetehadin.com',
   trailingSlash: 'ignore',
+  redirects: { '/learn': '/' },
   integrations: [mdx(), react(), sitemap()],
   markdown: {
     processor: unified({ remarkPlugins: [remarkMath], rehypePlugins: [rehypeKatex] }),

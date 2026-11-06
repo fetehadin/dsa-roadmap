@@ -1,8 +1,7 @@
 ---
-title: 'Lab 1: Grade Analyzer'
-phase: 1
+title: 'Grade Analyzer'
+phase: 3
 summary: Read student scores, rank them with all three simple sorts, compare their operation counts, and binary-search students by name.
-time: 3–4 hours
 starter: labs/grade-analyzer-starter
 solution: labs/grade-analyzer
 sampleInput: labs/grade-analyzer
@@ -22,7 +21,7 @@ uses: [selection-sort, bubble-sort, insertion-sort, binary-search, counting-time
 Your department wants a tiny console tool for marking. Given a list of students and scores, it must:
 
 1. **Rank** the students from highest to lowest score.
-2. Do the ranking **three times**, with selection, bubble and insertion sort, and **report how many comparisons and swaps (or shifts) each one made** on the same data. This is Chapter 2's analysis in practice.
+2. Do the ranking **three times**, with selection, bubble and insertion sort, and **report how many comparisons and swaps (or shifts) each one made** on the same data. This is Big-O analysis from Phase 1, in practice.
 3. Print each student's **letter grade** (A ≥ 85, B ≥ 70, C ≥ 55, D ≥ 40, else F) and the class **average**.
 4. **Binary-search** students by name. Binary search needs sorted data, so sort a copy **by name** first.
 

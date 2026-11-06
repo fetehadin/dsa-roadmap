@@ -2,7 +2,6 @@
 title: Fast & Slow Pointers
 chapter: levelup
 order: 4
-time: 40
 difficulty: medium
 summary: Two pointers moving through a linked list at different speeds find the middle, the n-th node from the end, and cycles (Floyd's algorithm) in one pass with O(1) space.
 keywords: [fast and slow pointers, tortoise and hare, Floyd, cycle detection, middle of linked list, nth from end]
@@ -22,11 +21,11 @@ complexity:
   note: The obvious alternatives (count first, or store visited nodes in a set) need two passes or O(n) memory.
 videos:
   - id: 'b139yf7Ik-E'
-    why: All the fast/slow variants in 6 minutes.
+    why: All the fast/slow variants, quickly.
   - id: gBTe7lFR3vc
     why: NeetCode explains why Floyd's tortoise and hare must meet inside a cycle.
   - id: A2_ldqM4QcY
-    why: Middle of the Linked List, solved and explained in 5 minutes.
+    why: Middle of the Linked List, solved and explained.
 exam:
   questions:
     - Why does `fast` meeting `slow` prove there is a cycle?
@@ -77,7 +76,7 @@ checklist:
   - I can find the middle of a linked list in one pass.
   - I can find the n-th node from the end in one pass.
   - I can detect a cycle with Floyd's algorithm and explain why it works.
-slides: [1UbdePhTxVSLqzw-OPSKJiLvqI8pvdHGJMEnOGhzKN38]
+
 ---
 
 Two runners on a track: the **hare** runs twice as fast as the **tortoise**.
@@ -88,4 +87,4 @@ Two runners on a track: the **hare** runs twice as fast as the **tortoise**.
 
 All three need only two pointers: **O(1) extra space**, one pass.
 
-> Built on Chapter 4 (linked lists). Not on the exam.
+> Built on Phase 2 (linked lists). Optional.

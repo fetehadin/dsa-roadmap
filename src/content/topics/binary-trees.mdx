@@ -1,8 +1,7 @@
 ---
 title: Binary Trees & Tree Terms
-chapter: 6
+chapter: 4
 order: 1
-time: 45
 difficulty: easy
 summary: Root, parent, child, leaf, sibling, depth, height, level, subtree; full, complete and perfect binary trees; and the Node struct with recursive count and height.
 keywords: [tree, binary tree, root, leaf, height, depth, level, degree, full, complete, perfect]
@@ -89,7 +88,7 @@ checklist:
   - I can tell full, complete and perfect binary trees apart.
   - I can write recursive count, leaves and height functions.
   - I can compute the maximum number of nodes for a given height.
-slides: []
+
 ---
 
 A **family tree** turned upside down. At the top is one ancestor, the **root**. Each person can have children, those children have children, and so on. Unlike a linked list, a tree **branches**: it is **non-linear** and **hierarchical**.
@@ -124,7 +123,7 @@ struct Node {
 ### Special shapes
 
 - **Full**: every node has **0 or 2** children.
-- **Complete**: every level is full **except possibly the last**, which is filled **from the left**. (Heaps in Chapter 8 are complete trees.)
+- **Complete**: every level is full **except possibly the last**, which is filled **from the left**. (Heaps, later in this phase, are complete trees.)
 - **Perfect**: every level is completely full. A perfect tree of height h has **2^(h+1) − 1** nodes.
 
 ### Thinking recursively

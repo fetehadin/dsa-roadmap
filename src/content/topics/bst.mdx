@@ -1,8 +1,7 @@
 ---
 title: Binary Search Tree
-chapter: 6
-order: 2
-time: 55
+chapter: 4
+order: 3
 difficulty: medium
 summary: Left is smaller, right is bigger. Insert, search, find min and max by walking one path, and why the tree's shape decides whether that is O(log n) or O(n).
 keywords: [BST, binary search tree, insert, search, min, max, balanced, skewed]
@@ -91,10 +90,10 @@ checklist:
   - I can write recursive insert and search.
   - I can find the min and max.
   - I can explain why BST operations are O(h) and when h becomes n.
-slides: []
+
 ---
 
-Think of a **guessing game**: "I'm thinking of a number. Is it 50?" "Lower." "30?" "Higher." Each answer throws away half the possibilities. That is **binary search** (Chapter 3), but stored as a tree so that **inserting** is also fast.
+Think of a **guessing game**: "I'm thinking of a number. Is it 50?" "Lower." "30?" "Higher." Each answer throws away half the possibilities. That is **binary search** (Phase 3), but stored as a tree so that **inserting** is also fast.
 
 ### The BST property
 
@@ -103,7 +102,7 @@ For **every** node:
 - everything in its **left** subtree is **smaller**,
 - everything in its **right** subtree is **bigger**.
 
-(Duplicates: this site ignores them. Some courses send them right. Say which rule you use.)
+(Duplicates: this site ignores them. Some books send them right. Say which rule you use.)
 
 ### Search, insert, min, max
 
@@ -124,7 +123,7 @@ Node* insert(Node* root, int x) {
 
 ### The shape matters
 
-Each step goes down one level, so the cost is the **height h**. A bushy, balanced tree has h ≈ log₂ n (a million items in about 20 steps). But inserting **already-sorted** data makes every node go right. The "tree" becomes a linked list, and search is **O(n)**. (Self-balancing trees fix this, but they are beyond this course.)
+Each step goes down one level, so the cost is the **height h**. A bushy, balanced tree has h ≈ log₂ n (a million items in about 20 steps). But inserting **already-sorted** data makes every node go right. The "tree" becomes a linked list, and search is **O(n)**. (Self-balancing trees fix this, and AVL trees are next on the roadmap.)
 
 ### A free sort
 

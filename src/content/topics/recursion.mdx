@@ -1,10 +1,9 @@
 ---
 title: Recursion Primer
-chapter: 3
-order: 7
-time: 45
+chapter: 1
+order: 4
 difficulty: medium
-summary: A function that calls itself on a smaller problem until it reaches a base case. You need this for trees (Ch 6) and merge/quick sort (Ch 8).
+summary: A function that calls itself on a smaller problem until it reaches a base case. You need this for trees (Phase 4) and merge/quick sort (Phase 3).
 keywords: [recursion, base case, call stack, factorial, recursive binary search, stack overflow]
 viz:
   - id: factorial
@@ -26,7 +25,7 @@ videos:
   - id: mz6tAJMVmfM
     why: CS50's short is the friendliest explanation of base case, recursive case and the call stack.
   - id: ngCos392W4w
-    why: A 5-step method for writing recursive functions. It pays off in Ch 6 and Ch 8.
+    why: A 5-step method for writing recursive functions. It pays off in sorting and trees.
 exam:
   questions:
     - What is recursion? What are the two required parts of a recursive function?
@@ -89,7 +88,7 @@ checklist:
   - I can draw the call stack for factorial(4).
   - I can write recursive binary search.
   - I can explain stack overflow and the O(n) space of deep recursion.
-slides: []
+
 ---
 
 Russian **matryoshka dolls**: to find the smallest doll you open a doll, and inside is… a smaller doll, which you open the same way. You stop when a doll doesn't open. That last doll is the **base case**.

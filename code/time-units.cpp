@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
 
-// We count time units with the instructor's rules by adding to `t`
+// We count time units with the counting rules by adding to `t`
 // next to each operation, then compare with the formula T(n) = 4n + 3.
 long long countLoop(int n) {
     long long t = 0;

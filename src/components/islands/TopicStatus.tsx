@@ -23,12 +23,19 @@ export default function TopicStatus({ slug }: { slug: string }) {
       <button
         className={`btn ${done ? '' : 'btn-primary'}`}
         aria-pressed={done}
-        onClick={() => patchTopic(slug, { done: !done, doneAt: !done ? new Date().toISOString() : undefined })}
+        onClick={() =>
+          patchTopic(slug, { done: !done, doneAt: !done ? new Date().toISOString() : undefined })
+        }
       >
         {done ? <CheckCircle2 size={17} className="text-[var(--r-done)]" /> : <Circle size={17} />}
         {done ? 'Completed' : 'Mark complete'}
       </button>
-      <button className="btn" aria-pressed={mark} aria-label={mark ? 'Remove bookmark' : 'Bookmark this topic'} onClick={() => patchTopic(slug, { bookmark: !mark })}>
+      <button
+        className="btn"
+        aria-pressed={mark}
+        aria-label={mark ? 'Remove bookmark' : 'Bookmark this topic'}
+        onClick={() => patchTopic(slug, { bookmark: !mark })}
+      >
         {mark ? <BookmarkCheck size={17} className="text-accent" /> : <Bookmark size={17} />}
         <span className="hidden sm:inline">{mark ? 'Saved' : 'Bookmark'}</span>
       </button>

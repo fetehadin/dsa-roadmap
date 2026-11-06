@@ -1,4 +1,4 @@
-// Lab 2: Library Manager (solution)
+// Lab: Library Manager (solution)
 #include <iostream>
 #include <string>
 using namespace std;

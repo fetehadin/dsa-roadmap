@@ -9,10 +9,19 @@ import Quiz from './islands/Quiz';
 import Checklist from './islands/Checklist';
 import TopicStatus from './islands/TopicStatus';
 import Notes from './islands/Notes';
-import { chapterById, CORE_RULE, slideUrl } from '@/data/chapters';
+import { chapterById, CORE_RULE } from '@/data/chapters';
 import { md, mdi } from '@/lib/md';
 import { allTopics, topicNum, topicUrl, type Topic } from '@/lib/catalog';
-import { Clock, Gauge, ArrowLeft, ArrowRight, AlertTriangle, HelpCircle, Lightbulb, ExternalLink, Presentation, Keyboard } from '@lucide/astro';
+import {
+  Gauge,
+  ArrowLeft,
+  ArrowRight,
+  AlertTriangle,
+  HelpCircle,
+  Lightbulb,
+  ExternalLink,
+  Keyboard,
+} from '@lucide/astro';
 
 interface Props {
   topic: Topic;
@@ -29,62 +38,132 @@ const next = sameTrack[i + 1];
 const num = topicNum(topic);
 const levelColor = { easy: 'var(--r-done)', medium: 'var(--r-compare)', hard: 'var(--r-swap)' };
 
-const quiz = await Promise.all(d.quiz.map(async (q) => ({ q: await mdi(q.q), code: q.code, options: await Promise.all(q.options.map((o) => mdi(o))), answer: q.answer, explain: await mdi(q.explain) })));
+const quiz = await Promise.all(
+  d.quiz.map(async (q) => ({
+    q: await mdi(q.q),
+    code: q.code,
+    options: await Promise.all(q.options.map((o) => mdi(o))),
+    answer: q.answer,
+    explain: await mdi(q.explain),
+  })),
+);
 const P = d.practice;
 const practice = {
   trace: { task: await md(P.trace.task), solution: await md(P.trace.solution) },
-  implement: { task: await md(P.implement.task), hint: await md(P.implement.hint), solution: P.implement.solution ? await md(P.implement.solution) : null },
-  problems: await Promise.all(P.problems.map(async (p) => ({ ...p, hint: await md(p.hint), solution: p.solution ? await md(p.solution) : null }))),
+  implement: {
+    task: await md(P.implement.task),
+    hint: await md(P.implement.hint),
+    solution: P.implement.solution ? await md(P.implement.solution) : null,
+  },
+  problems: await Promise.all(
+    P.problems.map(async (p) => ({
+      ...p,
+      hint: await md(p.hint),
+      solution: p.solution ? await md(p.solution) : null,
+    })),
+  ),
 };
-const exam = { questions: await Promise.all(d.exam.questions.map((x) => mdi(x))), mistakes: await Promise.all(d.exam.mistakes.map((x) => mdi(x))) };
-const cxRows = await Promise.all(d.complexity.rows.map(async ([k, v]) => [await mdi(k), await mdi(v)]));
+const exam = {
+  questions: await Promise.all(d.exam.questions.map((x) => mdi(x))),
+  mistakes: await Promise.all(d.exam.mistakes.map((x) => mdi(x))),
+};
+const cxRows = await Promise.all(
+  d.complexity.rows.map(async ([k, v]) => [await mdi(k), await mdi(v)]),
+);
 const cxNote = d.complexity.note ? await md(d.complexity.note) : null;
 const yesNo = (b: boolean | null | undefined) => (b === true ? 'Yes' : b === false ? 'No' : 'n/a');
-const slides = d.slides.length ? d.slides.map((id) => ({ id, title: (ch.slides ?? []).find((s) => s.id === id)?.title ?? 'Class slides' })) : (ch.slides ?? []).filter(() => d.chapter !== 'levelup');
-const sections = ['Mental model', 'Visualize', 'C++ code', 'Complexity', 'Watch', 'Exam lens', 'Quick check', 'Practice', 'Mastery'];
+const sections = [
+  'Mental model',
+  'Visualize',
+  'C++ code',
+  'Complexity',
+  'Watch',
+  'Interview & exam lens',
+  'Quick check',
+  'Practice',
+  'Mastery',
+];
 const sid = (s: string) => s.toLowerCase().replace(/[^a-z]+/g, '-');
 ---
 
 <article class="mx-auto max-w-4xl pt-6 sm:pt-10">
   <nav class="mb-4 flex items-center gap-1.5 text-sm text-muted" aria-label="Breadcrumb">
-    <a href={d.chapter === 'levelup' ? '/level-up' : '/learn'} class="hover:text-fg">{d.chapter === 'levelup' ? 'Level Up' : 'Learn'}</a>
+    <a href={d.chapter === 'levelup' ? '/level-up' : '/'} class="hover:text-fg">
+      {d.chapter === 'levelup' ? 'Level Up' : 'Roadmap'}
+    </a>
     <span class="text-faint">/</span>
-    {d.chapter !== 'levelup' && <><a href={`/learn/${ch.slug}`} class="hover:text-fg">Ch {ch.num} · {ch.short}</a><span class="text-faint">/</span></>}
-    <span class="truncate text-fg" aria-current="page">{d.title}</span>
+    {d.chapter !== 'levelup' && (
+      <>
+        <a href={`/learn/${ch.slug}`} class="hover:text-fg">
+          Phase {Number(ch.num)} · {ch.short}
+        </a>
+        <span class="text-faint">/</span>
+      </>
+    )}
+    <span class="truncate text-fg" aria-current="page">
+      {d.title}
+    </span>
   </nav>
 
   <header class="grid gap-4">
     <div class="flex flex-wrap items-center gap-2">
       <span class="chip !border-accent/40 !bg-accent-soft !text-accent">{num}</span>
-      <span class="chip"><Clock size={12} /> ~{d.time} min</span>
-      <span class="chip"><Gauge size={12} /> <span style={`color:${levelColor[d.difficulty]}`}>{d.difficulty}</span></span>
-      {d.chapter === 'levelup' && <span class="chip !border-[var(--r-compare)] !text-[var(--r-compare)]">optional · not on the exam</span>}
+      <span class="chip">
+        <Gauge size={12} /> <span style={`color:${levelColor[d.difficulty]}`}>{d.difficulty}</span>
+      </span>
+      {d.chapter === 'levelup' && (
+        <span class="chip !border-[var(--r-compare)] !text-[var(--r-compare)]">optional</span>
+      )}
     </div>
     <h1 class="text-3xl font-bold tracking-tight text-balance sm:text-4xl">{d.title}</h1>
     <p class="max-w-2xl text-lg text-muted">{d.summary}</p>
     <TopicStatus slug={topic.id} client:load />
     <p class="flex items-start gap-2 rounded-xl border border-dashed border-accent/50 bg-accent-soft px-4 py-3 text-sm">
       <Lightbulb size={17} class="mt-0.5 shrink-0 text-accent" />
-      <span><b>Rule of this site:</b> {CORE_RULE}</span>
+      <span>
+        <b>Rule of this site:</b> {CORE_RULE}
+      </span>
     </p>
   </header>
 
-  <nav class="no-print sticky top-14 z-30 -mx-4 mt-6 overflow-x-auto border-y border-line bg-[color-mix(in_oklab,var(--bg)_88%,transparent)] px-4 py-2 backdrop-blur-md" aria-label="On this page">
+  <nav
+    class="no-print sticky top-14 z-30 -mx-4 mt-6 overflow-x-auto border-y border-line bg-[color-mix(in_oklab,var(--bg)_88%,transparent)] px-4 py-2 backdrop-blur-md"
+    aria-label="On this page"
+  >
     <ol class="flex gap-1 text-xs whitespace-nowrap">
-      {sections.map((s, k) => <li><a href={`#${sid(s)}`} class="block rounded-md px-2 py-1.5 text-muted hover:bg-soft hover:text-fg"><span class="font-mono text-faint">{k + 2}</span> {s}</a></li>)}
+      {sections.map((s, k) => (
+        <li>
+          <a
+            href={`#${sid(s)}`}
+            class="block rounded-md px-2 py-1.5 text-muted hover:bg-soft hover:text-fg"
+          >
+            <span class="font-mono text-faint">{k + 2}</span> {s}
+          </a>
+        </li>
+      ))}
     </ol>
   </nav>
 
   <Section n={2} id="mental-model" title="Mental model">
-    <div class="prose"><Content /></div>
+    <div class="prose">
+      <Content />
+    </div>
   </Section>
 
   <Section n={3} id="visualize" title="Visualize">
-    <p class="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted"><Keyboard size={15} /> <span class="kbd">space</span> play · <span class="kbd">←</span><span class="kbd">→</span> step · <span class="kbd">r</span> reset. The highlighted code line follows each step.</p>
+    <p class="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
+      <Keyboard size={15} /> <span class="kbd">space</span> play · <span class="kbd">←</span>
+      <span class="kbd">→</span> step · <span class="kbd">r</span> reset. The highlighted code line
+      follows each step.
+    </p>
     <div class="grid gap-6">
       {d.viz.map((v) => (
         <div>
-          {v.id === 'growth-chart' ? <GrowthChart client:visible /> : <Player id={v.id} title={v.title ?? d.title} client:visible />}
+          {v.id === 'growth-chart' ? (
+            <GrowthChart client:visible />
+          ) : (
+            <Player id={v.id} title={v.title ?? d.title} client:visible />
+          )}
           {v.caption && <p class="mt-2 text-sm text-muted">{v.caption}</p>}
         </div>
       ))}
@@ -92,8 +171,15 @@ const sid = (s: string) => s.toLowerCase().replace(/[^a-z]+/g, '-');
   </Section>
 
   <Section n={4} id="c-code" title="C++ code">
-    <p class="mb-4 text-sm text-muted">Compiled and run with <code class="font-mono">g++ -std=c++17</code>; the output below is real. Type it out yourself before you copy it.</p>
-    <div class="grid gap-5">{d.code.map((c) => <CodeBlock file={c.file} title={c.title} />)}</div>
+    <p class="mb-4 text-sm text-muted">
+      Compiled and run with <code class="font-mono">g++ -std=c++17</code>; the output below is real.
+      Type it out yourself before you copy it.
+    </p>
+    <div class="grid gap-5">
+      {d.code.map((c) => (
+        <CodeBlock file={c.file} title={c.title} />
+      ))}
+    </div>
   </Section>
 
   <Section n={5} id="complexity" title="Complexity">
@@ -102,13 +188,38 @@ const sid = (s: string) => s.toLowerCase().replace(/[^a-z]+/g, '-');
         <tbody>
           {cxRows.map(([k, v]) => (
             <tr class="border-b border-line last:border-0">
-              <th scope="row" class="md w-1/2 px-4 py-2.5 text-left font-medium text-muted" set:html={k} />
+              <th
+                scope="row"
+                class="md w-1/2 px-4 py-2.5 text-left font-medium text-muted"
+                set:html={k}
+              />
               <td class="md px-4 py-2.5 font-mono" set:html={v} />
             </tr>
           ))}
-          {d.complexity.space && <tr class="border-b border-line"><th scope="row" class="px-4 py-2.5 text-left font-medium text-muted">Extra space</th><td class="px-4 py-2.5 font-mono">{d.complexity.space}</td></tr>}
-          {d.complexity.stable !== undefined && <tr class="border-b border-line"><th scope="row" class="px-4 py-2.5 text-left font-medium text-muted">Stable?</th><td class="px-4 py-2.5">{yesNo(d.complexity.stable)}</td></tr>}
-          {d.complexity.inPlace !== undefined && <tr><th scope="row" class="px-4 py-2.5 text-left font-medium text-muted">In-place?</th><td class="px-4 py-2.5">{yesNo(d.complexity.inPlace)}</td></tr>}
+          {d.complexity.space && (
+            <tr class="border-b border-line">
+              <th scope="row" class="px-4 py-2.5 text-left font-medium text-muted">
+                Extra space
+              </th>
+              <td class="px-4 py-2.5 font-mono">{d.complexity.space}</td>
+            </tr>
+          )}
+          {d.complexity.stable !== undefined && (
+            <tr class="border-b border-line">
+              <th scope="row" class="px-4 py-2.5 text-left font-medium text-muted">
+                Stable?
+              </th>
+              <td class="px-4 py-2.5">{yesNo(d.complexity.stable)}</td>
+            </tr>
+          )}
+          {d.complexity.inPlace !== undefined && (
+            <tr>
+              <th scope="row" class="px-4 py-2.5 text-left font-medium text-muted">
+                In-place?
+              </th>
+              <td class="px-4 py-2.5">{yesNo(d.complexity.inPlace)}</td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
@@ -117,23 +228,34 @@ const sid = (s: string) => s.toLowerCase().replace(/[^a-z]+/g, '-');
 
   <Section n={6} id="watch" title="Watch">
     <Videos slug={topic.id} items={d.videos} />
-    {slides.length > 0 && (
-      <p class="mt-4 flex flex-wrap items-center gap-2 text-sm text-muted">
-        <Presentation size={15} /> Original class slides (Python, by the course's lecture authors):
-        {slides.map((s) => <a href={slideUrl(s.id)} class="text-accent underline underline-offset-2" target="_blank" rel="noopener">{s.title}</a>)}
-      </p>
-    )}
   </Section>
 
-  <Section n={7} id="exam-lens" title="Exam lens">
+  <Section n={7} id="interview-exam-lens" title="Interview & exam lens">
     <div class="grid gap-4 md:grid-cols-2">
       <div class="card p-5">
-        <h3 class="mb-3 flex items-center gap-2 font-semibold"><HelpCircle size={17} class="text-accent" /> Likely questions</h3>
-        <ol class="md grid list-decimal gap-2 pl-5 text-[0.95rem]">{exam.questions.map((q) => <li set:html={q} />)}</ol>
+        <h3 class="mb-3 flex items-center gap-2 font-semibold">
+          <HelpCircle size={17} class="text-accent" /> Likely questions
+        </h3>
+        <ol class="md grid list-decimal gap-2 pl-5 text-[0.95rem]">
+          {exam.questions.map((q) => (
+            <li set:html={q} />
+          ))}
+        </ol>
       </div>
       <div class="card p-5">
-        <h3 class="mb-3 flex items-center gap-2 font-semibold"><AlertTriangle size={17} class="text-[var(--r-compare)]" /> Common mistakes</h3>
-        <ul class="md grid gap-2 text-[0.95rem]">{exam.mistakes.map((m) => <li class="flex gap-2"><span class="text-[var(--r-swap)]" aria-hidden="true">✗</span><span set:html={m} /></li>)}</ul>
+        <h3 class="mb-3 flex items-center gap-2 font-semibold">
+          <AlertTriangle size={17} class="text-[var(--r-compare)]" /> Common mistakes
+        </h3>
+        <ul class="md grid gap-2 text-[0.95rem]">
+          {exam.mistakes.map((m) => (
+            <li class="flex gap-2">
+              <span class="text-[var(--r-swap)]" aria-hidden="true">
+                ✗
+              </span>
+              <span set:html={m} />
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   </Section>
@@ -147,13 +269,24 @@ const sid = (s: string) => s.toLowerCase().replace(/[^a-z]+/g, '-');
       <div class="card p-5">
         <h3 class="mb-2 font-semibold">🟢 Trace by hand</h3>
         <div class="md text-[0.95rem]" set:html={practice.trace.task} />
-        <details class="mt-3 rounded-lg border border-line px-3 py-2"><summary class="text-sm font-medium text-accent">Show answer</summary><div class="md mt-2 text-sm" set:html={practice.trace.solution} /></details>
+        <details class="mt-3 rounded-lg border border-line px-3 py-2">
+          <summary class="text-sm font-medium text-accent">Show answer</summary>
+          <div class="md mt-2 text-sm" set:html={practice.trace.solution} />
+        </details>
       </div>
       <div class="card p-5">
         <h3 class="mb-2 font-semibold">🟡 Implement it</h3>
         <div class="md text-[0.95rem]" set:html={practice.implement.task} />
-        <details class="mt-3 rounded-lg border border-line px-3 py-2"><summary class="text-sm font-medium text-accent">Hint</summary><div class="md mt-2 text-sm" set:html={practice.implement.hint} /></details>
-        {practice.implement.solution && <details class="mt-2 rounded-lg border border-line px-3 py-2"><summary class="text-sm font-medium text-accent">Solution</summary><div class="md mt-2 text-sm" set:html={practice.implement.solution} /></details>}
+        <details class="mt-3 rounded-lg border border-line px-3 py-2">
+          <summary class="text-sm font-medium text-accent">Hint</summary>
+          <div class="md mt-2 text-sm" set:html={practice.implement.hint} />
+        </details>
+        {practice.implement.solution && (
+          <details class="mt-2 rounded-lg border border-line px-3 py-2">
+            <summary class="text-sm font-medium text-accent">Solution</summary>
+            <div class="md mt-2 text-sm" set:html={practice.implement.solution} />
+          </details>
+        )}
       </div>
       <div class="card p-5">
         <h3 class="mb-3 font-semibold">🔴 Solve problems</h3>
@@ -161,12 +294,29 @@ const sid = (s: string) => s.toLowerCase().replace(/[^a-z]+/g, '-');
           {practice.problems.map((p) => (
             <li class="rounded-xl border border-line p-4">
               <div class="flex flex-wrap items-center gap-2">
-                <a href={p.url} target="_blank" rel="noopener" class="flex items-center gap-1.5 font-medium hover:text-accent">{p.name} <ExternalLink size={13} /></a>
-                <span class="chip" style={`color:${levelColor[p.level]}`}>{p.level}</span>
+                <a
+                  href={p.url}
+                  target="_blank"
+                  rel="noopener"
+                  class="flex items-center gap-1.5 font-medium hover:text-accent"
+                >
+                  {p.name} <ExternalLink size={13} />
+                </a>
+                <span class="chip" style={`color:${levelColor[p.level]}`}>
+                  {p.level}
+                </span>
                 <span class="chip">{new URL(p.url).hostname.replace('www.', '')}</span>
               </div>
-              <details class="mt-2"><summary class="text-sm text-accent">Hint</summary><div class="md mt-1.5 text-sm text-muted" set:html={p.hint} /></details>
-              {p.solution && <details class="mt-1"><summary class="text-sm text-accent">Solution idea</summary><div class="md mt-1.5 text-sm" set:html={p.solution} /></details>}
+              <details class="mt-2">
+                <summary class="text-sm text-accent">Hint</summary>
+                <div class="md mt-1.5 text-sm text-muted" set:html={p.hint} />
+              </details>
+              {p.solution && (
+                <details class="mt-1">
+                  <summary class="text-sm text-accent">Solution idea</summary>
+                  <div class="md mt-1.5 text-sm" set:html={p.solution} />
+                </details>
+              )}
             </li>
           ))}
         </ul>
@@ -175,27 +325,55 @@ const sid = (s: string) => s.toLowerCase().replace(/[^a-z]+/g, '-');
   </Section>
 
   <Section n={10} id="mastery" title="Mastery checklist">
-    <p class="mb-3 text-sm text-muted">Tick these honestly. When every box is ticked, the topic is marked complete.</p>
+    <p class="mb-3 text-sm text-muted">
+      Tick these honestly. When every box is ticked, the topic is marked complete.
+    </p>
     <Checklist slug={topic.id} items={d.checklist} client:visible />
-    <div class="mt-5"><Notes slug={topic.id} client:visible /></div>
+    <div class="mt-5">
+      <Notes slug={topic.id} client:visible />
+    </div>
   </Section>
 
   <nav class="mt-12 grid gap-3 sm:grid-cols-2" aria-label="Previous and next topic">
     {prev ? (
-      <a href={topicUrl(prev.id)} class="card group flex items-center gap-3 p-4 hover:border-line-strong">
+      <a
+        href={topicUrl(prev.id)}
+        class="card group flex items-center gap-3 p-4 hover:border-line-strong"
+      >
         <ArrowLeft size={18} class="text-faint transition-transform group-hover:-translate-x-0.5" />
-        <span><span class="block text-xs text-muted">Previous · {topicNum(prev)}</span><span class="font-medium">{prev.data.title}</span></span>
+        <span>
+          <span class="block text-xs text-muted">Previous · {topicNum(prev)}</span>
+          <span class="font-medium">{prev.data.title}</span>
+        </span>
       </a>
-    ) : <span />}
+    ) : (
+      <span />
+    )}
     {next && (
-      <a href={topicUrl(next.id)} class="card group flex items-center justify-end gap-3 p-4 text-right hover:border-line-strong">
-        <span><span class="block text-xs text-muted">Next · {topicNum(next)}</span><span class="font-medium">{next.data.title}</span></span>
+      <a
+        href={topicUrl(next.id)}
+        class="card group flex items-center justify-end gap-3 p-4 text-right hover:border-line-strong"
+      >
+        <span>
+          <span class="block text-xs text-muted">Next · {topicNum(next)}</span>
+          <span class="font-medium">{next.data.title}</span>
+        </span>
         <ArrowRight size={18} class="text-faint transition-transform group-hover:translate-x-0.5" />
       </a>
     )}
   </nav>
   <p class="mt-6 text-center text-sm text-faint">
-    <a href={`/learn/${topic.id}.md`} class="hover:text-fg">View as Markdown</a>
-    {d.chapter !== 'levelup' && <> · <a href={`/cheatsheets/${ch.slug}`} class="hover:text-fg">Chapter cheat sheet</a></>}
+    <a href={`/learn/${topic.id}.md`} class="hover:text-fg">
+      View as Markdown
+    </a>
+    {d.chapter !== 'levelup' && (
+      <>
+        {' '}
+        ·{' '}
+        <a href={`/cheatsheets/${ch.slug}`} class="hover:text-fg">
+          Phase cheat sheet
+        </a>
+      </>
+    )}
   </p>
 </article>

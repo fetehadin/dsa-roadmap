@@ -224,7 +224,10 @@ export default function Player({ id, title }: { id: string; title?: string }) {
     >
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-4 py-2.5">
         <div className="text-sm font-semibold">{title ?? 'Visualizer'}</div>
-        <ul className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted" aria-label="Colour legend">
+        <ul
+          className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted"
+          aria-label="Colour legend"
+        >
           {legend.map((r) => (
             <li key={r} className="flex items-center gap-1.5">
               <span className="size-2.5 rounded-sm" style={{ background: roleVar[r] }} />

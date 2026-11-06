@@ -1,8 +1,7 @@
 ---
 title: Insertion Sort
 chapter: 3
-order: 3
-time: 40
+order: 5
 difficulty: easy
 summary: Grow a sorted part on the left by inserting each new item into its correct place, like sorting cards in your hand. Fast on nearly sorted data.
 keywords: [sorting, insertion, shift, stable, adaptive]
@@ -70,7 +69,7 @@ practice:
     - name: Insertion Sort List
       url: https://leetcode.com/problems/insertion-sort-list/
       level: medium
-      hint: Same idea on a linked list. Use a dummy head for the sorted list and insert each node after the right predecessor (revisit after Chapter 4).
+      hint: Same idea on a linked list. Use a dummy head for the sorted list and insert each node after the right predecessor (revisit after the linked list topics in Phase 2).
     - name: Sort an Array
       url: https://leetcode.com/problems/sort-an-array/
       level: medium
@@ -84,7 +83,7 @@ checklist:
   - I can write it from memory with the correct while condition.
   - I can name the best/worst inputs and their complexities.
   - I can explain why it is stable and adaptive.
-slides: [1anH6KfsTG4Y6j0oMo4lCd2os1ce-HlGhJ4tzOl9jHn0]
+
 ---
 
 You're dealt cards one at a time. Your hand is always sorted: each new card slides left past the bigger ones until it finds its spot. You never re-sort the whole hand. That's insertion sort.

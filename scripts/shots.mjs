@@ -8,10 +8,16 @@ const widths = (process.env.WIDTHS ?? '360,1280').split(',').map(Number);
 const themes = (process.env.THEMES ?? 'dark,light').split(',');
 const paths = process.argv.slice(2);
 fs.mkdirSync('.shots', { recursive: true });
-const browser = await chromium.launch({ executablePath: process.env.CHROME ?? '/usr/bin/chromium' });
+const browser = await chromium.launch({
+  executablePath: process.env.CHROME ?? '/usr/bin/chromium',
+});
 for (const theme of themes)
   for (const w of widths) {
-    const ctx = await browser.newContext({ viewport: { width: w, height: w < 500 ? 780 : 900 }, deviceScaleFactor: 1, reducedMotion: 'reduce' });
+    const ctx = await browser.newContext({
+      viewport: { width: w, height: w < 500 ? 780 : 900 },
+      deviceScaleFactor: 1,
+      reducedMotion: 'reduce',
+    });
     await ctx.addInitScript((t) => localStorage.setItem('dsa-theme', t), theme);
     const page = await ctx.newPage();
     const errors = [];
@@ -26,8 +32,12 @@ for (const theme of themes)
       const name = p.replace(/\//g, '_') || '_home';
       const file = `.shots/${name}-${w}-${theme}.png`;
       await page.screenshot({ path: file, fullPage: !!process.env.FULL });
-      const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
-      console.log(`${file}${overflow ? '  ⚠ horizontal overflow' : ''}${errors.length ? '  ⚠ ' + errors.join(' | ') : ''}`);
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth > window.innerWidth,
+      );
+      console.log(
+        `${file}${overflow ? '  ⚠ horizontal overflow' : ''}${errors.length ? '  ⚠ ' + errors.join(' | ') : ''}`,
+      );
       errors.length = 0;
     }
     await ctx.close();

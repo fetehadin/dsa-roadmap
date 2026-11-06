@@ -2,7 +2,6 @@
 title: Two Pointers
 chapter: levelup
 order: 1
-time: 40
 difficulty: medium
 summary: Two indices that move toward each other (or in the same direction) to replace an O(n²) pair search with one O(n) pass.
 keywords: [two pointers, pair sum, sorted array, reverse, palindrome, interview pattern]
@@ -22,7 +21,7 @@ complexity:
   note: The opposite-ends version needs **sorted** data so you know which pointer to move.
 videos:
   - id: QzZ7nmouLTI
-    why: The pattern and its variants in 7 minutes.
+    why: The pattern and its variants.
   - id: cQ1Oz4ckceM
     why: NeetCode solves Two Sum II, the textbook two-pointer problem.
 exam:
@@ -74,7 +73,7 @@ checklist:
   - I can explain why two pointers turns O(n²) into O(n).
   - I can solve pair-sum on a sorted array.
   - I can recognise when a problem fits the pattern.
-slides: [1pobcKAS8OXWsGtVvfPhJAXOm8zU_FD-0oBI8vhQ90Gc]
+
 ---
 
 Two people search a **sorted bookshelf** for two books whose prices add up to 15 birr. One starts at the cheap end, the other at the expensive end. Too expensive? The person at the expensive end steps in. Too cheap? The person at the cheap end steps in. They never need to go back.
@@ -88,4 +87,4 @@ The array is sorted. If `a[l] + a[r]` is **too small**, then `a[l]` paired with 
 - **Opposite ends** (`l = 0`, `r = n − 1`, move inward): pair sums, reversing, palindromes, container with most water.
 - **Same direction** (a slow write pointer and a fast read pointer): removing duplicates in place, moving zeros. Fast & slow pointers on linked lists are the same idea.
 
-> Built on Chapter 3 (sorting and binary search thinking). Not on the exam.
+> Built on Phase 3 (sorting and binary search thinking). Optional.

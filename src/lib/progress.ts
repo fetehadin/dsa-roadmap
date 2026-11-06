@@ -1,4 +1,8 @@
+export type Status = 'done' | 'progress' | 'skip';
+
 export interface TopicProgress {
+  /** roadmap status; `done` mirrors status === 'done' */
+  status?: Status;
   done?: boolean;
   doneAt?: string;
   quiz?: { score: number; total: number };
@@ -85,6 +89,22 @@ export function topic(slug: string): TopicProgress {
 export function patchTopic(slug: string, patch: Partial<TopicProgress>) {
   update((d) => {
     d.topics[slug] = { ...(d.topics[slug] ?? {}), ...patch };
+  });
+}
+
+export function statusOf(slug: string, p: ProgressData = load()): Status | undefined {
+  const t = p.topics[slug];
+  return t?.status ?? (t?.done ? 'done' : undefined);
+}
+
+/** Set (or clear, with undefined) a topic's roadmap status. */
+export function setStatus(slug: string, status: Status | undefined) {
+  update((d) => {
+    const t = { ...(d.topics[slug] ?? {}) };
+    t.status = status;
+    t.done = status === 'done';
+    if (status === 'done' && !t.doneAt) t.doneAt = new Date().toISOString();
+    d.topics[slug] = t;
   });
 }
 

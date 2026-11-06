@@ -5,8 +5,8 @@ import { confetti, toast } from './celebrate';
 
 const PCTS = [25, 50, 75, 100];
 const COPY: Record<number, [string, string]> = {
-  25: ['25% done!', 'A quarter of the course. Momentum is everything; keep going.'],
-  50: ['Halfway there!', 'You have covered half the outline. Future-you says thanks.'],
+  25: ['25% done!', 'A quarter of the roadmap. Momentum is everything; keep going.'],
+  50: ['Halfway there!', 'You have covered half the roadmap. Future-you says thanks.'],
   75: ['75%! The finish line is in sight', 'Time to start mixing in Exam mode.'],
   100: ['100%: every topic mastered!', 'Run a full Exam mode and go ace it. 🏆'],
 };
@@ -23,7 +23,8 @@ export function watchMilestones() {
     for (const c of chapters) {
       if (c.id === 'levelup') continue;
       const code = 100 + Number(c.id);
-      const b = prev.byChapter(c.id), a = now.byChapter(c.id);
+      const b = prev.byChapter(c.id),
+        a = now.byChapter(c.id);
       if (a.total && a.done === a.total && b.done < b.total && !have.has(code)) fresh.push(code);
     }
     prev = now;
@@ -36,11 +37,19 @@ export function watchMilestones() {
     confetti();
     if (ch) {
       const c = chapters.find((x) => Number(x.id) === ch - 100)!;
-      toast(`Chapter ${c.num} complete!`, `${c.title}: done. ${CHEERS[ch % CHEERS.length]}`, '🏁');
+      toast(
+        `Phase ${Number(c.num)} complete!`,
+        `${c.title}: done. ${CHEERS[ch % CHEERS.length]}`,
+        '🏁',
+      );
     }
     if (pct) toast(COPY[pct][0], COPY[pct][1], pct === 100 ? '🏆' : '🎉');
   });
   void getCatalog;
 }
 
-const CHEERS = ['Take a 5-minute break; you earned it.', 'Solve one problem from the list before moving on.', 'Try the chapter cheat sheet to lock it in.'];
+const CHEERS = [
+  'Take a 5-minute break; you earned it.',
+  'Solve one problem from the list before moving on.',
+  'Try the chapter cheat sheet to lock it in.',
+];

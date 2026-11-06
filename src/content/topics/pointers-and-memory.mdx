@@ -1,8 +1,7 @@
 ---
 title: Pointers, new/delete & the Heap
-chapter: 4
-order: 1
-time: 45
+chapter: 1
+order: 3
 difficulty: medium
 summary: A pointer holds an address. new asks the heap for memory that lives until you delete it. Master this and linked lists become easy.
 keywords: [pointer, address, dereference, new, delete, stack, heap, memory leak, dangling pointer, nullptr]
@@ -18,7 +17,7 @@ complexity:
     - ['`new` / `delete` one object', 'O(1) (amortised; done by the allocator)']
     - ['Stack memory', 'automatic: freed when the function returns']
     - ['Heap memory', 'manual: lives until `delete`']
-  note: Linked lists, trees and graphs are built from heap nodes connected by pointers. Every bug in Chapters 4–7 is a pointer bug in disguise.
+  note: Linked lists, trees and graphs are built from heap nodes connected by pointers. Most bugs in linked lists, trees and graphs are pointer bugs in disguise.
 videos:
   - id: h-HBipu_1P0
     why: The clearest 10-minute introduction to `&`, `*` and what a pointer really stores.
@@ -89,7 +88,7 @@ checklist:
   - I can explain the difference between stack and heap memory.
   - I can pair every `new` with exactly one `delete` (and `new[]` with `delete[]`).
   - I can spot leaks and dangling pointers in code.
-slides: [1UbdePhTxVSLqzw-OPSKJiLvqI8pvdHGJMEnOGhzKN38]
+
 ---
 
 A variable is a **house**; its value is the **person living there**; its address is the **street address**. A **pointer** is a slip of paper with an address written on it. It doesn't hold the person, it tells you where to find them.

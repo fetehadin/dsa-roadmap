@@ -1,8 +1,7 @@
 ---
 title: Binary Search
 chapter: 3
-order: 6
-time: 40
+order: 2
 difficulty: medium
 summary: On a sorted array, check the middle, then throw away the half that cannot contain the key. Each step halves the problem, so it takes O(log n).
 keywords: [binary search, sorted, divide and conquer, low mid high, log n]
@@ -94,7 +93,7 @@ checklist:
   - I can write iterative binary search with the correct `<=` and `± 1`.
   - I can explain why it is O(log n) and needs sorted data.
   - I can modify it to find the first occurrence.
-slides: []
+
 ---
 
 Guess-my-number from 1 to 100: you say 50; "higher"; 75; "lower"; 62… Every guess **cuts the possibilities in half**. You'll always win within 7 guesses. That's binary search.

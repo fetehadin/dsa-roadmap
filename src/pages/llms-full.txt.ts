@@ -5,6 +5,9 @@ import { CORE_RULE } from '@/data/chapters';
 
 export const GET: APIRoute = async () => {
   const topics = await allTopics();
-  const body = [`# DSA Roadmap: full content\n\nCoSc3111 (AAU) in C++. ${CORE_RULE}\n`, ...topics.map(topicMarkdown)].join('\n\n---\n\n');
+  const body = [
+    `# DSA Roadmap: full content\n\nData structures and algorithms in C++. ${CORE_RULE}\n`,
+    ...topics.map(topicMarkdown),
+  ].join('\n\n---\n\n');
   return new Response(body, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
 };

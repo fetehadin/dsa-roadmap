@@ -1,0 +1,412 @@
+---
+import { roadmap } from '@/lib/roadmap';
+import { ArrowRight, X, ExternalLink } from '@lucide/astro';
+
+const data = await roadmap();
+const firstReal = data.flatMap((p) => p.nodes).find((n) => !n.soon)!;
+---
+
+<section class="rm-overall card" aria-labelledby="rm-overall-h">
+  <div class="rm-overall-text">
+    <h2 id="rm-overall-h" class="rm-overall-h">
+      Your progress
+    </h2>
+    <p class="rm-overall-count">
+      <span data-overall-count>0</span> of <span data-overall-total>0</span> topics done
+    </p>
+    <div class="rm-bar rm-bar-lg" aria-hidden="true">
+      <span data-overall-bar></span>
+    </div>
+  </div>
+  <a href={`#${firstReal.slug}`} class="btn btn-primary rm-continue" data-continue>
+    <span data-continue-label>Start: {firstReal.title}</span>
+    <ArrowRight size={16} />
+  </a>
+</section>
+
+<ol class="rm" aria-label="Roadmap phases">
+  {data.map(({ phase, nodes }) => {
+    const real = nodes.filter((n) => !n.soon).map((n) => n.slug);
+    return (
+      <li class="rm-phase" id={phase.slug} data-topics={real.join(' ')}>
+        <div class="rm-head">
+          <span class="rm-badge" aria-hidden="true">
+            <span class="rm-badge-num">{phase.num}</span>
+            <svg class="rm-badge-check" viewBox="0 0 24 24">
+              <path d="M6 12.5l4 4 8-9" />
+            </svg>
+          </span>
+          <div class="rm-head-text">
+            <p class="rm-eyebrow">
+              Phase {Number(phase.num)}
+              <span class="rm-complete-tag">· complete</span>
+            </p>
+            <h2 class="rm-title">{phase.title}</h2>
+            <p class="rm-blurb">{phase.blurb}</p>
+            <div class="rm-meter">
+              <div class="rm-bar" aria-hidden="true">
+                <span data-bar />
+              </div>
+              <span class="rm-count" data-count>
+                {real.length ? `0 / ${real.length} done` : 'coming soon'}
+              </span>
+            </div>
+          </div>
+        </div>
+        <ul class="rm-topics">
+          {nodes.map((n) => (
+            <li class="rm-item">
+              <a
+                href={`#${n.slug}`}
+                class="rm-node"
+                data-slug={n.slug}
+                data-soon={n.soon ? '' : undefined}
+                aria-haspopup="dialog"
+                aria-controls="rm-panel"
+              >
+                <span class="rm-dot" aria-hidden="true">
+                  <svg viewBox="0 0 16 16">
+                    <path d="M3.5 8.5l3 3 6-7" />
+                  </svg>
+                </span>
+                <span class="rm-label">{n.title}</span>
+                {n.soon && <span class="rm-soon">coming soon</span>}
+                <span class="sr-only" data-sr />
+              </a>
+            </li>
+          ))}
+        </ul>
+        {phase.lab && (
+          <a class="rm-lab" href={`/labs/${phase.lab}`}>
+            Phase project: build it yourself <ArrowRight size={14} />
+          </a>
+        )}
+      </li>
+    );
+  })}
+</ol>
+
+<div id="rm-backdrop" class="rm-backdrop" hidden></div>
+<aside
+  id="rm-panel"
+  class="rm-panel"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="rm-panel-title"
+  hidden
+>
+  <header class="rm-panel-head">
+    <div class="min-w-0">
+      <p class="rm-eyebrow" data-eyebrow></p>
+      <h2 id="rm-panel-title" class="rm-panel-title" tabindex="-1" data-title></h2>
+    </div>
+    <button class="rm-close" type="button" aria-label="Close panel" data-close>
+      <X size={18} />
+    </button>
+  </header>
+  <div class="rm-panel-body" data-body></div>
+  <footer class="rm-panel-foot">
+    <div class="rm-status" role="group" aria-label="Your status for this topic">
+      <button type="button" data-set="done" aria-pressed="false">
+        Done
+      </button>
+      <button type="button" data-set="progress" aria-pressed="false">
+        In progress
+      </button>
+      <button type="button" data-set="skip" aria-pressed="false">
+        Skip
+      </button>
+    </div>
+    <p class="rm-status-note" data-status-note hidden>
+      Tracking opens when the full lesson is ready.
+    </p>
+    <a class="btn rm-lesson" data-lesson href="/">
+      Open full lesson <ExternalLink size={14} />
+    </a>
+  </footer>
+</aside>
+
+<script>
+  import { load, setStatus, statusOf, subscribe, update, type Status } from '@/lib/progress';
+
+  interface PanelData {
+    title: string;
+    num: string | null;
+    phase: string;
+    soon: boolean;
+    explain: string;
+    code: string;
+    complexity: [string, string][];
+    space: string | null;
+    practice: { name: string; url: string; level: string }[];
+    related?: { title: string; url: string }[];
+    lesson: string | null;
+  }
+
+  const panel = document.getElementById('rm-panel');
+  if (panel) init(panel);
+
+  function init(panel: HTMLElement) {
+    const backdrop = document.getElementById('rm-backdrop')!;
+    const $ = <T extends HTMLElement>(sel: string) => panel.querySelector<T>(sel)!;
+    const body = $('[data-body]');
+    const title = $('[data-title]');
+    const eyebrow = $('[data-eyebrow]');
+    const lesson = $<HTMLAnchorElement>('[data-lesson]');
+    const note = $('[data-status-note]');
+    const buttons = [...panel.querySelectorAll<HTMLButtonElement>('[data-set]')];
+    const nodes = new Map(
+      [...document.querySelectorAll<HTMLAnchorElement>('.rm-node')].map((n) => [
+        n.dataset.slug!,
+        n,
+      ]),
+    );
+    const order = [...nodes.keys()].filter((s) => !nodes.get(s)!.hasAttribute('data-soon'));
+    const cont = document.querySelector<HTMLAnchorElement>('[data-continue]')!;
+    const LABEL: Record<Status, string> = {
+      done: 'done',
+      progress: 'in progress',
+      skip: 'skipped',
+    };
+    const cache = new Map<string, Promise<PanelData>>();
+    let current: string | null = null;
+    let returnTo: HTMLElement | null = null;
+    let closeTimer = 0;
+    const completed = new Set<string>();
+    let firstRender = true;
+
+    const esc = (s: string) =>
+      s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+    const get = (slug: string) => {
+      if (!cache.has(slug))
+        cache.set(
+          slug,
+          fetch(`/roadmap/${slug}.json`).then((r) => (r.ok ? r.json() : Promise.reject(r.status))),
+        );
+      return cache.get(slug)!;
+    };
+
+    function render() {
+      const p = load();
+      let total = 0;
+      let done = 0;
+      document.querySelectorAll<HTMLElement>('.rm-phase').forEach((ph) => {
+        const slugs = (ph.dataset.topics ?? '').split(' ').filter(Boolean);
+        if (!slugs.length) return;
+        let d = 0;
+        let skip = 0;
+        for (const s of slugs) {
+          const st = statusOf(s, p);
+          if (st === 'done') d++;
+          else if (st === 'skip') skip++;
+        }
+        const denom = slugs.length - skip;
+        ph.querySelector<HTMLElement>('[data-bar]')!.style.transform =
+          `scaleX(${denom ? d / denom : 1})`;
+        ph.querySelector('[data-count]')!.textContent = denom
+          ? `${d} / ${denom} done`
+          : 'all skipped';
+        const complete = d + skip === slugs.length;
+        ph.classList.toggle('is-complete', complete);
+        if (complete && !completed.has(ph.id) && !firstRender) {
+          ph.classList.add('just-completed');
+          setTimeout(() => ph.classList.remove('just-completed'), 900);
+        }
+        if (complete) completed.add(ph.id);
+        else completed.delete(ph.id);
+        total += denom;
+        done += d;
+      });
+      firstRender = false;
+      document.querySelector('[data-overall-count]')!.textContent = String(done);
+      document.querySelector('[data-overall-total]')!.textContent = String(total);
+      document.querySelector<HTMLElement>('[data-overall-bar]')!.style.transform =
+        `scaleX(${total ? done / total : 0})`;
+
+      nodes.forEach((n, slug) => {
+        const st = n.hasAttribute('data-soon') ? undefined : statusOf(slug, p);
+        if (st) n.dataset.status = st;
+        else delete n.dataset.status;
+        n.querySelector('[data-sr]')!.textContent = n.hasAttribute('data-soon')
+          ? ''
+          : st
+            ? `, ${LABEL[st]}`
+            : '';
+      });
+
+      const open = (s: string) => !['done', 'skip'].includes(statusOf(s, p) ?? '');
+      const target =
+        order.find((s) => statusOf(s, p) === 'progress') ??
+        (p.last && order.includes(p.last) && open(p.last) ? p.last : order.find(open));
+      const label = cont.querySelector('[data-continue-label]')!;
+      if (target) {
+        cont.href = `#${target}`;
+        cont.dataset.slug = target;
+        const started = Object.values(p.topics).some((t) => t.status || t.done);
+        label.textContent = `${started ? 'Continue' : 'Start'}: ${nodes.get(target)!.querySelector('.rm-label')!.textContent}`;
+      } else {
+        cont.href = '/exam';
+        delete cont.dataset.slug;
+        label.textContent = 'Everything done. Test yourself';
+      }
+      if (current) syncButtons();
+    }
+
+    function syncButtons() {
+      const st = statusOf(current!);
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.set === st)));
+    }
+
+    async function open(slug: string) {
+      const node = nodes.get(slug);
+      if (!node) return;
+      window.clearTimeout(closeTimer);
+      if (!current) returnTo = node;
+      current = slug;
+      nodes.forEach((n) => n.removeAttribute('aria-current'));
+      node.setAttribute('aria-current', 'true');
+      const soon = node.hasAttribute('data-soon');
+      title.textContent = node.querySelector('.rm-label')!.textContent;
+      eyebrow.textContent = '';
+      body.innerHTML =
+        '<div class="rm-skeleton"></div><div class="rm-skeleton"></div><div class="rm-skeleton rm-skeleton-code"></div>';
+      buttons.forEach((b) => (b.disabled = soon));
+      note.hidden = !soon;
+      lesson.hidden = true;
+      syncButtons();
+      panel.hidden = false;
+      backdrop.hidden = false;
+      document.documentElement.classList.add('rm-locked');
+      requestAnimationFrame(() => {
+        panel.classList.add('is-open');
+        backdrop.classList.add('is-open');
+      });
+      title.focus({ preventScroll: true });
+      if (!soon) update((d) => void (d.last = slug));
+      try {
+        const d = await get(slug);
+        if (current !== slug) return;
+        eyebrow.textContent = d.soon ? `${d.phase} · coming soon` : `${d.phase} · ${d.num}`;
+        const rows =
+          d.complexity.map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`).join('') +
+          (d.space ? `<tr><th scope="row">Space</th><td>${d.space}</td></tr>` : '');
+        const practice = d.practice
+          .map(
+            (x) =>
+              `<li><a href="${esc(x.url)}" target="_blank" rel="noopener"><span class="rm-level rm-level-${esc(x.level)}">${esc(x.level)}</span>${esc(x.name)}</a></li>`,
+          )
+          .join('');
+        const related = d.related?.length
+          ? `<p class="rm-related">Learn it now with: ${d.related.map((r) => `<a href="${esc(r.url)}">${esc(r.title)}</a>`).join(', ')}</p>`
+          : '';
+        body.innerHTML = `
+          <div class="rm-prose md">${d.explain}</div>
+          ${d.soon ? `<p class="rm-soon-note">Full lesson coming soon.</p>${related}` : ''}
+          <h3 class="rm-h3">C++</h3><div class="rm-code">${d.code}</div>
+          <h3 class="rm-h3">Complexity</h3><table class="rm-cx md"><tbody>${rows}</tbody></table>
+          <h3 class="rm-h3">Practice</h3><ul class="rm-practice">${practice}</ul>`;
+        if (d.lesson) {
+          lesson.href = d.lesson;
+          lesson.hidden = false;
+        }
+      } catch {
+        if (current === slug)
+          body.innerHTML = `<p class="rm-error">Couldn't load this topic. ${soon ? '' : `<a href="/learn/${esc(slug)}">Open the full lesson</a>.`}</p>`;
+      }
+    }
+
+    function close() {
+      if (!current) return;
+      current = null;
+      panel.classList.remove('is-open');
+      backdrop.classList.remove('is-open');
+      document.documentElement.classList.remove('rm-locked');
+      nodes.forEach((n) => n.removeAttribute('aria-current'));
+      closeTimer = window.setTimeout(() => {
+        panel.hidden = true;
+        backdrop.hidden = true;
+      }, 240);
+      returnTo?.focus({ preventScroll: true });
+    }
+
+    function requestClose() {
+      if (history.state?.rm) history.back();
+      else {
+        history.replaceState(null, '', location.pathname + location.search);
+        close();
+      }
+    }
+
+    function go(slug: string) {
+      if (location.hash === `#${slug}`) return void open(slug);
+      if (current && history.state?.rm) history.replaceState({ rm: 1 }, '', `#${slug}`);
+      else history.pushState({ rm: 1 }, '', `#${slug}`);
+      open(slug);
+    }
+
+    function fromHash() {
+      const slug = decodeURIComponent(location.hash.slice(1));
+      if (nodes.has(slug)) open(slug);
+      else close();
+    }
+
+    nodes.forEach((n, slug) => {
+      n.addEventListener('click', (e) => {
+        e.preventDefault();
+        go(slug);
+      });
+      const warm = () => void get(slug).catch(() => cache.delete(slug));
+      n.addEventListener('pointerenter', warm, { once: true });
+      n.addEventListener('focus', warm, { once: true });
+    });
+    cont.addEventListener('click', (e) => {
+      if (!cont.dataset.slug) return;
+      e.preventDefault();
+      go(cont.dataset.slug);
+    });
+    buttons.forEach((b) =>
+      b.addEventListener('click', () => {
+        if (!current) return;
+        const s = b.dataset.set as Status;
+        const next = statusOf(current) === s ? undefined : s;
+        setStatus(current, next);
+        if (next === 'done') {
+          const n = nodes.get(current)!;
+          n.classList.add('just-done');
+          setTimeout(() => n.classList.remove('just-done'), 600);
+        }
+      }),
+    );
+    $('[data-close]').addEventListener('click', requestClose);
+    backdrop.addEventListener('click', requestClose);
+    window.addEventListener('popstate', fromHash);
+    window.addEventListener('hashchange', fromHash);
+    document.addEventListener('keydown', (e) => {
+      if (!current) return;
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        requestClose();
+      } else if (e.key === 'Tab') {
+        const f = [
+          ...panel.querySelectorAll<HTMLElement>(
+            'a[href]:not([hidden]),button:not([disabled]),[tabindex="0"]',
+          ),
+        ].filter((x) => x.offsetParent !== null);
+        if (!f.length) return;
+        const first = f[0];
+        const last = f[f.length - 1];
+        if (e.shiftKey && (document.activeElement === first || document.activeElement === title)) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+
+    render();
+    subscribe(render);
+    fromHash();
+  }
+</script>

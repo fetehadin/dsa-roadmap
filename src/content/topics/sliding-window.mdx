@@ -2,7 +2,6 @@
 title: Sliding Window
 chapter: levelup
 order: 2
-time: 45
 difficulty: medium
 summary: Keep a running answer for a contiguous range, adding the item that enters and removing the one that leaves, instead of recomputing every window.
 keywords: [sliding window, subarray, substring, fixed window, variable window, interview pattern]
@@ -22,7 +21,7 @@ complexity:
   note: Sliding windows work on **contiguous** ranges (subarrays, substrings), not subsequences.
 videos:
   - id: y2d0VHdvfdc
-    why: Fixed vs variable windows in 7 minutes.
+    why: Fixed vs variable windows, side by side.
   - id: '1pkOgXD63yU'
     why: NeetCode applies the window idea to Best Time to Buy and Sell Stock.
 exam:
@@ -70,7 +69,7 @@ checklist:
   - I can write a fixed-size window in O(n).
   - I can write a variable window that grows and shrinks.
   - I can explain why both are O(n).
-slides: [100Y79piELHmtZmLks9c4LYAw5htoh3OWTBmwSaQauzw]
+
 ---
 
 A **train window**: as the train moves, one new tree appears on the right and one old tree disappears on the left. You don't need to look at the whole view again.
@@ -83,4 +82,4 @@ Compute the first window's sum once. Then for each step: `sum += a[r] âˆ’ a[r âˆ
 
 Two pointers `l` and `r` mark the window. Move `r` to **grow** it. Whenever the window breaks a rule (a repeated letter, a sum too big), move `l` to **shrink** it until it is valid again. Each index enters once and leaves once, so the total is **O(n)**, even with the inner `while`.
 
-> Built on arrays (Ch1) and two pointers. Not on the exam.
+> Built on arrays (Phase 2) and two pointers. Optional.

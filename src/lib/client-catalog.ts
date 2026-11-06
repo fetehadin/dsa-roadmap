@@ -19,12 +19,18 @@ export function stats(p: ProgressData = load(), cat = getCatalog()) {
   const done = core.filter((c) => p.topics[c.slug]?.done).length;
   const quizzes = Object.values(p.topics).filter((t) => t.quiz && t.quiz.total > 0);
   const quizAvg = quizzes.length
-    ? Math.round((quizzes.reduce((s, t) => s + t.quiz!.score / t.quiz!.total, 0) / quizzes.length) * 100)
+    ? Math.round(
+        (quizzes.reduce((s, t) => s + t.quiz!.score / t.quiz!.total, 0) / quizzes.length) * 100,
+      )
     : null;
   const byChapter = (id: CatalogItem['chapter']) => {
     const list = cat.filter((c) => c.chapter === id);
     const d = list.filter((c) => p.topics[c.slug]?.done).length;
-    return { done: d, total: list.length, pct: list.length ? Math.round((d / list.length) * 100) : 0 };
+    return {
+      done: d,
+      total: list.length,
+      pct: list.length ? Math.round((d / list.length) * 100) : 0,
+    };
   };
   const nextUp = core.find((c) => !p.topics[c.slug]?.done);
   return {

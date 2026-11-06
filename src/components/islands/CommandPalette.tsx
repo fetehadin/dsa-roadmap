@@ -10,10 +10,17 @@ interface Item {
   text?: string;
 }
 
-const icons = { Topic: BookOpen, Glossary: Hash, 'Cheat sheet': FileText, Page: Sparkles, Lab: FlaskConical, 'Level Up': Sparkles };
+const icons = {
+  Topic: BookOpen,
+  Glossary: Hash,
+  'Cheat sheet': FileText,
+  Page: Sparkles,
+  Lab: FlaskConical,
+  'Level Up': Sparkles,
+};
 
-export default function CommandPalette() {
-  const [open, setOpen] = useState(false);
+export default function CommandPalette({ startOpen = false }: { startOpen?: boolean }) {
+  const [open, setOpen] = useState(startOpen);
   const [q, setQ] = useState('');
   const [items, setItems] = useState<Item[] | null>(null);
   const [fuse, setFuse] = useState<Fuse<Item> | null>(null);
@@ -51,9 +58,22 @@ export default function CommandPalette() {
     input.current?.focus();
     document.body.style.overflow = 'hidden';
     if (!items)
-      Promise.all([fetch('/search.json').then((r) => r.json() as Promise<Item[]>), import('fuse.js')]).then(([data, F]) => {
+      Promise.all([
+        fetch('/search.json').then((r) => r.json() as Promise<Item[]>),
+        import('fuse.js'),
+      ]).then(([data, F]) => {
         setItems(data);
-        setFuse(new F.default(data, { keys: [{ name: 'title', weight: 3 }, { name: 'sub', weight: 1 }, { name: 'text', weight: 0.6 }], threshold: 0.36, ignoreLocation: true }));
+        setFuse(
+          new F.default(data, {
+            keys: [
+              { name: 'title', weight: 3 },
+              { name: 'sub', weight: 1 },
+              { name: 'text', weight: 0.6 },
+            ],
+            threshold: 0.36,
+            ignoreLocation: true,
+          }),
+        );
       });
     return () => {
       document.body.style.overflow = '';
@@ -80,8 +100,16 @@ export default function CommandPalette() {
 
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-[60] grid items-start bg-black/50 px-3 pt-[10vh] backdrop-blur-sm" onMouseDown={(e) => e.target === e.currentTarget && close()}>
-      <div role="dialog" aria-modal="true" aria-label="Search" className="card anim-pop mx-auto w-full max-w-xl overflow-hidden">
+    <div
+      className="fixed inset-0 z-[60] grid items-start bg-black/50 px-3 pt-[10vh] backdrop-blur-sm"
+      onMouseDown={(e) => e.target === e.currentTarget && close()}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Search"
+        className="card anim-pop mx-auto w-full max-w-xl overflow-hidden"
+      >
         <div className="flex items-center gap-2 border-b border-line px-4">
           <Search size={17} className="text-faint" aria-hidden="true" />
           <input
@@ -112,12 +140,20 @@ export default function CommandPalette() {
         </div>
         <ul id="palette-list" role="listbox" className="max-h-[55vh] overflow-y-auto p-1.5">
           {!items && <li className="px-3 py-6 text-center text-sm text-muted">Loading…</li>}
-          {items && results.length === 0 && <li className="px-3 py-6 text-center text-sm text-muted">No matches. Try "stack", "Big-O" or "leaf".</li>}
+          {items && results.length === 0 && (
+            <li className="px-3 py-6 text-center text-sm text-muted">
+              No matches. Try "stack", "Big-O" or "leaf".
+            </li>
+          )}
           {results.map((r, i) => {
             const Icon = icons[r.type];
             return (
               <li key={r.url + r.title} id={`pi-${i}`} role="option" aria-selected={i === sel}>
-                <a href={r.url} onMouseEnter={() => setSel(i)} className={`flex items-center gap-3 rounded-lg px-3 py-2.5 ${i === sel ? 'bg-accent-soft' : ''}`}>
+                <a
+                  href={r.url}
+                  onMouseEnter={() => setSel(i)}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 ${i === sel ? 'bg-accent-soft' : ''}`}
+                >
                   <Icon size={16} className="shrink-0 text-accent" aria-hidden="true" />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-medium">{r.title}</span>
@@ -130,9 +166,15 @@ export default function CommandPalette() {
           })}
         </ul>
         <div className="flex gap-3 border-t border-line px-4 py-2 text-xs text-faint">
-          <span><span className="kbd">↑↓</span> move</span>
-          <span><span className="kbd">↵</span> open</span>
-          <span><span className="kbd">esc</span> close</span>
+          <span>
+            <span className="kbd">↑↓</span> move
+          </span>
+          <span>
+            <span className="kbd">↵</span> open
+          </span>
+          <span>
+            <span className="kbd">esc</span> close
+          </span>
         </div>
       </div>
     </div>

@@ -25,7 +25,9 @@ function bars(code: string[], sorter: (a: number[], rec: Rec) => void): Algo<Bar
     run: (st) => {
       const frames: Frame<BarsState>[] = [];
       const a = [...st.a];
-      sorter(a, (arr, extra) => frames.push({ s: { a: [...arr] }, ...extra, hl: { ...(extra.hl ?? {}) } }));
+      sorter(a, (arr, extra) =>
+        frames.push({ s: { a: [...arr] }, ...extra, hl: { ...(extra.hl ?? {}) } }),
+      );
       return frames;
     },
   };
@@ -51,25 +53,62 @@ export const selection = bars(
   ],
   (a, rec) => {
     const n = a.length;
-    let cmp = 0, sw = 0;
-    rec(a, { line: 1, note: `Start: ${n} items. Each pass finds the smallest remaining item and puts it at the front.`, vars: { comparisons: 0, swaps: 0 } });
+    let cmp = 0,
+      sw = 0;
+    rec(a, {
+      line: 1,
+      note: `Start: ${n} items. Each pass finds the smallest remaining item and puts it at the front.`,
+      vars: { comparisons: 0, swaps: 0 },
+    });
     for (let i = 0; i < n - 1; i++) {
       let m = i;
-      rec(a, { line: 3, note: `Pass ${i + 1}: assume a[${i}] = ${a[i]} is the minimum.`, hl: { ...doneSet(0, i - 1), [i]: 'current' }, ptr: { i, min: m }, vars: { comparisons: cmp, swaps: sw } });
+      rec(a, {
+        line: 3,
+        note: `Pass ${i + 1}: assume a[${i}] = ${a[i]} is the minimum.`,
+        hl: { ...doneSet(0, i - 1), [i]: 'current' },
+        ptr: { i, min: m },
+        vars: { comparisons: cmp, swaps: sw },
+      });
       for (let j = i + 1; j < n; j++) {
         cmp++;
         const less = a[j] < a[m];
-        rec(a, { line: 5, note: `Compare a[${j}] = ${a[j]} with current min ${a[m]}${less ? ' → smaller!' : '.'}`, hl: { ...doneSet(0, i - 1), [m]: 'current', [j]: 'compare' }, ptr: { i, j, min: m }, vars: { comparisons: cmp, swaps: sw } });
+        rec(a, {
+          line: 5,
+          note: `Compare a[${j}] = ${a[j]} with current min ${a[m]}${less ? ' → smaller!' : '.'}`,
+          hl: { ...doneSet(0, i - 1), [m]: 'current', [j]: 'compare' },
+          ptr: { i, j, min: m },
+          vars: { comparisons: cmp, swaps: sw },
+        });
         if (less) {
           m = j;
-          rec(a, { line: 6, note: `New minimum is ${a[m]} at index ${m}.`, hl: { ...doneSet(0, i - 1), [m]: 'current' }, ptr: { i, j, min: m }, vars: { comparisons: cmp, swaps: sw } });
+          rec(a, {
+            line: 6,
+            note: `New minimum is ${a[m]} at index ${m}.`,
+            hl: { ...doneSet(0, i - 1), [m]: 'current' },
+            ptr: { i, j, min: m },
+            vars: { comparisons: cmp, swaps: sw },
+          });
         }
       }
       [a[i], a[m]] = [a[m], a[i]];
       sw++;
-      rec(a, { line: 7, note: m === i ? `Minimum already at index ${i}; the swap is a no-op.` : `Swap a[${i}] and a[${m}]. ${a[i]} is now in its final place.`, hl: { ...doneSet(0, i - 1), [i]: 'swap', [m]: 'swap' }, ptr: { i, min: m }, vars: { comparisons: cmp, swaps: sw } });
+      rec(a, {
+        line: 7,
+        note:
+          m === i
+            ? `Minimum already at index ${i}; the swap is a no-op.`
+            : `Swap a[${i}] and a[${m}]. ${a[i]} is now in its final place.`,
+        hl: { ...doneSet(0, i - 1), [i]: 'swap', [m]: 'swap' },
+        ptr: { i, min: m },
+        vars: { comparisons: cmp, swaps: sw },
+      });
     }
-    rec(a, { line: 9, note: `Sorted with ${cmp} comparisons and ${sw} swaps. Selection sort always does n(n-1)/2 comparisons.`, hl: doneSet(0, n - 1), vars: { comparisons: cmp, swaps: sw } });
+    rec(a, {
+      line: 9,
+      note: `Sorted with ${cmp} comparisons and ${sw} swaps. Selection sort always does n(n-1)/2 comparisons.`,
+      hl: doneSet(0, n - 1),
+      vars: { comparisons: cmp, swaps: sw },
+    });
   },
 );
 
@@ -90,28 +129,61 @@ export const bubble = bars(
   ],
   (a, rec) => {
     const n = a.length;
-    let cmp = 0, sw = 0;
-    rec(a, { line: 1, note: 'Each pass bubbles the largest unsorted item to the right end.', vars: { comparisons: 0, swaps: 0 } });
+    let cmp = 0,
+      sw = 0;
+    rec(a, {
+      line: 1,
+      note: 'Each pass bubbles the largest unsorted item to the right end.',
+      vars: { comparisons: 0, swaps: 0 },
+    });
     for (let i = 0; i < n - 1; i++) {
       let swapped = false;
-      rec(a, { line: 3, note: `Pass ${i + 1}. The last ${i} item(s) are already in place.`, hl: doneSet(n - i, n - 1), ptr: {}, vars: { pass: i + 1, comparisons: cmp, swaps: sw } });
+      rec(a, {
+        line: 3,
+        note: `Pass ${i + 1}. The last ${i} item(s) are already in place.`,
+        hl: doneSet(n - i, n - 1),
+        ptr: {},
+        vars: { pass: i + 1, comparisons: cmp, swaps: sw },
+      });
       for (let j = 0; j < n - 1 - i; j++) {
         cmp++;
         const big = a[j] > a[j + 1];
-        rec(a, { line: 5, note: `Compare ${a[j]} and ${a[j + 1]}${big ? ': out of order.' : ': fine.'}`, hl: { ...doneSet(n - i, n - 1), [j]: 'compare', [j + 1]: 'compare' }, ptr: { j }, vars: { pass: i + 1, comparisons: cmp, swaps: sw } });
+        rec(a, {
+          line: 5,
+          note: `Compare ${a[j]} and ${a[j + 1]}${big ? ': out of order.' : ': fine.'}`,
+          hl: { ...doneSet(n - i, n - 1), [j]: 'compare', [j + 1]: 'compare' },
+          ptr: { j },
+          vars: { pass: i + 1, comparisons: cmp, swaps: sw },
+        });
         if (big) {
           [a[j], a[j + 1]] = [a[j + 1], a[j]];
           sw++;
           swapped = true;
-          rec(a, { line: 6, note: `Swap → ${a[j]}, ${a[j + 1]}.`, hl: { ...doneSet(n - i, n - 1), [j]: 'swap', [j + 1]: 'swap' }, ptr: { j }, vars: { pass: i + 1, comparisons: cmp, swaps: sw } });
+          rec(a, {
+            line: 6,
+            note: `Swap → ${a[j]}, ${a[j + 1]}.`,
+            hl: { ...doneSet(n - i, n - 1), [j]: 'swap', [j + 1]: 'swap' },
+            ptr: { j },
+            vars: { pass: i + 1, comparisons: cmp, swaps: sw },
+          });
         }
       }
       if (!swapped) {
-        rec(a, { line: 10, note: 'No swaps in this pass, so the array is sorted. Stop early (this is why best case is O(n)).', hl: doneSet(0, n - 1), vars: { pass: i + 1, comparisons: cmp, swaps: sw } });
+        rec(a, {
+          line: 10,
+          note: 'No swaps in this pass, so the array is sorted. Stop early (this is why best case is O(n)).',
+          hl: doneSet(0, n - 1),
+          vars: { pass: i + 1, comparisons: cmp, swaps: sw },
+        });
         return;
       }
     }
-    rec(a, { line: 12, note: `Sorted: ${cmp} comparisons, ${sw} swaps.`, hl: doneSet(0, n - 1), vars: { comparisons: cmp, swaps: sw } });
+    rec(a, {
+      line: 12,
+      note: `Sorted: ${cmp} comparisons, ${sw} swaps.`,
+      hl: doneSet(0, n - 1),
+      vars: { comparisons: cmp, swaps: sw },
+    });
   },
 );
 
@@ -131,27 +203,62 @@ export const insertion = bars(
   ],
   (a, rec) => {
     const n = a.length;
-    let cmp = 0, sh = 0;
-    rec(a, { line: 1, note: 'Like sorting cards in your hand: the left part is always sorted; insert the next card into it.', hl: { 0: 'done' }, vars: { comparisons: 0, shifts: 0 } });
+    let cmp = 0,
+      sh = 0;
+    rec(a, {
+      line: 1,
+      note: 'Like sorting cards in your hand: the left part is always sorted; insert the next card into it.',
+      hl: { 0: 'done' },
+      vars: { comparisons: 0, shifts: 0 },
+    });
     for (let i = 1; i < n; i++) {
       const key = a[i];
       let j = i - 1;
       const sorted = (to: number) => doneSet(0, to);
-      rec(a, { line: 3, note: `Take key = ${key} (a[${i}]).`, hl: { ...sorted(i - 1), [i]: 'current' }, ptr: { i, j }, vars: { key, comparisons: cmp, shifts: sh } });
+      rec(a, {
+        line: 3,
+        note: `Take key = ${key} (a[${i}]).`,
+        hl: { ...sorted(i - 1), [i]: 'current' },
+        ptr: { i, j },
+        vars: { key, comparisons: cmp, shifts: sh },
+      });
       while (j >= 0) {
         cmp++;
         const gt = a[j] > key;
-        rec(a, { line: 5, note: `Is a[${j}] = ${a[j]} > ${key}? ${gt ? 'Yes → shift it right.' : 'No → stop.'}`, hl: { ...sorted(i), [j]: 'compare', [j + 1]: 'current' }, ptr: { i, j }, vars: { key, comparisons: cmp, shifts: sh } });
+        rec(a, {
+          line: 5,
+          note: `Is a[${j}] = ${a[j]} > ${key}? ${gt ? 'Yes → shift it right.' : 'No → stop.'}`,
+          hl: { ...sorted(i), [j]: 'compare', [j + 1]: 'current' },
+          ptr: { i, j },
+          vars: { key, comparisons: cmp, shifts: sh },
+        });
         if (!gt) break;
         a[j + 1] = a[j];
         sh++;
-        rec(a, { line: 6, note: `a[${j + 1}] = a[${j}] (${a[j]}).`, hl: { ...sorted(i), [j + 1]: 'swap' }, ptr: { i, j }, vars: { key, comparisons: cmp, shifts: sh } });
+        rec(a, {
+          line: 6,
+          note: `a[${j + 1}] = a[${j}] (${a[j]}).`,
+          hl: { ...sorted(i), [j + 1]: 'swap' },
+          ptr: { i, j },
+          vars: { key, comparisons: cmp, shifts: sh },
+        });
         j--;
       }
       a[j + 1] = key;
-      rec(a, { line: 9, note: `Drop key ${key} into a[${j + 1}].`, hl: { ...sorted(i), [j + 1]: 'swap' }, ptr: { i }, vars: { key, comparisons: cmp, shifts: sh } });
+      rec(a, {
+        line: 9,
+        note: `Drop key ${key} into a[${j + 1}].`,
+        hl: { ...sorted(i), [j + 1]: 'swap' },
+        ptr: { i },
+        vars: { key, comparisons: cmp, shifts: sh },
+      });
     }
-    rec(a, { line: 11, note: `Sorted with ${cmp} comparisons and ${sh} shifts.`, hl: doneSet(0, n - 1), vars: { comparisons: cmp, shifts: sh } });
+    rec(a, {
+      line: 11,
+      note: `Sorted with ${cmp} comparisons and ${sh} shifts.`,
+      hl: doneSet(0, n - 1),
+      vars: { comparisons: cmp, shifts: sh },
+    });
   },
 );
 
@@ -174,26 +281,58 @@ export const shell = bars(
   (a, rec) => {
     const n = a.length;
     let cmp = 0;
-    rec(a, { line: 1, note: 'Shell sort = insertion sort on items that are "gap" apart, with the gap shrinking to 1.', vars: { comparisons: 0 } });
+    rec(a, {
+      line: 1,
+      note: 'Shell sort = insertion sort on items that are "gap" apart, with the gap shrinking to 1.',
+      vars: { comparisons: 0 },
+    });
     for (let gap = Math.floor(n / 2); gap > 0; gap = Math.floor(gap / 2)) {
-      rec(a, { line: 2, note: `gap = ${gap}: sort each group of items ${gap} apart.`, vars: { gap, comparisons: cmp } });
+      rec(a, {
+        line: 2,
+        note: `gap = ${gap}: sort each group of items ${gap} apart.`,
+        vars: { gap, comparisons: cmp },
+      });
       for (let i = gap; i < n; i++) {
         const temp = a[i];
         let j = i;
-        rec(a, { line: 4, note: `temp = a[${i}] = ${temp}.`, hl: { [i]: 'current' }, ptr: { i }, vars: { gap, temp, comparisons: cmp } });
+        rec(a, {
+          line: 4,
+          note: `temp = a[${i}] = ${temp}.`,
+          hl: { [i]: 'current' },
+          ptr: { i },
+          vars: { gap, temp, comparisons: cmp },
+        });
         while (j >= gap) {
           cmp++;
           const gt = a[j - gap] > temp;
-          rec(a, { line: 6, note: `a[${j - gap}] = ${a[j - gap]} > ${temp}? ${gt ? 'yes, move it ' + gap + ' right' : 'no'}`, hl: { [j - gap]: 'compare', [j]: 'current' }, ptr: { i, j }, vars: { gap, temp, comparisons: cmp } });
+          rec(a, {
+            line: 6,
+            note: `a[${j - gap}] = ${a[j - gap]} > ${temp}? ${gt ? 'yes, move it ' + gap + ' right' : 'no'}`,
+            hl: { [j - gap]: 'compare', [j]: 'current' },
+            ptr: { i, j },
+            vars: { gap, temp, comparisons: cmp },
+          });
           if (!gt) break;
           a[j] = a[j - gap];
           j -= gap;
         }
         a[j] = temp;
-        if (j !== i) rec(a, { line: 10, note: `Place ${temp} at index ${j}.`, hl: { [j]: 'swap' }, ptr: { i, j }, vars: { gap, comparisons: cmp } });
+        if (j !== i)
+          rec(a, {
+            line: 10,
+            note: `Place ${temp} at index ${j}.`,
+            hl: { [j]: 'swap' },
+            ptr: { i, j },
+            vars: { gap, comparisons: cmp },
+          });
       }
     }
-    rec(a, { line: 13, note: `Done after gap = 1 (a plain insertion sort on an almost-sorted array). ${cmp} comparisons.`, hl: doneSet(0, n - 1), vars: { comparisons: cmp } });
+    rec(a, {
+      line: 13,
+      note: `Done after gap = 1 (a plain insertion sort on an almost-sorted array). ${cmp} comparisons.`,
+      hl: doneSet(0, n - 1),
+      vars: { comparisons: cmp },
+    });
   },
 );
 
@@ -222,44 +361,84 @@ export const quick = bars(
   (a, rec) => {
     const n = a.length;
     const fixed = new Set<number>();
-    let cmp = 0, sw = 0;
+    let cmp = 0,
+      sw = 0;
     const base = (lo: number, hi: number): Record<number, Role> => {
       const o: Record<number, Role> = {};
-      for (let k = 0; k < n; k++) if (fixed.has(k)) o[k] = 'done';
-      else if (k < lo || k > hi) o[k] = 'dim';
+      for (let k = 0; k < n; k++)
+        if (fixed.has(k)) o[k] = 'done';
+        else if (k < lo || k > hi) o[k] = 'dim';
       return o;
     };
     const qs = (lo: number, hi: number) => {
       if (lo > hi) return;
       if (lo === hi) {
         fixed.add(lo);
-        rec(a, { line: 14, note: `Range [${lo}..${hi}] has one item: already sorted.`, hl: base(lo, hi), vars: { comparisons: cmp, swaps: sw } });
+        rec(a, {
+          line: 14,
+          note: `Range [${lo}..${hi}] has one item: already sorted.`,
+          hl: base(lo, hi),
+          vars: { comparisons: cmp, swaps: sw },
+        });
         return;
       }
       const pivot = a[hi];
       let i = lo - 1;
-      rec(a, { line: 2, note: `Partition [${lo}..${hi}] around pivot ${pivot} (last item).`, hl: { ...base(lo, hi), [hi]: 'current' }, ptr: { lo, hi }, vars: { pivot, comparisons: cmp, swaps: sw } });
+      rec(a, {
+        line: 2,
+        note: `Partition [${lo}..${hi}] around pivot ${pivot} (last item).`,
+        hl: { ...base(lo, hi), [hi]: 'current' },
+        ptr: { lo, hi },
+        vars: { pivot, comparisons: cmp, swaps: sw },
+      });
       for (let j = lo; j < hi; j++) {
         cmp++;
         const less = a[j] < pivot;
-        rec(a, { line: 5, note: `${a[j]} < ${pivot}? ${less ? 'yes → grow the "small" zone' : 'no → leave it'}`, hl: { ...base(lo, hi), [hi]: 'current', [j]: 'compare' }, ptr: { i: i < lo ? null : i, j }, vars: { pivot, comparisons: cmp, swaps: sw } });
+        rec(a, {
+          line: 5,
+          note: `${a[j]} < ${pivot}? ${less ? 'yes → grow the "small" zone' : 'no → leave it'}`,
+          hl: { ...base(lo, hi), [hi]: 'current', [j]: 'compare' },
+          ptr: { i: i < lo ? null : i, j },
+          vars: { pivot, comparisons: cmp, swaps: sw },
+        });
         if (less) {
           i++;
           [a[i], a[j]] = [a[j], a[i]];
           sw++;
-          rec(a, { line: 7, note: `Swap a[${i}] and a[${j}].`, hl: { ...base(lo, hi), [hi]: 'current', [i]: 'swap', [j]: 'swap' }, ptr: { i, j }, vars: { pivot, comparisons: cmp, swaps: sw } });
+          rec(a, {
+            line: 7,
+            note: `Swap a[${i}] and a[${j}].`,
+            hl: { ...base(lo, hi), [hi]: 'current', [i]: 'swap', [j]: 'swap' },
+            ptr: { i, j },
+            vars: { pivot, comparisons: cmp, swaps: sw },
+          });
         }
       }
       [a[i + 1], a[hi]] = [a[hi], a[i + 1]];
       sw++;
       fixed.add(i + 1);
-      rec(a, { line: 10, note: `Put pivot ${pivot} at index ${i + 1}: everything left is smaller, everything right is bigger.`, hl: { ...base(lo, hi), [i + 1]: 'done' }, ptr: { p: i + 1 }, vars: { pivot, comparisons: cmp, swaps: sw } });
+      rec(a, {
+        line: 10,
+        note: `Put pivot ${pivot} at index ${i + 1}: everything left is smaller, everything right is bigger.`,
+        hl: { ...base(lo, hi), [i + 1]: 'done' },
+        ptr: { p: i + 1 },
+        vars: { pivot, comparisons: cmp, swaps: sw },
+      });
       qs(lo, i);
       qs(i + 2, hi);
     };
-    rec(a, { line: 13, note: 'Quick sort: pick a pivot, partition, then sort each side recursively.', vars: { comparisons: 0, swaps: 0 } });
+    rec(a, {
+      line: 13,
+      note: 'Quick sort: pick a pivot, partition, then sort each side recursively.',
+      vars: { comparisons: 0, swaps: 0 },
+    });
     qs(0, n - 1);
-    rec(a, { line: 19, note: `Sorted with ${cmp} comparisons and ${sw} swaps.`, hl: doneSet(0, n - 1), vars: { comparisons: cmp, swaps: sw } });
+    rec(a, {
+      line: 19,
+      note: `Sorted with ${cmp} comparisons and ${sw} swaps.`,
+      hl: doneSet(0, n - 1),
+      vars: { comparisons: cmp, swaps: sw },
+    });
   },
 );
 
@@ -287,7 +466,10 @@ export const heapSort: Algo<HeapState> = {
     '}',
   ],
   input: { ...input('4, 10, 3, 5, 1, 8, 7'), random: () => randomNums(7, 1, 60) },
-  init: (s) => ({ a: parseNums(s, 15).length ? parseNums(s, 15) : [4, 10, 3, 5, 1], n: parseNums(s, 15).length || 5 }),
+  init: (s) => ({
+    a: parseNums(s, 15).length ? parseNums(s, 15) : [4, 10, 3, 5, 1],
+    n: parseNums(s, 15).length || 5,
+  }),
   actions: [{ id: 'run', label: 'Sort' }],
   auto: 'run',
   run: (st) => {
@@ -297,25 +479,55 @@ export const heapSort: Algo<HeapState> = {
     const rec = (f: Omit<Frame<HeapState>, 's'>) => frames.push({ s: { a: [...a], n }, ...f });
     const heapify = (size: number, i: number) => {
       let largest = i;
-      const l = 2 * i + 1, r = 2 * i + 2;
-      rec({ line: 3, note: `heapify(i=${i}): compare ${a[i]} with its children${l < size ? ' ' + a[l] : ''}${r < size ? ' and ' + a[r] : ''}.`, hl: { [i]: 'current', ...(l < size ? { [l]: 'compare' } : {}), ...(r < size ? { [r]: 'compare' } : {}) } });
+      const l = 2 * i + 1,
+        r = 2 * i + 2;
+      rec({
+        line: 3,
+        note: `heapify(i=${i}): compare ${a[i]} with its children${l < size ? ' ' + a[l] : ''}${r < size ? ' and ' + a[r] : ''}.`,
+        hl: {
+          [i]: 'current',
+          ...(l < size ? { [l]: 'compare' } : {}),
+          ...(r < size ? { [r]: 'compare' } : {}),
+        },
+      });
       if (l < size && a[l] > a[largest]) largest = l;
       if (r < size && a[r] > a[largest]) largest = r;
       if (largest !== i) {
         [a[i], a[largest]] = [a[largest], a[i]];
-        rec({ line: 7, note: `Child ${a[i]} is bigger: swap it up, then keep sifting down from index ${largest}.`, hl: { [i]: 'swap', [largest]: 'swap' } });
+        rec({
+          line: 7,
+          note: `Child ${a[i]} is bigger: swap it up, then keep sifting down from index ${largest}.`,
+          hl: { [i]: 'swap', [largest]: 'swap' },
+        });
         heapify(size, largest);
-      } else rec({ line: 6, note: `${a[i]} is ≥ its children: heap property holds here.`, hl: { [i]: 'done' } });
+      } else
+        rec({
+          line: 6,
+          note: `${a[i]} is ≥ its children: heap property holds here.`,
+          hl: { [i]: 'done' },
+        });
     };
     rec({ line: 11, note: 'The array IS the tree: children of index i live at 2i+1 and 2i+2.' });
     for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
-      rec({ line: 12, note: `Build max-heap: heapify the non-leaf node at index ${i}.`, hl: { [i]: 'current' } });
+      rec({
+        line: 12,
+        note: `Build max-heap: heapify the non-leaf node at index ${i}.`,
+        hl: { [i]: 'current' },
+      });
       heapify(n, i);
     }
-    rec({ line: 14, note: `Max-heap built. The biggest item (${a[0]}) is at the root.`, hl: { 0: 'current' } });
+    rec({
+      line: 14,
+      note: `Max-heap built. The biggest item (${a[0]}) is at the root.`,
+      hl: { 0: 'current' },
+    });
     for (let end = a.length - 1; end > 0; end--) {
       [a[0], a[end]] = [a[end], a[0]];
-      rec({ line: 15, note: `Swap root with a[${end}]: ${a[end]} is now in its final place.`, hl: { 0: 'swap', [end]: 'swap' } });
+      rec({
+        line: 15,
+        note: `Swap root with a[${end}]: ${a[end]} is now in its final place.`,
+        hl: { 0: 'swap', [end]: 'swap' },
+      });
       n = end;
       rec({ line: 16, note: `Shrink the heap to ${end} and sift the new root down.` });
       heapify(end, 0);
@@ -357,7 +569,8 @@ export const mergeSort: Algo<MergeState> = {
   run: (st) => {
     const segs = st.segs.map((s) => ({ ...s, vals: [...s.vals] }));
     const frames: Frame<MergeState>[] = [];
-    const rec = (f: Omit<Frame<MergeState>, 's'>) => frames.push({ s: { segs: segs.map((s) => ({ ...s, vals: [...s.vals] })), n: st.n }, ...f });
+    const rec = (f: Omit<Frame<MergeState>, 's'>) =>
+      frames.push({ s: { segs: segs.map((s) => ({ ...s, vals: [...s.vals] })), n: st.n }, ...f });
     const find = (lo: number, depth: number) => segs.find((s) => s.lo === lo && s.depth === depth)!;
     let merges = 0;
     const ms = (lo: number, hi: number, depth: number) => {
@@ -373,13 +586,19 @@ export const mergeSort: Algo<MergeState> = {
       rec({ line: 12, note: `Split [${seg.vals}] at mid = ${mid} into two halves.` });
       ms(lo, mid, depth + 1);
       ms(mid + 1, hi, depth + 1);
-      const L = find(lo, depth + 1), R = find(mid + 1, depth + 1);
+      const L = find(lo, depth + 1),
+        R = find(mid + 1, depth + 1);
       L.role = 'compare';
       R.role = 'compare';
-      rec({ line: 15, note: `Merge [${L.vals}] and [${R.vals}]: repeatedly take the smaller front item.` });
+      rec({
+        line: 15,
+        note: `Merge [${L.vals}] and [${R.vals}]: repeatedly take the smaller front item.`,
+      });
       const out: number[] = [];
-      let i = 0, j = 0;
-      while (i < L.vals.length && j < R.vals.length) out.push(L.vals[i] <= R.vals[j] ? L.vals[i++] : R.vals[j++]);
+      let i = 0,
+        j = 0;
+      while (i < L.vals.length && j < R.vals.length)
+        out.push(L.vals[i] <= R.vals[j] ? L.vals[i++] : R.vals[j++]);
       out.push(...L.vals.slice(i), ...R.vals.slice(j));
       seg.vals = out;
       seg.role = 'done';
@@ -390,7 +609,10 @@ export const mergeSort: Algo<MergeState> = {
     };
     rec({ line: 10, note: 'Divide until pieces have one item, then merge sorted pieces back up.' });
     ms(0, st.n - 1, 0);
-    rec({ line: 16, note: `Sorted: [${find(0, 0).vals}]. Depth log₂n levels × O(n) work per level = O(n log n).` });
+    rec({
+      line: 16,
+      note: `Sorted: [${find(0, 0).vals}]. Depth log₂n levels × O(n) work per level = O(n log n).`,
+    });
     return frames;
   },
 };
@@ -436,7 +658,12 @@ export const pointerSort: Algo<ArrayState> = {
         s: {
           rows: [
             { name: 'records', a: scores, sub: names, hl: { ...(f.hl as Record<number, Role>) } },
-            { name: 'p[ ]', a: p.map((x) => `→${x}`), hl: hlp, ptr: f.ptr as Record<string, number> },
+            {
+              name: 'p[ ]',
+              a: p.map((x) => `→${x}`),
+              hl: hlp,
+              ptr: f.ptr as Record<string, number>,
+            },
             { name: 'p[i]->score', a: p.map((x) => scores[x]), hl: hlp, noIndex: true },
           ],
         },
@@ -444,20 +671,45 @@ export const pointerSort: Algo<ArrayState> = {
         hl: f.hl,
         ptr: {},
       });
-    const done = (i: number) => Object.fromEntries(Array.from({ length: i }, (_, k) => [k, 'done'])) as Record<number, Role>;
-    rec({ line: 2, note: 'The big records never move. We sort an array of pointers (here: indices) to them instead.' });
+    const done = (i: number) =>
+      Object.fromEntries(Array.from({ length: i }, (_, k) => [k, 'done'])) as Record<number, Role>;
+    rec({
+      line: 2,
+      note: 'The big records never move. We sort an array of pointers (here: indices) to them instead.',
+    });
     let swaps = 0;
     for (let i = 0; i < n - 1; i++) {
       let m = i;
       for (let j = i + 1; j < n; j++) {
-        rec({ line: 6, note: `Compare p[${j}]->score (${scores[p[j]]}) with p[min]->score (${scores[p[m]]}).`, hl: { [p[j]]: 'compare', [p[m]]: 'current' }, ptr: { i, j, min: m } }, { ...done(i), [j]: 'compare', [m]: 'current' });
+        rec(
+          {
+            line: 6,
+            note: `Compare p[${j}]->score (${scores[p[j]]}) with p[min]->score (${scores[p[m]]}).`,
+            hl: { [p[j]]: 'compare', [p[m]]: 'current' },
+            ptr: { i, j, min: m },
+          },
+          { ...done(i), [j]: 'compare', [m]: 'current' },
+        );
         if (scores[p[j]] < scores[p[m]]) m = j;
       }
       [p[i], p[m]] = [p[m], p[i]];
       swaps++;
-      rec({ line: 8, note: `Swap pointers p[${i}] and p[${m}]. ${names[p[i]]}'s record stayed where it was; only an int/pointer moved.`, ptr: { i } }, { ...done(i), [i]: 'swap', [m]: 'swap' });
+      rec(
+        {
+          line: 8,
+          note: `Swap pointers p[${i}] and p[${m}]. ${names[p[i]]}'s record stayed where it was; only an int/pointer moved.`,
+          ptr: { i },
+        },
+        { ...done(i), [i]: 'swap', [m]: 'swap' },
+      );
     }
-    rec({ line: 10, note: `Sorted view: ${p.map((x) => names[x]).join(' < ')}. ${swaps} pointer swaps, zero record copies.` }, done(n));
+    rec(
+      {
+        line: 10,
+        note: `Sorted view: ${p.map((x) => names[x]).join(' < ')}. ${swaps} pointer swaps, zero record copies.`,
+      },
+      done(n),
+    );
     return frames;
   },
 };

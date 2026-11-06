@@ -8,7 +8,9 @@ import { chapters, chapterById, type ChapterId } from '@/data/chapters';
 export async function getStaticPaths() {
   const topics = await allTopics();
   return [
-    ...chapters.filter((c) => c.id !== 'levelup').map((c) => ({ params: { slug: c.slug }, props: { chapter: c.id } })),
+    ...chapters
+      .filter((c) => c.id !== 'levelup')
+      .map((c) => ({ params: { slug: c.slug }, props: { chapter: c.id } })),
     ...topics.map((t) => ({ params: { slug: t.id }, props: { topic: t } })),
   ];
 }
@@ -18,9 +20,9 @@ const ogKey = ch.slug;
 ---
 
 <Base
-  title={topic ? topic.data.title : `Ch ${ch.num}: ${ch.title}`}
+  title={topic ? topic.data.title : `Phase ${Number(ch.num)}: ${ch.title}`}
   description={topic ? topic.data.summary : ch.blurb}
-  accent={ch.accent}
+
   og={`/og/${ogKey}.png`}
 >
   {topic ? <TopicPage topic={topic} /> : <ChapterPage id={chapter!} />}

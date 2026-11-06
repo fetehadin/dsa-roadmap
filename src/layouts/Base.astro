@@ -1,36 +1,45 @@
 ---
+import { FONTS_URL, googleFonts } from '@/lib/fonts';
 import '@/styles/global.css';
 import { catalog } from '@/lib/catalog';
-import { chapters, CORE_RULE } from '@/data/chapters';
-import CommandPalette from '@/components/islands/CommandPalette';
-import Streak from '@/components/islands/Streak';
+import { phases, CORE_RULE } from '@/data/chapters';
 import { Search, Sun, Moon, Menu, Keyboard } from '@lucide/astro';
 
 interface Props {
   title: string;
   description?: string;
-  accent?: { dark: string; light: string };
   og?: string;
   wide?: boolean;
 }
-const { title, description = 'A C++ study roadmap for Data Structures & Algorithms (CoSc3111, AAU): visual step-throughs, exam-ready notes, quizzes and labs.', accent, og = '/og/default.png', wide = false } = Astro.props;
-const fullTitle = title === 'DSA Roadmap' ? 'DSA Roadmap: Data Structures & Algorithms in C++' : `${title} · DSA Roadmap`;
+const {
+  title,
+  description = 'A free, self-paced roadmap to data structures and algorithms in C++: step-through visuals, real code, quizzes and practice.',
+  og = '/og/default.png',
+  wide = false,
+} = Astro.props;
+const fullTitle =
+  title === 'DSA Roadmap'
+    ? 'Data Structures & Algorithms in C++ · DSA Roadmap'
+    : `${title} · DSA Roadmap`;
 const cat = await catalog();
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogUrl = new URL(og, Astro.site);
+const FONTS = FONTS_URL;
+const gf = await googleFonts();
 const path = Astro.url.pathname;
+const active = (href: string) =>
+  href === '/' ? path === '/' || path.startsWith('/learn') : path.startsWith(href);
 const nav = [
-  { href: '/learn', label: 'Learn' },
+  { href: '/', label: 'Roadmap' },
   { href: '/level-up', label: 'Level Up' },
   { href: '/labs', label: 'Labs' },
-  { href: '/exam', label: 'Exam mode' },
+  { href: '/exam', label: 'Test yourself' },
   { href: '/progress', label: 'Progress' },
 ];
-const style = accent ? `--accent-d:${accent.dark};--accent-l:${accent.light}` : undefined;
 ---
 
 <!doctype html>
-<html lang="en" class="dark" style={style}>
+<html lang="en" class="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -38,9 +47,31 @@ const style = accent ? `--accent-d:${accent.dark};--accent-l:${accent.light}` : 
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    {gf ? (
+      <>
+        {gf.preload.map((href) => (
+          <link rel="preload" as="font" type="font/woff2" href={href} crossorigin />
+        ))}
+        <style is:inline set:html={gf.css} />
+      </>
+    ) : (
+      <>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preload"
+          as="style"
+          href={FONTS}
+          onload="this.onload=null;this.rel='stylesheet'"
+        />
+        <noscript>
+          <link rel="stylesheet" href={FONTS} />
+        </noscript>
+      </>
+    )}
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt" />
-    <meta name="theme-color" content="#0b0d12" />
+    <meta name="theme-color" content="#0f1012" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="DSA Roadmap" />
     <meta property="og:title" content={fullTitle} />
@@ -52,7 +83,8 @@ const style = accent ? `--accent-d:${accent.dark};--accent-l:${accent.light}` : 
     <meta name="twitter:card" content="summary_large_image" />
     <script is:inline>
       try {
-        if (localStorage.getItem('dsa-theme') === 'light') document.documentElement.classList.remove('dark');
+        if (localStorage.getItem('dsa-theme') === 'light')
+          document.documentElement.classList.remove('dark');
       } catch {
         /* storage blocked */
       }
@@ -60,38 +92,92 @@ const style = accent ? `--accent-d:${accent.dark};--accent-l:${accent.light}` : 
     <slot name="head" />
   </head>
   <body class="min-h-dvh bg-bg text-fg antialiased">
-    <a href="#main" class="sr-only z-50 rounded-lg bg-accent px-3 py-2 text-accent-fg focus:not-sr-only focus:fixed focus:top-3 focus:left-3">Skip to content</a>
+    <a
+      href="#main"
+      class="sr-only z-50 rounded-lg bg-accent px-3 py-2 text-accent-fg focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+    >
+      Skip to content
+    </a>
     <header class="sticky top-0 z-40 border-b border-line bg-[color-mix(in_oklab,var(--bg)_82%,transparent)] backdrop-blur-md">
       <div class="mx-auto flex h-14 max-w-6xl items-center gap-2 px-4">
-        <a href="/" class="flex items-center gap-2 font-mono text-sm font-semibold tracking-tight" aria-label="DSA Roadmap home">
-          <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--accent)" /><path d="M9 21V11l7 5-7 5Zm9 0h6" stroke="var(--accent-fg)" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round" /></svg>
-          <span>dsa<span class="text-faint">/</span>roadmap</span>
+        <a
+          href="/"
+          class="flex items-center gap-2 font-mono text-sm font-semibold tracking-tight"
+          aria-label="DSA Roadmap home"
+        >
+          <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true">
+            <rect width="32" height="32" rx="8" fill="var(--accent)" />
+            <path
+              d="M9 21V11l7 5-7 5Zm9 0h6"
+              stroke="var(--accent-fg)"
+              stroke-width="2.6"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span>
+            dsa<span class="text-faint">/</span>roadmap
+          </span>
         </a>
         <nav class="ml-4 hidden items-center gap-1 md:flex" aria-label="Main">
           {nav.map((n) => (
-            <a href={n.href} class={`rounded-lg px-2.5 py-1.5 text-sm transition-colors hover:bg-soft hover:text-fg ${path.startsWith(n.href) ? 'text-fg font-medium' : 'text-muted'}`} aria-current={path.startsWith(n.href) ? 'page' : undefined}>
+            <a
+              href={n.href}
+              class={`rounded-lg px-2.5 py-1.5 text-sm transition-colors hover:bg-soft hover:text-fg ${active(n.href) ? 'text-fg font-medium' : 'text-muted'}`}
+              aria-current={active(n.href) ? 'page' : undefined}
+            >
               {n.label}
             </a>
           ))}
         </nav>
         <div class="ml-auto flex items-center gap-1.5">
-          <button id="open-search" class="btn btn-sm gap-2 !px-2.5 text-muted sm:min-w-44 sm:justify-start" aria-label="Search (Ctrl K)" aria-keyshortcuts="Control+K Meta+K /">
+          <button
+            id="open-search"
+            class="btn btn-sm gap-2 !px-2.5 text-muted sm:min-w-44 sm:justify-start"
+            aria-label="Search (Ctrl K)"
+            aria-keyshortcuts="Control+K Meta+K /"
+          >
             <Search size={15} />
             <span class="hidden text-xs sm:inline">Search topics…</span>
             <span class="kbd ml-auto hidden sm:inline">⌘K</span>
           </button>
-          <Streak client:idle />
-          <button id="theme-toggle" class="btn btn-sm !px-2.5" aria-label="Toggle light / dark theme">
+          <a
+            href="/progress"
+            id="streak"
+            class="btn btn-sm hidden gap-1 !px-2 font-mono"
+            aria-label="Study streak"
+          >
+            <span aria-hidden="true">🔥</span>
+            <span class="text-xs" data-n></span>
+          </a>
+          <button
+            id="theme-toggle"
+            class="btn btn-sm !px-2.5"
+            aria-label="Toggle light / dark theme"
+          >
             <Sun size={15} class="hidden dark:block" />
             <Moon size={15} class="block dark:hidden" />
           </button>
           <details class="relative md:hidden" id="mobile-nav">
-            <summary class="btn btn-sm !px-2.5" aria-label="Menu"><Menu size={16} /></summary>
+            <summary class="btn btn-sm !px-2.5" aria-label="Menu">
+              <Menu size={16} />
+            </summary>
             <nav class="card absolute right-0 mt-2 grid w-52 p-1.5" aria-label="Mobile">
-              {nav.map((n) => <a href={n.href} class="rounded-lg px-3 py-2.5 text-sm hover:bg-soft">{n.label}</a>)}
-              <a href="/guide" class="rounded-lg px-3 py-2.5 text-sm hover:bg-soft">How to use this guide</a>
-              <a href="/cheatsheets" class="rounded-lg px-3 py-2.5 text-sm hover:bg-soft">Cheat sheets</a>
-              <a href="/glossary" class="rounded-lg px-3 py-2.5 text-sm hover:bg-soft">Glossary</a>
+              {nav.map((n) => (
+                <a href={n.href} class="rounded-lg px-3 py-2.5 text-sm hover:bg-soft">
+                  {n.label}
+                </a>
+              ))}
+              <a href="/guide" class="rounded-lg px-3 py-2.5 text-sm hover:bg-soft">
+                How to use this guide
+              </a>
+              <a href="/cheatsheets" class="rounded-lg px-3 py-2.5 text-sm hover:bg-soft">
+                Cheat sheets
+              </a>
+              <a href="/glossary" class="rounded-lg px-3 py-2.5 text-sm hover:bg-soft">
+                Glossary
+              </a>
             </nav>
           </details>
         </div>
@@ -106,52 +192,144 @@ const style = accent ? `--accent-d:${accent.dark};--accent-l:${accent.light}` : 
       <div class="mx-auto grid max-w-6xl gap-8 px-4 py-10 text-sm text-muted sm:grid-cols-[2fr_1fr_1fr_1fr]">
         <div class="grid content-start gap-2">
           <div class="font-mono font-semibold text-fg">dsa/roadmap</div>
-          <p class="max-w-sm">Data Structures &amp; Algorithms (CoSc3111, AAU) in C++. Free, no sign-up; your progress stays in this browser.</p>
+          <p class="max-w-sm">
+            A free, self-paced guide to data structures and algorithms in C++. No sign-up; your
+            progress stays in this browser.
+          </p>
           <p class="text-xs text-faint">“{CORE_RULE}”</p>
         </div>
         <div class="grid content-start gap-1.5">
-          <div class="text-xs font-semibold tracking-wider text-faint uppercase">Chapters</div>
-          {chapters.filter((c) => c.id !== 'levelup').map((c) => <a href={`/learn/${c.slug}`} class="hover:text-fg">{c.num} {c.short}</a>)}
+          <div class="text-xs font-semibold tracking-wider text-faint uppercase">Phases</div>
+          {phases.map((c) => (
+            <a href={`/#${c.slug}`} class="hover:text-fg">
+              {c.num} {c.title}
+            </a>
+          ))}
         </div>
         <div class="grid content-start gap-1.5">
           <div class="text-xs font-semibold tracking-wider text-faint uppercase">Tools</div>
-          <a href="/guide" class="hover:text-fg">How to use this guide</a>
-          <a href="/cheatsheets" class="hover:text-fg">Cheat sheets</a>
-          <a href="/big-o" class="hover:text-fg">Big-O table</a>
-          <a href="/glossary" class="hover:text-fg">Glossary</a>
-          <a href="/exam" class="hover:text-fg">Exam mode</a>
-          <a href="/labs" class="hover:text-fg">Labs</a>
+          <a href="/guide" class="hover:text-fg">
+            How to use this guide
+          </a>
+          <a href="/cheatsheets" class="hover:text-fg">
+            Cheat sheets
+          </a>
+          <a href="/big-o" class="hover:text-fg">
+            Big-O table
+          </a>
+          <a href="/glossary" class="hover:text-fg">
+            Glossary
+          </a>
+          <a href="/exam" class="hover:text-fg">
+            Exam mode
+          </a>
+          <a href="/labs" class="hover:text-fg">
+            Labs
+          </a>
         </div>
         <div class="grid content-start gap-1.5">
           <div class="text-xs font-semibold tracking-wider text-faint uppercase">For AI tools</div>
-          <a href="/llms.txt" class="hover:text-fg">llms.txt</a>
-          <a href="/llms-full.txt" class="hover:text-fg">llms-full.txt</a>
-          <button id="open-help" class="flex items-center gap-1.5 text-left hover:text-fg"><Keyboard size={14} /> Shortcuts <span class="kbd">?</span></button>
+          <a href="/llms.txt" class="hover:text-fg">
+            llms.txt
+          </a>
+          <a href="/llms-full.txt" class="hover:text-fg">
+            llms-full.txt
+          </a>
+          <button id="open-help" class="flex items-center gap-1.5 text-left hover:text-fg">
+            <Keyboard size={14} /> Shortcuts <span class="kbd">?</span>
+          </button>
         </div>
       </div>
     </footer>
 
-    <dialog id="help-dialog" class="card m-auto w-[min(92vw,26rem)] p-0 text-fg backdrop:bg-black/50" aria-labelledby="help-title">
+    <dialog
+      id="help-dialog"
+      class="card m-auto w-[min(92vw,26rem)] p-0 text-fg backdrop:bg-black/50"
+      aria-labelledby="help-title"
+    >
       <div class="flex items-center justify-between border-b border-line px-5 py-3">
-        <h2 id="help-title" class="font-semibold">Keyboard shortcuts</h2>
-        <form method="dialog"><button class="btn btn-sm" aria-label="Close">Esc</button></form>
+        <h2 id="help-title" class="font-semibold">
+          Keyboard shortcuts
+        </h2>
+        <form method="dialog">
+          <button class="btn btn-sm" aria-label="Close">
+            Esc
+          </button>
+        </form>
       </div>
       <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2.5 p-5 text-sm">
-        <dt><span class="kbd">⌘K</span> <span class="kbd">/</span></dt><dd>Search topics, glossary, cheat sheets</dd>
-        <dt><span class="kbd">space</span></dt><dd>Play / pause the visualizer</dd>
-        <dt><span class="kbd">←</span> <span class="kbd">→</span></dt><dd>Step back / forward</dd>
-        <dt><span class="kbd">r</span></dt><dd>Reset the visualizer</dd>
-        <dt><span class="kbd">?</span></dt><dd>Show this help</dd>
+        <dt>
+          <span class="kbd">⌘K</span> <span class="kbd">/</span>
+        </dt>
+        <dd>Search topics, glossary, cheat sheets</dd>
+        <dt>
+          <span class="kbd">space</span>
+        </dt>
+        <dd>Play / pause the visualizer</dd>
+        <dt>
+          <span class="kbd">←</span> <span class="kbd">→</span>
+        </dt>
+        <dd>Step back / forward</dd>
+        <dt>
+          <span class="kbd">r</span>
+        </dt>
+        <dd>Reset the visualizer</dd>
+        <dt>
+          <span class="kbd">?</span>
+        </dt>
+        <dd>Show this help</dd>
       </dl>
     </dialog>
 
     <script type="application/json" id="dsa-catalog" set:html={JSON.stringify(cat)} />
-    <CommandPalette client:idle />
+    <div id="palette-root"></div>
     <script>
-      import { touchDay } from '@/lib/progress';
+      import { load, streak, subscribe, touchDay } from '@/lib/progress';
       import { watchMilestones } from '@/lib/milestones';
       touchDay();
       watchMilestones();
+
+      const streakEl = document.getElementById('streak');
+      const showStreak = () => {
+        const n = streak(load().days);
+        if (!streakEl) return;
+        streakEl.classList.toggle('hidden', !n);
+        streakEl.classList.toggle('inline-flex', !!n);
+        streakEl.querySelector('[data-n]')!.textContent = String(n);
+        streakEl.title = `${n}-day study streak`;
+        streakEl.setAttribute('aria-label', `${n} day study streak`);
+      };
+      showStreak();
+      subscribe(showStreak);
+
+      // The search palette (React + Fuse) loads only when first opened.
+      let mounted = false;
+      const openPalette = async () => {
+        if (mounted) return;
+        mounted = true;
+        const [{ createElement }, { createRoot }, { default: CommandPalette }] = await Promise.all([
+          import('react'),
+          import('react-dom/client'),
+          import('@/components/islands/CommandPalette'),
+        ]);
+        createRoot(document.getElementById('palette-root')!).render(
+          createElement(CommandPalette, { startOpen: true }),
+        );
+      };
+      document.getElementById('open-search')?.addEventListener('click', openPalette);
+      window.addEventListener('keydown', (e) => {
+        if (mounted) return;
+        const typing = (e.target as HTMLElement).closest(
+          'input,textarea,select,[contenteditable="true"]',
+        );
+        if (
+          ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) ||
+          (e.key === '/' && !typing)
+        ) {
+          e.preventDefault();
+          openPalette();
+        }
+      });
       const root = document.documentElement;
       document.getElementById('theme-toggle')?.addEventListener('click', () => {
         const dark = root.classList.toggle('dark');

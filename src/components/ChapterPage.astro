@@ -1,52 +1,67 @@
 ---
-import { chapterById, phases, slideUrl, type ChapterId } from '@/data/chapters';
+import { chapterById, type ChapterId } from '@/data/chapters';
 import { allTopics, topicNum, topicUrl } from '@/lib/catalog';
 import TopicDots from './islands/TopicDots';
-import { Clock, Presentation, FileText, FlaskConical } from '@lucide/astro';
+import { FileText, FlaskConical } from '@lucide/astro';
 
 interface Props {
   id: ChapterId;
 }
 const ch = chapterById(Astro.props.id);
 const topics = (await allTopics()).filter((t) => t.data.chapter === ch.id);
-const mins = topics.reduce((s, t) => s + t.data.time, 0);
-const phase = phases.find((p) => p.chapters.includes(ch.id));
 const levelColor = { easy: 'var(--r-done)', medium: 'var(--r-compare)', hard: 'var(--r-swap)' };
 ---
 
 <div class="mx-auto max-w-4xl pt-8 sm:pt-12">
-  <a href={ch.id === 'levelup' ? '/' : '/learn'} class="text-sm text-muted hover:text-fg">← {ch.id === 'levelup' ? 'Home' : 'All chapters'}</a>
+  <a href={ch.id === 'levelup' ? '/' : `/#${ch.slug}`} class="text-sm text-muted hover:text-fg">
+    ← Roadmap
+  </a>
   <div class="mt-4 flex flex-wrap items-center gap-2">
-    <span class="eyebrow">{ch.id === 'levelup' ? 'Optional track' : `Chapter ${ch.num}`}</span>
-    <span class="chip">{ch.weeks}</span>
-    {phase && <span class="chip">Phase {phase.n}</span>}
-    <span class="chip"><Clock size={12} /> ~{Math.round(mins / 60 * 10) / 10} h</span>
-    {ch.id === 'levelup' && <span class="chip !border-[var(--r-compare)] !text-[var(--r-compare)]">not on the exam</span>}
+    <span class="eyebrow">
+      {ch.id === 'levelup' ? 'Optional track' : `Phase ${Number(ch.num)}`}
+    </span>
+    {ch.id === 'levelup' && (
+      <span class="chip !border-[var(--r-compare)] !text-[var(--r-compare)]">optional</span>
+    )}
   </div>
   <h1 class="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">{ch.title}</h1>
   <p class="mt-3 max-w-2xl text-lg text-muted">{ch.blurb}</p>
   {ch.id === 'levelup' && (
     <p class="mt-4 max-w-2xl rounded-xl border border-dashed border-line p-4 text-sm text-muted">
-      These patterns reuse arrays, linked lists and stacks from the course to solve interview-style problems quickly. Finish the chapter they build on first. They will make you faster at the exam's "write a function" questions, but nothing here is examined directly.
+      These patterns reuse arrays, linked lists and stacks from the roadmap to solve interview-style
+      problems quickly. Finish the phase each one builds on first.
     </p>
   )}
   <div class="mt-5 flex flex-wrap gap-2">
-    {ch.id !== 'levelup' && <a href={`/cheatsheets/${ch.slug}`} class="btn btn-sm"><FileText size={14} /> Cheat sheet</a>}
-    {phase && <a href={`/labs/${phase.lab}`} class="btn btn-sm"><FlaskConical size={14} /> Phase {phase.n} lab</a>}
-    {(ch.slides ?? []).map((s) => <a href={slideUrl(s.id)} target="_blank" rel="noopener" class="btn btn-sm"><Presentation size={14} /> Slides: {s.title}</a>)}
+    {ch.id !== 'levelup' && (
+      <a href={`/cheatsheets/${ch.slug}`} class="btn btn-sm">
+        <FileText size={14} /> Cheat sheet
+      </a>
+    )}
+    {ch.lab && (
+      <a href={`/labs/${ch.lab}`} class="btn btn-sm">
+        <FlaskConical size={14} /> Phase project
+      </a>
+    )}
   </div>
 
   <ol class="mt-8 grid gap-3">
     {topics.map((t) => (
       <li>
-        <a href={topicUrl(t.id)} class="card group flex items-center gap-4 p-4 transition-colors hover:border-line-strong sm:p-5">
-          <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-accent-soft font-mono text-sm font-semibold text-accent">{topicNum(t)}</span>
+        <a
+          href={topicUrl(t.id)}
+          class="card group flex items-center gap-4 p-4 transition-colors hover:border-line-strong sm:p-5"
+        >
+          <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-accent-soft font-mono text-sm font-semibold text-accent">
+            {topicNum(t)}
+          </span>
           <span class="min-w-0 flex-1">
             <span class="block font-semibold group-hover:text-accent">{t.data.title}</span>
             <span class="mt-0.5 line-clamp-2 block text-sm text-muted">{t.data.summary}</span>
             <span class="mt-2 flex flex-wrap gap-1.5">
-              <span class="chip"><Clock size={11} /> {t.data.time} min</span>
-              <span class="chip" style={`color:${levelColor[t.data.difficulty]}`}>{t.data.difficulty}</span>
+              <span class="chip" style={`color:${levelColor[t.data.difficulty]}`}>
+                {t.data.difficulty}
+              </span>
             </span>
           </span>
           <TopicDots slug={t.id} client:idle />

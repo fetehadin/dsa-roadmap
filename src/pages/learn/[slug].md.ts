@@ -6,4 +6,6 @@ export const getStaticPaths: GetStaticPaths = async () =>
   (await allTopics()).map((t) => ({ params: { slug: t.id }, props: { topic: t } }));
 
 export const GET: APIRoute = ({ props }) =>
-  new Response(topicMarkdown((props as { topic: Topic }).topic), { headers: { 'Content-Type': 'text/markdown; charset=utf-8' } });
+  new Response(topicMarkdown((props as { topic: Topic }).topic), {
+    headers: { 'Content-Type': 'text/markdown; charset=utf-8' },
+  });

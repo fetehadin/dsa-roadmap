@@ -95,4 +95,4 @@ export const parseNums = (s: string, max = 16): number[] =>
 export const randomNums = (n = 8, lo = 1, hi = 50) =>
   Array.from({ length: n }, () => lo + Math.floor(Math.random() * (hi - lo + 1))).join(', ');
 
-export const clone = <T,>(x: T): T => structuredClone(x);
+export const clone = <T>(x: T): T => structuredClone(x);

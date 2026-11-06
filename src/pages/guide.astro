@@ -1,63 +1,168 @@
 ---
 import Base from '@/layouts/Base.astro';
-import { CORE_RULE, phases, chapters } from '@/data/chapters';
+import { CORE_RULE, phases } from '@/data/chapters';
 import { Tv as Youtube, BookMarked, MonitorPlay, Lightbulb } from '@lucide/astro';
 
 const channels = [
-  { name: 'mycodeschool', use: 'Fundamentals', why: 'Slow, careful whiteboard explanations of linked lists, stacks, queues, trees and graphs in C/C++. Most of this site\'s chapter videos come from here.', url: 'https://www.youtube.com/@mycodeschool' },
-  { name: 'Abdul Bari', use: 'Algorithms', why: 'Analysis, asymptotic notation and the Chapter 8 sorts traced by hand, the way exams ask.', url: 'https://www.youtube.com/@abdul_bari' },
-  { name: 'NeetCode', use: 'Problem practice', why: 'Clean solutions to the LeetCode problems linked in each Practice section.', url: 'https://www.youtube.com/@NeetCode' },
+  {
+    name: 'mycodeschool',
+    use: 'Fundamentals',
+    why: "Slow, careful whiteboard explanations of linked lists, stacks, queues, trees and graphs in C/C++. Most of this site's chapter videos come from here.",
+    url: 'https://www.youtube.com/@mycodeschool',
+  },
+  {
+    name: 'Abdul Bari',
+    use: 'Algorithms',
+    why: 'Analysis, asymptotic notation and the fast sorts traced by hand, the way exams ask.',
+    url: 'https://www.youtube.com/@abdul_bari',
+  },
+  {
+    name: 'NeetCode',
+    use: 'Problem practice',
+    why: 'Clean solutions to the LeetCode problems linked in each Practice section.',
+    url: 'https://www.youtube.com/@NeetCode',
+  },
 ];
 const alternates = [
-  { name: "Jenny's Lectures CS/IT", use: 'Step-by-step basics, close to a classroom lecture', url: 'https://www.youtube.com/@JennyslecturesCSIT' },
-  { name: 'take U forward (Striver A2Z)', use: 'Level Up patterns and interview prep', url: 'https://www.youtube.com/@takeUforward' },
+  {
+    name: "Jenny's Lectures CS/IT",
+    use: 'Step-by-step basics, close to a classroom lecture',
+    url: 'https://www.youtube.com/@JennyslecturesCSIT',
+  },
+  {
+    name: 'take U forward (Striver A2Z)',
+    use: 'Level Up patterns and interview prep',
+    url: 'https://www.youtube.com/@takeUforward',
+  },
 ];
 const refs = [
-  ['Goodrich, Tamassia & Mount, Data Structures and Algorithms in C++', 'The course textbook.', null],
-  ['VisuAlgo', 'Animations of almost every structure in the course.', 'https://visualgo.net'],
-  ['USFCA Data Structure Visualizations', 'Type your own values into BSTs, heaps, hashing.', 'https://www.cs.usfca.edu/~galles/visualization/Algorithms.html'],
-  ['learncpp.com', 'The best free C++ tutorial; read the pointers chapter.', 'https://www.learncpp.com'],
-  ['cppreference', 'The C++ standard library reference (std::stack, std::queue…).', 'https://en.cppreference.com'],
-  ['GeeksforGeeks', 'Quick articles and extra examples for every topic.', 'https://www.geeksforgeeks.org/data-structures/'],
+  [
+    'Goodrich, Tamassia & Mount, Data Structures and Algorithms in C++',
+    'A solid C++ textbook if you want more depth.',
+    null,
+  ],
+  ['VisuAlgo', 'Animations of almost every structure on this roadmap.', 'https://visualgo.net'],
+  [
+    'USFCA Data Structure Visualizations',
+    'Type your own values into BSTs, heaps, hashing.',
+    'https://www.cs.usfca.edu/~galles/visualization/Algorithms.html',
+  ],
+  [
+    'learncpp.com',
+    'The best free C++ tutorial; read the pointers chapter.',
+    'https://www.learncpp.com',
+  ],
+  [
+    'cppreference',
+    'The C++ standard library reference (std::stack, std::queue…).',
+    'https://en.cppreference.com',
+  ],
+  [
+    'GeeksforGeeks',
+    'Quick articles and extra examples for every topic.',
+    'https://www.geeksforgeeks.org/data-structures/',
+  ],
   ['Programiz DSA', 'Short, beginner-friendly explanations.', 'https://www.programiz.com/dsa'],
-  ['OpenDSA', 'Interactive textbook with auto-graded exercises.', 'https://opendsa-server.cs.vt.edu'],
+  [
+    'OpenDSA',
+    'Interactive textbook with auto-graded exercises.',
+    'https://opendsa-server.cs.vt.edu',
+  ],
   ['Big-O Cheat Sheet', 'One-page complexity reference.', 'https://www.bigocheatsheet.com'],
-  ['LeetCode Explore: Linked List', 'Guided card for Chapter 4.', 'https://leetcode.com/explore/learn/card/linked-list/'],
-  ['LeetCode Explore: Queue & Stack', 'Guided card for Chapter 5.', 'https://leetcode.com/explore/learn/card/queue-stack/'],
+  [
+    'LeetCode Explore: Linked List',
+    'Guided card for linked lists.',
+    'https://leetcode.com/explore/learn/card/linked-list/',
+  ],
+  [
+    'LeetCode Explore: Queue & Stack',
+    'Guided card for stacks and queues.',
+    'https://leetcode.com/explore/learn/card/queue-stack/',
+  ],
   ['NeetCode roadmap', 'Problem roadmap for Level Up.', 'https://neetcode.io/roadmap'],
 ] as const;
 ---
 
-<Base title="How to use this guide" description="A study method, a 16-week plan, which YouTube channel to use for what, and the best free references.">
+<Base
+  title="How to use this guide"
+  description="A study method, the seven phases, which YouTube channel to use for what, and the best free references."
+>
   <article class="mx-auto max-w-3xl pt-8 sm:pt-12">
     <span class="eyebrow">Guide</span>
     <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">How to use this guide</h1>
-    <p class="mt-4 rounded-xl border border-dashed border-line p-4 text-lg"><Lightbulb size={18} class="mr-1 inline text-[var(--r-compare)]" /> <b>{CORE_RULE}</b></p>
+    <p class="mt-4 rounded-xl border border-dashed border-line p-4 text-lg">
+      <Lightbulb size={18} class="mr-1 inline text-[var(--r-compare)]" /> <b>{CORE_RULE}</b>
+    </p>
 
     <h2 class="mt-10 text-xl font-semibold">The loop for every topic</h2>
     <ol class="mt-3 grid list-decimal gap-2 pl-5 text-muted marker:font-mono marker:text-accent">
-      <li><b class="text-fg">Mental model.</b> Read the plain-English idea and the analogy first. If you can't explain it to a friend, the code won't stick.</li>
-      <li><b class="text-fg">Visualize.</b> Step through slowly with <span class="kbd">→</span>. Predict the next frame before you press.</li>
-      <li><b class="text-fg">Code.</b> Read the C++, then <b>close the page and type it yourself</b>. Compile with <code class="font-mono text-sm">g++ -std=c++17</code>.</li>
-      <li><b class="text-fg">Watch</b> one video, only if something is still unclear. One is enough.</li>
-      <li><b class="text-fg">Exam lens and quick check.</b> These are what get marked.</li>
-      <li><b class="text-fg">Practice.</b> Trace by hand 🟢, implement 🟡, solve 2–3 problems 🔴.</li>
-      <li><b class="text-fg">Tick the "I can…" boxes</b> honestly. That marks the topic done.</li>
+      <li>
+        <b class="text-fg">Mental model.</b> Read the plain-English idea and the analogy first. If
+        you can't explain it to a friend, the code won't stick.
+      </li>
+      <li>
+        <b class="text-fg">Visualize.</b> Step through slowly with <span class="kbd">→</span>.
+        Predict the next frame before you press.
+      </li>
+      <li>
+        <b class="text-fg">Code.</b> Read the C++, then <b>close the page and type it yourself</b>.
+        Compile with <code class="font-mono text-sm">g++ -std=c++17</code>.
+      </li>
+      <li>
+        <b class="text-fg">Watch</b> one video, only if something is still unclear. One is enough.
+      </li>
+      <li>
+        <b class="text-fg">Exam lens and quick check.</b> These are what get marked.
+      </li>
+      <li>
+        <b class="text-fg">Practice.</b> Trace by hand 🟢, implement 🟡, solve 2–3 problems 🔴.
+      </li>
+      <li>
+        <b class="text-fg">Tick the "I can…" boxes</b> honestly. That marks the topic done.
+      </li>
     </ol>
 
-    <h2 class="mt-10 text-xl font-semibold">The plan</h2>
-    <div class="mt-3 grid gap-3">
+    <h2 class="mt-10 text-xl font-semibold">The phases</h2>
+    <ol class="mt-3 grid gap-3">
       {phases.map((p) => (
-        <div class="card p-4">
-          <div class="flex flex-wrap items-center gap-2"><b>Phase {p.n}: {p.title}</b><span class="chip">{p.weeks}</span></div>
-          <p class="mt-1 text-sm text-muted">{p.chapters.map((id) => { const c = chapters.find((x) => x.id === id)!; return `Ch${c.num} ${c.short} (${c.weeks})`; }).join(' · ')} · then the <a class="text-accent hover:underline" href={`/labs/${p.lab}`}>phase lab</a>.</p>
-        </div>
+        <li class="card p-4">
+          <a href={`/#${p.slug}`} class="font-display font-semibold hover:text-accent">
+            Phase {Number(p.num)}: {p.title}
+          </a>
+          <p class="mt-1 text-sm text-muted">
+            {p.blurb}
+            {p.lab && (
+              <>
+                {' '}
+                Ends with a{' '}
+                <a class="text-accent hover:underline" href={`/labs/${p.lab}`}>
+                  build-it-yourself project
+                </a>
+                .
+              </>
+            )}
+          </p>
+        </li>
       ))}
-    </div>
-    <p class="mt-3 text-sm text-muted">Behind? Stretch the plan instead of skipping. Week 16 is for <a href="/exam" class="text-accent hover:underline">Exam mode</a> and the <a href="/cheatsheets" class="text-accent hover:underline">cheat sheets</a>.</p>
+    </ol>
+    <p class="mt-3 text-sm text-muted">
+      Go at your own pace, in order: each phase uses the one before it. When you finish, use{' '}
+      <a href="/exam" class="text-accent hover:underline">
+        Test yourself
+      </a>{' '}
+      and the{' '}
+      <a href="/cheatsheets" class="text-accent hover:underline">
+        cheat sheets
+      </a>{' '}
+      to lock it in.
+    </p>
 
-    <h2 class="mt-10 flex items-center gap-2 text-xl font-semibold"><Youtube size={20} /> Which channel for what</h2>
-    <p class="mt-2 text-muted">Don't follow every channel. Pick <b>one per need</b>:</p>
+    <h2 class="mt-10 flex items-center gap-2 text-xl font-semibold">
+      <Youtube size={20} /> Which channel for what
+    </h2>
+    <p class="mt-2 text-muted">
+      Don't follow every channel. Pick <b>one per need</b>:
+    </p>
     <div class="mt-3 grid gap-3 sm:grid-cols-3">
       {channels.map((c) => (
         <a href={c.url} target="_blank" rel="noopener" class="card p-4 hover:border-line-strong">
@@ -67,18 +172,73 @@ const refs = [
         </a>
       ))}
     </div>
-    <p class="mt-3 text-sm text-muted">Alternates: {alternates.map((a, i) => <>{i ? ' · ' : ''}<a href={a.url} target="_blank" rel="noopener" class="text-accent hover:underline">{a.name}</a> ({a.use})</>)}.</p>
-    <p class="mt-2 text-sm text-muted"><MonitorPlay size={14} class="inline" /> Full-course backups: <a class="text-accent hover:underline" href="https://youtu.be/B31LgI4Y4DQ" target="_blank" rel="noopener">Data Structures in C/C++ (freeCodeCamp/mycodeschool)</a> · <a class="text-accent hover:underline" href="https://youtu.be/RBSGKlAvoiM" target="_blank" rel="noopener">Data Structures Easy→Advanced (freeCodeCamp/William Fiset)</a>.</p>
+    <p class="mt-3 text-sm text-muted">
+      Alternates:{' '}
+      {alternates.map((a, i) => (
+        <>
+          {i ? ' · ' : ''}
+          <a href={a.url} target="_blank" rel="noopener" class="text-accent hover:underline">
+            {a.name}
+          </a>{' '}
+          ({a.use})
+        </>
+      ))}
+      .
+    </p>
+    <p class="mt-2 text-sm text-muted">
+      <MonitorPlay size={14} class="inline" /> Full-course backups:{' '}
+      <a
+        class="text-accent hover:underline"
+        href="https://youtu.be/B31LgI4Y4DQ"
+        target="_blank"
+        rel="noopener"
+      >
+        Data Structures in C/C++ (freeCodeCamp/mycodeschool)
+      </a>{' '}
+      ·{' '}
+      <a
+        class="text-accent hover:underline"
+        href="https://youtu.be/RBSGKlAvoiM"
+        target="_blank"
+        rel="noopener"
+      >
+        Data Structures Easy→Advanced (freeCodeCamp/William Fiset)
+      </a>
+      .
+    </p>
 
-    <h2 class="mt-10 flex items-center gap-2 text-xl font-semibold"><BookMarked size={20} /> References</h2>
+    <h2 class="mt-10 flex items-center gap-2 text-xl font-semibold">
+      <BookMarked size={20} /> References
+    </h2>
     <ul class="mt-3 grid gap-2">
       {refs.map(([t, d, u]) => (
-        <li class="text-sm">{u ? <a href={u} target="_blank" rel="noopener" class="font-medium text-accent hover:underline">{t}</a> : <b>{t}</b>}: <span class="text-muted">{d}</span></li>
+        <li class="text-sm">
+          {u ? (
+            <a
+              href={u}
+              target="_blank"
+              rel="noopener"
+              class="font-medium text-accent hover:underline"
+            >
+              {t}
+            </a>
+          ) : (
+            <b>{t}</b>
+          )}
+          : <span class="text-muted">{d}</span>
+        </li>
       ))}
     </ul>
-    <p class="mt-4 text-sm text-muted">The class slides (in Python) are linked as "Original slides" on each chapter page, with credit to their authors. All code on this site is rewritten in C++.</p>
 
     <h2 class="mt-10 text-xl font-semibold">Your data</h2>
-    <p class="mt-2 text-muted">No account, no server. Progress, quiz scores, notes and bookmarks are saved in your browser's localStorage. Use <a href="/progress" class="text-accent hover:underline">Progress → Export</a> to back up or move devices. If your browser blocks storage, the site still works, but forgets when you close the tab.</p>
+    <p class="mt-2 text-muted">
+      No account, no server. Progress, quiz scores, notes and bookmarks are saved in your browser's
+      localStorage. Use{' '}
+      <a href="/progress" class="text-accent hover:underline">
+        Progress → Export
+      </a>{' '}
+      to back up or move devices. If your browser blocks storage, the site still works, but forgets
+      when you close the tab.
+    </p>
   </article>
 </Base>

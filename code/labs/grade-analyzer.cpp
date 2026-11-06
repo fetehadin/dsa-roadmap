@@ -1,4 +1,4 @@
-// Lab 1: Grade Analyzer (solution)
+// Lab: Grade Analyzer (solution)
 #include <iostream>
 #include <string>
 using namespace std;

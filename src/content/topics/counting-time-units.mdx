@@ -1,10 +1,9 @@
 ---
 title: Counting Time Units
-chapter: 2
-order: 3
-time: 50
+chapter: 1
+order: 7
 difficulty: medium
-summary: Turn code into a formula T(n) using the instructor's counting rules. Loops become sums, and nested loops multiply.
+summary: Turn code into a formula T(n) using a simple set of counting rules. Loops become sums, and nested loops multiply.
 keywords: [time units, T(n), counting rules, summation, loops, nested loops]
 viz:
   - id: time-units
@@ -20,7 +19,7 @@ complexity:
     - ['Single loop `for(i=0;i<n;i++) k=k+1; cout<<k;`', 'T(n) = 4n + 3 → O(n)']
     - ['Nested n × n loop with `k++`', 'T(n) = 3n² + 4n + 3 → O(n²)']
     - ['Loop where i doubles (`i *= 2`)', '≈ log₂ n iterations → O(log n)']
-  note: The exact T(n) depends on the counting rules; the **growth rate** (Big-O) does not. Use your instructor's rules on the exam.
+  note: The exact T(n) depends on the counting rules; the **growth rate** (Big-O) does not. Different books count slightly differently, so state your rules.
 videos:
   - id: 9TlHvipP5yA
     why: Abdul Bari counts statements in loops step by step, the same skill as here.
@@ -36,7 +35,7 @@ exam:
     - 'For `if/else`, adding both branches. Count the condition **plus the larger branch only**.'
     - Forgetting the initialization of the loop (1 unit, done once).
 quiz:
-  - q: 'Using the course rules, T(n) for `for(i=0;i<n;i++) k=k+1; cout<<k;` is:'
+  - q: 'Using the counting rules above, T(n) for `for(i=0;i<n;i++) k=k+1; cout<<k;` is:'
     options: ['3n + 2', '4n + 3', '4n + 2', '2n + 3']
     answer: 1
     explain: 1 (init) + (n+1) tests + n increments + 2n (add + assign) + 1 (cout) = 4n + 3.
@@ -59,7 +58,7 @@ quiz:
 practice:
   trace:
     task: |
-      Compute T(n) with the course rules:
+      Compute T(n) with the counting rules:
       ```cpp
       int sum = 0;
       for (int i = 0; i < n; i++)
@@ -91,7 +90,7 @@ checklist:
   - I can get T(n) = 4n + 3 for the standard single loop without notes.
   - I can count a nested loop and write it as a summation.
   - I can simplify Σ1, Σi and Σi² sums.
-slides: []
+
 ---
 
 Instead of timing code with a stopwatch, we **count operations**. Each simple operation costs **1 time unit**. Then T(n), the total as a function of input size n, tells us how the work grows.

@@ -1,8 +1,7 @@
 ---
 title: Bubble Sort
 chapter: 3
-order: 2
-time: 35
+order: 4
 difficulty: easy
 summary: Compare neighbours and swap them if they are out of order. After each pass the biggest remaining item has "bubbled" to the end.
 keywords: [sorting, swap, adjacent, early exit]
@@ -85,7 +84,7 @@ practice:
     - name: Sort an Array (try bubble sort first, see it time out)
       url: https://leetcode.com/problems/sort-an-array/
       level: medium
-      hint: Bubble sort is correct but O(n²) and will hit the time limit. That is the lesson. Come back after Chapter 8 with merge sort.
+      hint: Bubble sort is correct but O(n²) and will hit the time limit. That is the lesson. Come back with merge sort, later in this phase.
     - name: Move Zeroes
       url: https://leetcode.com/problems/move-zeroes/
       level: easy
@@ -100,7 +99,7 @@ checklist:
   - I can write bubble sort from memory, including the swapped flag.
   - I can explain why the best case is O(n) and the worst case is O(n²).
   - I can explain why bubble sort is stable.
-slides: []
+
 ---
 
 Imagine bubbles in a glass of water: the **big ones rise to the top**. Bubble sort walks along the array comparing each pair of neighbours. If the left one is bigger, they swap. By the end of one pass, the largest item has floated to the last position, and it never moves again.
@@ -113,7 +112,7 @@ So each pass fixes one more item at the end:
 
 ### The early-exit trick
 
-If a whole pass makes **no swaps**, every neighbour pair is already in order, so the whole array is sorted. The `swapped` flag lets us stop right there. That is the "avoid late loop termination" idea from Chapter 2, put into practice.
+If a whole pass makes **no swaps**, every neighbour pair is already in order, so the whole array is sorted. The `swapped` flag lets us stop right there. That is the "avoid late loop termination" idea from Phase 1, put into practice.
 
 ### Why the inner loop shrinks
 

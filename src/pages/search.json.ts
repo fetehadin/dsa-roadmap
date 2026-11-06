@@ -16,14 +16,41 @@ export const GET: APIRoute = async () => {
       sub: chapterById(t.data.chapter).title,
       text: [t.data.summary, ...t.data.keywords].join(' '),
     })),
-    ...glossary.map((g) => ({ title: g.term, url: `/glossary#${slug(g.term)}`, type: 'Glossary', sub: g.def })),
-    ...chapters.filter((c) => c.id !== 'levelup').map((c) => ({ title: `Cheat sheet: Ch ${c.num} ${c.short}`, url: `/cheatsheets/${c.slug}`, type: 'Cheat sheet', sub: c.title })),
-    ...labs.map((l) => ({ title: l.data.title, url: `/labs/${l.id}`, type: 'Lab', sub: l.data.summary })),
-    { title: 'Big-O master table', url: '/big-o', type: 'Cheat sheet', sub: 'Every operation and sort on one page' },
-    { title: 'Exam mode', url: '/exam', type: 'Page', sub: 'Random timed quiz across chapters' },
+    ...glossary.map((g) => ({
+      title: g.term,
+      url: `/glossary#${slug(g.term)}`,
+      type: 'Glossary',
+      sub: g.def,
+    })),
+    ...chapters
+      .filter((c) => c.id !== 'levelup')
+      .map((c) => ({
+        title: `Cheat sheet: Phase ${Number(c.num)} ${c.title}`,
+        url: `/cheatsheets/${c.slug}`,
+        type: 'Cheat sheet',
+        sub: c.title,
+      })),
+    ...labs.map((l) => ({
+      title: l.data.title,
+      url: `/labs/${l.id}`,
+      type: 'Lab',
+      sub: l.data.summary,
+    })),
+    {
+      title: 'Big-O master table',
+      url: '/big-o',
+      type: 'Cheat sheet',
+      sub: 'Every operation and sort on one page',
+    },
+    { title: 'Test yourself', url: '/exam', type: 'Page', sub: 'Random timed quiz across phases' },
     { title: 'Progress dashboard', url: '/progress', type: 'Page', sub: 'Export, import, reset' },
-    { title: 'How to use this guide', url: '/guide', type: 'Page', sub: 'Study plan and video channels' },
-    { title: 'Glossary', url: '/glossary', type: 'Page', sub: 'Every term in the course' },
+    {
+      title: 'How to use this guide',
+      url: '/guide',
+      type: 'Page',
+      sub: 'How to study with this roadmap',
+    },
+    { title: 'Glossary', url: '/glossary', type: 'Page', sub: 'Every term on the roadmap' },
   ];
   return new Response(JSON.stringify(items), { headers: { 'Content-Type': 'application/json' } });
 };
