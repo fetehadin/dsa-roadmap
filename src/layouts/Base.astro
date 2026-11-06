@@ -3,7 +3,16 @@ import { FONTS_URL, googleFonts } from '@/lib/fonts';
 import '@/styles/global.css';
 import { catalog } from '@/lib/catalog';
 import { phases, CORE_RULE } from '@/data/chapters';
-import { Search, Sun, Moon, Menu, Keyboard } from '@lucide/astro';
+import {
+  Search,
+  Sun,
+  Moon,
+  Menu,
+  Keyboard,
+  ArrowUpRight,
+  MessageCircle,
+  Star,
+} from '@lucide/astro';
 
 interface Props {
   title: string;
@@ -189,6 +198,84 @@ const nav = [
     </main>
 
     <footer class="border-t border-line">
+      <section class="mx-auto max-w-6xl px-4 pt-10" aria-labelledby="dev-title">
+        <div class="card flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:p-6">
+          <img
+            src="/dev-avatar.webp"
+            alt="Fetehadin Negash"
+            width="80"
+            height="80"
+            loading="lazy"
+            decoding="async"
+            class="size-16 shrink-0 rounded-2xl object-cover ring-1 ring-line sm:size-20"
+          />
+          <div class="min-w-0 flex-1">
+            <p class="eyebrow">Meet the dev</p>
+            <h2 id="dev-title" class="font-display mt-1 text-xl font-bold text-fg">
+              Hey, I'm Fetehadin 👋
+            </h2>
+            <p class="mt-1.5 max-w-xl text-sm text-muted">
+              Full-stack engineer. I built this so DSA is something you <em>see</em>, not just
+              memorize. Found a bug or want a topic next? Tell me. I read every message.
+            </p>
+            <ul class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm" aria-label="Find me online">
+              <li>
+                <a
+                  href="https://github.com/fetehadin"
+                  target="_blank"
+                  rel="noopener me"
+                  class="inline-flex min-h-11 items-center hover:text-fg"
+                >
+                  GitHub
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://www.linkedin.com/in/fetehadin/"
+                  target="_blank"
+                  rel="noopener me"
+                  class="inline-flex min-h-11 items-center hover:text-fg"
+                >
+                  LinkedIn
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://x.com/fetebuilds"
+                  target="_blank"
+                  rel="noopener me"
+                  class="inline-flex min-h-11 items-center hover:text-fg"
+                >
+                  X @fetebuilds
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://github.com/fetehadin/dsa-roadmap"
+                  target="_blank"
+                  rel="noopener"
+                  class="inline-flex min-h-11 items-center gap-1 hover:text-fg"
+                >
+                  <Star size={14} /> Star the project
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="flex shrink-0 flex-col gap-2 sm:w-48">
+            <a
+              href="https://fetehadin.com"
+              target="_blank"
+              rel="noopener me"
+              class="btn btn-primary min-h-11"
+            >
+              See my work <ArrowUpRight size={16} />
+            </a>
+            <a href="https://t.me/Fete64" target="_blank" rel="noopener" class="btn min-h-11">
+              <MessageCircle size={16} /> Send feedback
+            </a>
+          </div>
+        </div>
+      </section>
       <div class="mx-auto grid max-w-6xl gap-8 px-4 py-10 text-sm text-muted sm:grid-cols-[2fr_1fr_1fr_1fr]">
         <div class="grid content-start gap-2">
           <div class="font-mono font-semibold text-fg">dsa/roadmap</div>
@@ -221,7 +308,7 @@ const nav = [
             Glossary
           </a>
           <a href="/exam" class="hover:text-fg">
-            Exam mode
+            Test yourself
           </a>
           <a href="/labs" class="hover:text-fg">
             Labs
