@@ -1,0 +1,4 @@
+middle: 4
+2nd from end: 6
+cycle? no
+after linking 7 -> 3, cycle? yes

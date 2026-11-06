@@ -1,0 +1,86 @@
+---
+title: Sliding Window
+chapter: levelup
+order: 2
+time: 45
+difficulty: medium
+summary: Keep a running answer for a contiguous range, adding the item that enters and removing the one that leaves, instead of recomputing every window.
+keywords: [sliding window, subarray, substring, fixed window, variable window, interview pattern]
+viz:
+  - id: sliding-window
+    title: Fixed-size window sum
+    caption: Each slide adds one number and subtracts one. Try k = 1 and k = n to see the edges.
+code:
+  - file: sliding-window
+    title: sliding-window.cpp
+complexity:
+  rows:
+    - ['recompute every window', 'O(n·k)']
+    - ['fixed sliding window', 'O(n)']
+    - ['variable window (grow/shrink)', 'O(n): each item enters and leaves once']
+  space: O(1), or O(alphabet) for a frequency table
+  note: Sliding windows work on **contiguous** ranges (subarrays, substrings), not subsequences.
+videos:
+  - id: y2d0VHdvfdc
+    why: Fixed vs variable windows in 7 minutes.
+  - id: '1pkOgXD63yU'
+    why: NeetCode applies the window idea to Best Time to Buy and Sell Stock.
+exam:
+  questions:
+    - What is the difference between a fixed and a variable sliding window?
+    - Why is the variable window still O(n) even though it has a nested while loop?
+  mistakes:
+    - Off-by-one when dropping the old item. It is `a[r − k]`, not `a[r − k + 1]`.
+    - Using a window on a problem that asks for a subsequence (not contiguous).
+    - Forgetting to update the answer after shrinking.
+quiz:
+  - q: '`2 1 5 1 3 2`, k = 3. The window sums are…'
+    options: ['8, 7, 9, 6', '8, 7, 9, 6, 5', '3, 6, 6, 4', '8, 9']
+    answer: 0
+    explain: '2+1+5, 1+5+1, 5+1+3, 1+3+2.'
+  - q: Moving the window right by one costs…
+    options: ['O(k)', 'O(1)', 'O(n)', 'O(log n)']
+    answer: 1
+    explain: Add the new item, subtract the old one.
+  - q: Longest substring without repeats in `pwwkew`?
+    options: ['2', '3', '4', '6']
+    answer: 1
+    explain: '`wke`.'
+practice:
+  trace:
+    task: 'Max sum of k = 3 in `2 1 5 1 3 2 7 1`. List each window sum.'
+    solution: '8, 7, 9, 6, 12, 10 → best **12** (`3 2 7`).'
+  implement:
+    task: Find the length of the shortest subarray with sum ≥ S (all numbers positive).
+    hint: 'Grow `r`, adding to sum. While `sum >= S`, record `r − l + 1` and shrink from the left.'
+  problems:
+    - name: Best Time to Buy and Sell Stock
+      url: https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
+      level: easy
+      hint: Track the lowest price so far; the window is "buy day … today".
+    - name: Longest Substring Without Repeating Characters
+      url: https://leetcode.com/problems/longest-substring-without-repeating-characters/
+      level: medium
+      hint: This page's `longestUnique()`.
+    - name: Minimum Size Subarray Sum
+      url: https://leetcode.com/problems/minimum-size-subarray-sum/
+      level: medium
+      hint: Variable window. Shrink while the sum is big enough.
+checklist:
+  - I can write a fixed-size window in O(n).
+  - I can write a variable window that grows and shrinks.
+  - I can explain why both are O(n).
+slides: [100Y79piELHmtZmLks9c4LYAw5htoh3OWTBmwSaQauzw]
+---
+
+A **train window**: as the train moves, one new tree appears on the right and one old tree disappears on the left. You don't need to look at the whole view again.
+
+### Fixed window (size k)
+
+Compute the first window's sum once. Then for each step: `sum += a[r] − a[r − k]`. That is **O(n)** instead of O(n·k).
+
+### Variable window
+
+Two pointers `l` and `r` mark the window. Move `r` to **grow** it. Whenever the window breaks a rule (a repeated letter, a sum too big), move `l` to **shrink** it until it is valid again. Each index enters once and leaves once, so the total is **O(n)**, even with the inner `while`.
+
+> Built on arrays (Ch1) and two pointers. Not on the exam.

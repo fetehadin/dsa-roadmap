@@ -1,0 +1,91 @@
+---
+title: Two Pointers
+chapter: levelup
+order: 1
+time: 40
+difficulty: medium
+summary: Two indices that move toward each other (or in the same direction) to replace an O(n²) pair search with one O(n) pass.
+keywords: [two pointers, pair sum, sorted array, reverse, palindrome, interview pattern]
+viz:
+  - id: two-pointers
+    title: Pair with a target sum
+    caption: Each step throws away one end. The dimmed items can never be part of the answer.
+code:
+  - file: two-pointers
+    title: two-pointers.cpp
+complexity:
+  rows:
+    - ['brute force (all pairs)', 'O(n²)']
+    - ['two pointers on sorted data', 'O(n)']
+    - ['sort first, then two pointers', 'O(n log n)']
+  space: O(1)
+  note: The opposite-ends version needs **sorted** data so you know which pointer to move.
+videos:
+  - id: QzZ7nmouLTI
+    why: The pattern and its variants in 7 minutes.
+  - id: cQ1Oz4ckceM
+    why: NeetCode solves Two Sum II, the textbook two-pointer problem.
+exam:
+  questions:
+    - Why does the pair-sum algorithm only work on sorted input?
+    - Why is moving `l` right the only sensible move when the sum is too small?
+    - Name three problems solved with two pointers.
+  mistakes:
+    - Using `l <= r` and pairing an item with itself.
+    - Running opposite-end two pointers on unsorted data.
+    - Moving both pointers at once and skipping valid pairs.
+quiz:
+  - q: 'Array `1 3 4 6 8 11 14`, target 15. First pair checked?'
+    options: ['1 + 3', '1 + 14', '6 + 8', '3 + 11']
+    answer: 1
+    explain: Start at both ends.
+  - q: sum < target. Which pointer moves?
+    options: ['r moves left', 'l moves right', 'both', 'neither']
+    answer: 1
+    explain: Only a bigger left value can increase the sum.
+  - q: Time complexity of the two-pointer pair search?
+    options: ['O(1)', 'O(n)', 'O(n log n)', 'O(n²)']
+    answer: 1
+    explain: Each step moves one pointer, so at most n steps.
+practice:
+  trace:
+    task: 'Find a pair summing to 10 in `1 2 4 5 7 9` with two pointers. List each (l, r, sum).'
+    solution: |
+      - l=0, r=5: 1 + 9 = 10 → **found** on the first step.
+
+      Try target 11: (0,5) 10 < 11 → l=1 · (1,5) 2 + 9 = 11 → found.
+  implement:
+    task: Check whether a string is a palindrome, skipping non-letters, using two pointers.
+    hint: '`l` from the start, `r` from the end. Skip characters that are not `isalnum`, compare `tolower`, move both inward.'
+  problems:
+    - name: Two Sum II - Input Array Is Sorted
+      url: https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/
+      level: medium
+      hint: This page's code, returning 1-based indices.
+    - name: Valid Palindrome
+      url: https://leetcode.com/problems/valid-palindrome/
+      level: easy
+      hint: Opposite-end pointers, skipping non-alphanumeric characters.
+    - name: Container With Most Water
+      url: https://leetcode.com/problems/container-with-most-water/
+      level: medium
+      hint: Start wide. Always move the shorter wall; moving the taller one can never help.
+checklist:
+  - I can explain why two pointers turns O(n²) into O(n).
+  - I can solve pair-sum on a sorted array.
+  - I can recognise when a problem fits the pattern.
+slides: [1pobcKAS8OXWsGtVvfPhJAXOm8zU_FD-0oBI8vhQ90Gc]
+---
+
+Two people search a **sorted bookshelf** for two books whose prices add up to 15 birr. One starts at the cheap end, the other at the expensive end. Too expensive? The person at the expensive end steps in. Too cheap? The person at the cheap end steps in. They never need to go back.
+
+### Why it works
+
+The array is sorted. If `a[l] + a[r]` is **too small**, then `a[l]` paired with anything left of `r` is even smaller, so `a[l]` is useless: move `l` right. If it is **too big**, `a[r]` is useless: move `r` left. Every step discards one item, so the search is **O(n)** instead of checking all **n²** pairs.
+
+### Two flavours
+
+- **Opposite ends** (`l = 0`, `r = n − 1`, move inward): pair sums, reversing, palindromes, container with most water.
+- **Same direction** (a slow write pointer and a fast read pointer): removing duplicates in place, moving zeros. Fast & slow pointers on linked lists are the same idea.
+
+> Built on Chapter 3 (sorting and binary search thinking). Not on the exam.

@@ -1,0 +1,91 @@
+---
+title: Fast & Slow Pointers
+chapter: levelup
+order: 4
+time: 40
+difficulty: medium
+summary: Two pointers moving through a linked list at different speeds find the middle, the n-th node from the end, and cycles (Floyd's algorithm) in one pass with O(1) space.
+keywords: [fast and slow pointers, tortoise and hare, Floyd, cycle detection, middle of linked list, nth from end]
+viz:
+  - id: fast-slow
+    title: Tortoise and hare
+    caption: Find the middle, then detect a cycle, then find the n-th node from the end.
+code:
+  - file: fast-slow
+    title: fast-slow.cpp
+complexity:
+  rows:
+    - ['middle node', 'O(n)']
+    - ['n-th from end', 'O(n), one pass']
+    - ['cycle detection', 'O(n)']
+  space: O(1)
+  note: The obvious alternatives (count first, or store visited nodes in a set) need two passes or O(n) memory.
+videos:
+  - id: 'b139yf7Ik-E'
+    why: All the fast/slow variants in 6 minutes.
+  - id: gBTe7lFR3vc
+    why: NeetCode explains why Floyd's tortoise and hare must meet inside a cycle.
+  - id: A2_ldqM4QcY
+    why: Middle of the Linked List, solved and explained in 5 minutes.
+exam:
+  questions:
+    - Why does `fast` meeting `slow` prove there is a cycle?
+    - For an even-length list, which middle does the loop return?
+  mistakes:
+    - Checking only `fast->next` and not `fast` first (null dereference).
+    - In n-th from end, moving the lead pointer n − 1 steps instead of n.
+quiz:
+  - q: 'List `1 2 3 4 5 6 7`. Where is slow when fast stops?'
+    options: ['3', '4', '5', '7']
+    answer: 1
+    explain: Fast visits 1, 3, 5, 7; slow visits 1, 2, 3, 4.
+  - q: 'List `1 2 3 4 5 6`. middle() returns…'
+    options: ['3', '4', '6', 'nullptr']
+    answer: 1
+    explain: This loop returns the second middle on even lengths.
+  - q: Why must fast and slow meet if there is a cycle?
+    options: ['Luck', 'Inside the loop, fast gains exactly one node per step, so the gap shrinks to 0', 'They start together', 'The list is sorted']
+    answer: 1
+    explain: The gap can't jump over 0 because it shrinks by 1 each step.
+practice:
+  trace:
+    task: 'List `1 2 3 4 5 6 7`. Find the 2nd node from the end with a lead pointer. Show both pointers each step.'
+    solution: |
+      Move lead 2 steps → lead at 3, trail at 1.
+      Then step both: (4,2) (5,3) (6,4) (7,5) (null,6). Answer: **6**.
+  implement:
+    task: Return the node where a cycle begins (Linked List Cycle II).
+    hint: After slow and fast meet, move one pointer back to head. Step both one at a time; they meet at the cycle's start.
+  problems:
+    - name: Middle of the Linked List
+      url: https://leetcode.com/problems/middle-of-the-linked-list/
+      level: easy
+      hint: This page's `middle()`.
+    - name: Linked List Cycle
+      url: https://leetcode.com/problems/linked-list-cycle/
+      level: easy
+      hint: Floyd. Check `fast && fast->next` in the loop condition.
+    - name: Remove Nth Node From End of List
+      url: https://leetcode.com/problems/remove-nth-node-from-end-of-list/
+      level: medium
+      hint: Use a dummy node and stop the trail one node early so you can unlink.
+    - name: Linked List Cycle II
+      url: https://leetcode.com/problems/linked-list-cycle-ii/
+      level: medium
+      hint: Meet, reset one pointer to head, then walk both at speed 1.
+checklist:
+  - I can find the middle of a linked list in one pass.
+  - I can find the n-th node from the end in one pass.
+  - I can detect a cycle with Floyd's algorithm and explain why it works.
+slides: [1UbdePhTxVSLqzw-OPSKJiLvqI8pvdHGJMEnOGhzKN38]
+---
+
+Two runners on a track: the **hare** runs twice as fast as the **tortoise**.
+
+- On a **straight road**, when the hare reaches the finish, the tortoise is exactly **halfway**. That finds the **middle** of a linked list.
+- On a **circular track**, the hare eventually **laps** the tortoise and they meet. That detects a **cycle**.
+- Give one runner an **n-step head start** at the same speed: when the leader finishes, the other is **n from the end**.
+
+All three need only two pointers: **O(1) extra space**, one pass.
+
+> Built on Chapter 4 (linked lists). Not on the exam.

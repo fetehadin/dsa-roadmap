@@ -1,0 +1,107 @@
+---
+title: Monotonic Stack
+chapter: levelup
+order: 5
+time: 50
+difficulty: hard
+summary: A stack kept in sorted (decreasing) order answers "next greater element" and "how far away is it" for every index in one O(n) pass.
+keywords: [monotonic stack, next greater element, daily temperatures, span, circular array, interview pattern]
+viz:
+  - id: monotonic-stack
+    title: Decreasing stack on 2, 1, 3, 5, 6, 1
+    caption: Each number pops everything smaller than itself and becomes their answer. Watch the span row fill in.
+code:
+  - file: monotonic-stack
+    title: monotonic-stack.cpp
+complexity:
+  rows:
+    - ['brute force (scan right from each i)', 'O(n²)']
+    - ['monotonic stack', 'O(n): each index pushed and popped once']
+  space: O(n)
+  note: 'Pop on `<` and equal values do **not** answer each other; pop on `<=` and they do. For circular arrays, loop **twice** (i from 0 to 2n − 1, index i % n), pushing only in the first lap.'
+videos:
+  - id: Dq_ObZwTY_Q
+    why: The data structure itself, explained in under 6 minutes.
+  - id: cTBiBSnjO3c
+    why: NeetCode's Daily Temperatures, the span version of this page.
+exam:
+  questions:
+    - Why is the monotonic stack O(n) despite the nested while loop?
+    - How does the answer change if you pop on `<=` instead of `<`?
+    - How do you handle a circular array?
+  mistakes:
+    - Storing values instead of indices, which loses the span (distance).
+    - Pushing during the second lap of a circular array.
+    - Forgetting that items left on the stack at the end have no answer (−1).
+quiz:
+  - q: '`2 1 3 5 6 1`: next greater element of index 1 (value 1)?'
+    options: ['2', '3', '5', '-1']
+    answer: 1
+    explain: The first bigger value to its right is 3.
+  - q: Span (distance) for index 0 (value 2)?
+    options: ['1', '2', '3', '0']
+    answer: 1
+    explain: 3 is at index 2, which is 2 − 0 = 2 steps away.
+  - q: 'Circular version: next greater for the last 1?'
+    options: ['-1', '2', '3', '6']
+    answer: 1
+    explain: Wrapping around, the first bigger value is the 2 at index 0.
+practice:
+  trace:
+    task: 'Run next-greater on `2 1 3 5 6 1`. Write the stack (as values) after each i.'
+    solution: |
+      - i0: `[2]` · i1: `[2 1]`
+      - i2: 3 pops 1 (ans 3) and 2 (ans 3) → `[3]`
+      - i3: pops 3 (ans 5) → `[5]` · i4: pops 5 (ans 6) → `[6]`
+      - i5: `[6 1]`, leftovers get −1
+
+      Answer: `3 3 5 6 -1 -1`, spans `2 1 1 1 0 0`.
+  implement:
+    task: Compute the **previous smaller** element for every index.
+    hint: Scan left to right with an increasing stack. Pop while the top is ≥ a[i]; the top that remains (if any) is the answer.
+  problems:
+    - name: Daily Temperatures
+      url: https://leetcode.com/problems/daily-temperatures/
+      level: medium
+      hint: This page's span version.
+    - name: Car Fleet
+      url: https://leetcode.com/problems/car-fleet/
+      level: medium
+      hint: Sort by position descending; keep a stack of arrival times; a slower car ahead absorbs the faster ones behind.
+    - name: Remove K Digits
+      url: https://leetcode.com/problems/remove-k-digits/
+      level: medium
+      hint: Increasing stack of digits. Pop a bigger digit while k > 0.
+    - name: Sum of Subarray Minimums
+      url: https://leetcode.com/problems/sum-of-subarray-minimums/
+      level: medium
+      hint: For each i, find how far it is the minimum to the left and right (previous/next smaller). Use `<` on one side and `<=` on the other to avoid double counting.
+checklist:
+  - I can run a monotonic stack by hand.
+  - I can compute next greater and its distance.
+  - I can handle equal values and circular arrays.
+slides: [1RrPRDycXJ0Fh3djRVLo2bzNNHx4ljGC4IDvWyIVOvIM]
+---
+
+People stand in a line, all looking right. For each person, who is the **first taller person** they can see?
+
+Walk the line left to right with a **stack of people still waiting** for a taller person. Keep it **decreasing**: tallest at the bottom. When a new person arrives, every shorter person at the top of the stack has just found their answer: **pop** them and record it. Then push the newcomer.
+
+```cpp
+while (!st.empty() && a[st.top()] < a[i]) {
+    ans[st.top()] = a[i];          // next greater
+    span[st.top()] = i - st.top(); // how far away
+    st.pop();
+}
+st.push(i);
+```
+
+Each index is pushed once and popped at most once, so the whole thing is **O(n)**.
+
+- **Equal values**: with `<`, an equal height does not count as taller. Use `<=` if it should.
+- **Circular arrays**: loop `i` from 0 to 2n − 1 and use `i % n`, pushing only during the first lap.
+- **Store indices**, not values, so you can compute distances.
+
+Also see the **LeetCode monotonic problems**: Car Fleet, Remove K Digits, Sum of Subarray Minimums, 132 Pattern, Shortest Subarray with Sum ≥ K (monotonic **queue**).
+
+> Built on Chapter 5 (stacks). Not on the exam.

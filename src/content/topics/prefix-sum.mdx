@@ -1,0 +1,91 @@
+---
+title: Prefix Sum
+chapter: levelup
+order: 3
+time: 35
+difficulty: easy
+summary: Precompute running totals once in O(n), then answer any range-sum query with one subtraction in O(1).
+keywords: [prefix sum, cumulative sum, range sum query, subarray sum, interview pattern]
+viz:
+  - id: prefix-sum
+    title: Build the prefix array, then query
+    caption: After building, set pos = 1 and value = 4 to get sum(a[1..4]) from two cells.
+code:
+  - file: prefix-sum
+    title: prefix-sum.cpp
+complexity:
+  rows:
+    - ['build', 'O(n)']
+    - ['each range query', 'O(1)']
+    - ['q queries without prefix sums', 'O(n·q)']
+  space: O(n)
+  note: Using size n + 1 with `p[0] = 0` removes the special case for ranges that start at index 0.
+videos:
+  - id: yuws7YK0Yng
+    why: The whole pattern in 4 minutes.
+  - id: 'fFVZt-6sgyo'
+    why: NeetCode combines prefix sums with a hash map (Chapter 8) for Subarray Sum Equals K.
+exam:
+  questions:
+    - Build the prefix array of a given array and compute a range sum.
+    - Why is `p` one longer than `a`?
+  mistakes:
+    - 'Writing `p[r] − p[l]`. With the n + 1 layout it is `p[r + 1] − p[l]`.'
+    - Rebuilding the prefix array for every query.
+quiz:
+  - q: 'a = `3 1 4 1 5`. p = ?'
+    options: ['`3 4 8 9 14`', '`0 3 4 8 9 14`', '`0 3 1 4 1 5`', '`14 11 10 6 5`']
+    answer: 1
+    explain: p[0] = 0, then running totals.
+  - q: 'With that p, sum(a[1..3]) = ?'
+    options: ['p[3] − p[1] = 5', 'p[4] − p[1] = 6', 'p[4] − p[0] = 9', 'p[3] − p[0] = 8']
+    answer: 1
+    explain: 9 − 3 = 6 = 1 + 4 + 1.
+  - q: Range query cost after building?
+    options: ['O(1)', 'O(log n)', 'O(n)', 'O(n²)']
+    answer: 0
+    explain: One subtraction.
+practice:
+  trace:
+    task: 'a = `3 1 4 1 5 9 2`. Build p and compute sum(a[1..4]), sum(a[0..6]) and sum(a[5..5]).'
+    solution: |
+      p = `0 3 4 8 9 14 23 25`
+      - a[1..4] = p[5] − p[1] = 14 − 3 = **11**
+      - a[0..6] = p[7] − p[0] = **25**
+      - a[5..5] = p[6] − p[5] = **9**
+  implement:
+    task: Find the pivot index where the sum of the left side equals the sum of the right side.
+    hint: 'Total = p[n]. At index i: left = p[i], right = total − p[i + 1].'
+  problems:
+    - name: Range Sum Query - Immutable
+      url: https://leetcode.com/problems/range-sum-query-immutable/
+      level: easy
+      hint: Build p in the constructor; sumRange is one subtraction.
+    - name: Find Pivot Index
+      url: https://leetcode.com/problems/find-pivot-index/
+      level: easy
+      hint: Left sum vs total − left − a[i].
+    - name: Subarray Sum Equals K
+      url: https://leetcode.com/problems/subarray-sum-equals-k/
+      level: medium
+      hint: Count how many earlier prefix sums equal `current − k`, using an unordered_map.
+checklist:
+  - I can build a prefix-sum array.
+  - I can answer a range sum in O(1).
+  - I can combine prefix sums with a hash map.
+slides: [1ATUDfM_6uqhwTPe0O8vlifjT-yeVNOd3h_u4qxugfKA]
+---
+
+A **car odometer**. To know how far you drove between Adama and Hawassa, you don't add up every kilometre again. You subtract the odometer reading at Adama from the reading at Hawassa.
+
+A **prefix sum** array is that odometer: `p[i]` = sum of the first i items.
+
+```cpp
+p[0] = 0;
+p[i + 1] = p[i] + a[i];
+sum(a[l..r]) = p[r + 1] - p[l];
+```
+
+Building it is **O(n)**, once. After that, any range sum is **O(1)**. That is the time/space trade-off from Chapter 2: spend O(n) memory to save repeated work.
+
+> Built on arrays and time/space trade-offs (Ch1–2). Not on the exam.
