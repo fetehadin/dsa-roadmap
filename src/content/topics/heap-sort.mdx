@@ -1,0 +1,111 @@
+---
+title: Heap Sort
+chapter: 8
+order: 4
+time: 55
+difficulty: hard
+summary: Build a max-heap in the array, then repeatedly swap the root (the largest item) to the end and sift down. O(n log n) in every case, in-place.
+keywords: [heap sort, heap, max-heap, heapify, sift down, complete binary tree, priority queue]
+viz:
+  - id: heap-sort
+    title: Heap as tree and array
+    caption: Watch the same data as a tree and as an array. Build the heap, then extract the max again and again.
+code:
+  - file: heap-sort
+    title: heap-sort.cpp
+complexity:
+  rows:
+    - ['Build heap', 'O(n)']
+    - ['Each extract-max (swap + heapify)', 'O(log n)']
+    - ['Best / average / worst', 'O(n log n)']
+  space: O(1) iterative, O(log n) with recursive heapify
+  stable: false
+  inPlace: true
+  note: Heap sort combines merge sort's guaranteed O(n log n) with quick sort's in-place storage, but it is usually slower in practice.
+videos:
+  - id: HqPJF2L5h9U
+    why: Abdul Bari covers heaps, insert, delete, heapify and heap sort in one sitting.
+  - id: '2DmK_H7IdTo'
+    why: A 4-minute visual of the swap-and-heapify loop.
+exam:
+  questions:
+    - What is a max-heap? Why is it stored in an array?
+    - For index i, give the indices of its parent, left child and right child (0-based).
+    - 'Build a max-heap from `4, 10, 3, 5, 1, 8`. Show the array.'
+    - Trace two steps of heap sort after the heap is built.
+  mistakes:
+    - Using 1-based formulas (2i, 2i+1) with a 0-based array. With 0-based it is 2i+1 and 2i+2.
+    - Starting the build loop at i = 0 instead of n/2 − 1, going down to 0.
+    - Calling heapify on the whole array instead of the shrinking heap size `end`.
+    - Confusing a heap with a BST. In a heap, left and right children have no order between them.
+quiz:
+  - q: In a 0-based array heap, the children of index 2 are…
+    options: ['3 and 4', '4 and 5', '5 and 6', '2 and 3']
+    answer: 2
+    explain: 2·2 + 1 = 5 and 2·2 + 2 = 6.
+  - q: In a max-heap, the largest item is…
+    options: ['the last item', 'the root, a[0]', 'a leaf', 'anywhere']
+    answer: 1
+    explain: Every parent is ≥ its children, so the max sits at the top.
+  - q: 'Build a max-heap from `4, 10, 3, 5, 1, 8`. Result?'
+    options: ['`10 5 8 4 1 3`', '`10 8 5 4 3 1`', '`1 3 4 5 8 10`', '`10 4 8 5 1 3`']
+    answer: 0
+    explain: 'heapify(2): 8 up. heapify(1): 10 stays. heapify(0): 4 swaps with 10, then with 5.'
+  - q: Why can a heap be stored in an array with no pointers?
+    options: ['It is sorted', 'It is a complete binary tree, so there are no gaps', 'It is a BST', 'It has no children']
+    answer: 1
+    explain: Complete trees fill levels left to right, so index arithmetic finds parents and children.
+practice:
+  trace:
+    task: 'Heap sort `4, 10, 3, 5, 1, 8`. Write the max-heap, then the array after each of the first three swap-and-heapify steps.'
+    solution: |
+      - max-heap: `10 5 8 4 1 3`
+      - swap 10↔3, heapify size 5 → `8 5 3 4 1 | 10`
+      - swap 8↔1, heapify size 4 → `5 4 3 1 | 8 10`
+      - swap 5↔1, heapify size 3 → `4 1 3 | 5 8 10`
+  implement:
+    task: Write a min-heap priority queue with `push`, `pop` and `top` using a `vector<int>` (sift up on push, sift down on pop).
+    hint: 'Sift up: while `i > 0 && a[(i-1)/2] > a[i]`, swap with the parent and move up.'
+  problems:
+    - name: Kth Largest Element in an Array
+      url: https://leetcode.com/problems/kth-largest-element-in-an-array/
+      level: medium
+      hint: Keep a min-heap of size k (`priority_queue<int, vector<int>, greater<int>>`). Its top is the answer.
+    - name: Last Stone Weight
+      url: https://leetcode.com/problems/last-stone-weight/
+      level: easy
+      hint: A max-heap (`priority_queue<int>`). Pop two, push the difference.
+checklist:
+  - I can explain a max-heap and its array storage.
+  - I can build a heap by hand with heapify.
+  - I can trace heap sort's swap-and-heapify loop.
+  - I know heap sort is O(n log n), in-place and not stable.
+slides: []
+---
+
+A **sports knockout tournament**. The champion ends up at the top. Remove the champion and the runners-up compete again; the next winner rises to the top. Heap sort keeps finding "the champion" (the maximum) and moving it to the end.
+
+### What is a max-heap?
+
+A **complete binary tree** where every parent is **≥ its children**. So the largest item is always at the **root**.
+
+Because the tree is complete, it fits in an array with no gaps (0-based):
+
+| | index |
+| --- | --- |
+| left child of i | 2i + 1 |
+| right child of i | 2i + 2 |
+| parent of i | (i − 1) / 2 |
+
+### heapify (sift down)
+
+If a node is smaller than a child, swap it with the **larger** child and keep going down. O(log n).
+
+### Heap sort in two phases
+
+1. **Build** a max-heap: call heapify on every non-leaf, from `n/2 − 1` down to 0.
+2. **Extract** repeatedly: swap `a[0]` (the max) with the last item of the heap, shrink the heap by 1, and heapify the root.
+
+The sorted part grows from the right, just like selection sort, but each "find the max" costs **O(log n)** instead of O(n).
+
+> The same heap is a **priority queue** (`std::priority_queue`), used in Dijkstra's algorithm and schedulers.

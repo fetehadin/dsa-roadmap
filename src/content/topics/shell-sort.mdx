@@ -1,0 +1,95 @@
+---
+title: Shell Sort
+chapter: 8
+order: 1
+time: 35
+difficulty: medium
+summary: Insertion sort on items a gap apart, with the gap shrinking to 1. Far-away items move in big jumps, so the final insertion sort has little work left.
+keywords: [shell sort, gap, diminishing increment, insertion sort]
+viz:
+  - id: shell-sort
+    title: Shell sort gap passes
+    caption: Watch the gap go 4 → 2 → 1. By the last pass, almost nothing moves.
+code:
+  - file: shell-sort
+    title: shell-sort.cpp
+complexity:
+  rows:
+    - ['Best case (sorted)', 'O(n log n)']
+    - ['Average case', 'depends on the gaps; about O(n^1.5) for n/2, n/4, …']
+    - ['Worst case (gaps n/2, n/4, …)', 'O(n²)']
+  space: O(1)
+  stable: false
+  inPlace: true
+  note: Better gap sequences (Knuth's 1, 4, 13, 40, …) bring the worst case down to about O(n^1.5). The exam usually uses n/2, n/4, …, 1.
+videos:
+  - id: ddeLSDsYVp8
+    why: Short, clear explanation of why gaps help, with a hand trace.
+  - id: '9crZRd8GPWM'
+    why: A long, slow walkthrough with code, in the style of a class lecture.
+exam:
+  questions:
+    - 'Trace shell sort with gaps 4, 2, 1 on `35, 33, 42, 10, 14, 19, 27, 44`.'
+    - How is shell sort related to insertion sort? Why is it faster?
+    - Is shell sort stable? Give a reason.
+  mistakes:
+    - Comparing neighbours (gap 1) in every pass, which is just insertion sort.
+    - Forgetting that the last pass must use gap = 1, or the array may not be sorted.
+    - Claiming it is stable. Jumps over a gap can reorder equal keys.
+quiz:
+  - q: With n = 8 and gaps n/2, n/4, …, which gaps are used?
+    options: ['8, 4, 2, 1', '4, 2, 1', '3, 2, 1', '7, 3, 1']
+    answer: 1
+    explain: 8/2 = 4, then 2, then 1.
+  - q: The final pass of shell sort is…
+    options: ['a selection sort', 'a plain insertion sort (gap 1)', 'a merge', 'skipped if sorted']
+    answer: 1
+    explain: Gap 1 is ordinary insertion sort, but on an almost-sorted array, so it is fast.
+  - q: Is shell sort stable?
+    options: ['Yes', 'No']
+    answer: 1
+    explain: Equal items in different gap groups can swap order.
+practice:
+  trace:
+    task: 'Trace shell sort (gaps 4, 2, 1) on `35, 33, 42, 10, 14, 19, 27, 44`. Write the array after each gap.'
+    solution: |
+      - gap 4: `14 19 27 10 35 33 42 44`
+      - gap 2: `14 10 27 19 35 33 42 44`
+      - gap 1: `10 14 19 27 33 35 42 44`
+  implement:
+    task: Change the code to use Knuth's gaps (1, 4, 13, 40, …) and count comparisons for both versions on a reversed array of 100 items.
+    hint: 'Start with `gap = 1; while (gap < n / 3) gap = 3 * gap + 1;` and shrink with `gap /= 3`.'
+  problems:
+    - name: Sort an Array
+      url: https://leetcode.com/problems/sort-an-array/
+      level: medium
+      hint: Shell sort usually passes where bubble and insertion sort time out.
+    - name: Sort Colors
+      url: https://leetcode.com/problems/sort-colors/
+      level: medium
+      hint: Any sort works. Then try a one-pass solution with three pointers.
+checklist:
+  - I can explain shell sort as gapped insertion sort.
+  - I can trace the gap passes by hand.
+  - I know it is in-place and not stable.
+slides: []
+---
+
+Insertion sort is slow when a small item sits **far to the right**: it creeps left **one step at a time**. Shell sort fixes this by letting items **jump**.
+
+Picture lining up a class by height. First, compare students **4 places apart** and swap if needed. Then 2 apart. Finally, neighbours. After the big jumps, everyone is **nearly** in place, and the last neighbour pass (plain insertion sort) has almost nothing to do.
+
+### The algorithm
+
+```text
+for gap = n/2, n/4, ..., 1:
+    insertion sort, but compare a[j] with a[j - gap]
+```
+
+With gap = 4, the array is really four separate small lists (indices 0, 4 · 1, 5 · 2, 6 · 3, 7), and each one is insertion-sorted.
+
+### Why it works
+
+Insertion sort is **O(n)** on nearly sorted data. The large gaps make the data nearly sorted cheaply, so the final gap-1 pass is fast.
+
+Shell sort is **not stable**: a jump can carry an item past an equal one.

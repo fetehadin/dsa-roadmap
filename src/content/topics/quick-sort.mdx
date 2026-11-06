@@ -1,0 +1,110 @@
+---
+title: Quick Sort
+chapter: 8
+order: 2
+time: 55
+difficulty: hard
+summary: Pick a pivot, partition so smaller items go left and bigger items go right, then sort each side recursively. Average O(n log n), worst O(n²).
+keywords: [quick sort, pivot, partition, Lomuto, divide and conquer, recursion]
+viz:
+  - id: quick-sort
+    title: Quick sort partitioning
+    caption: Watch the "small" zone grow as items smaller than the pivot are swapped in. Then try a sorted array for the worst case.
+code:
+  - file: quick-sort
+    title: quick-sort.cpp
+complexity:
+  rows:
+    - ['Best case (pivot splits in half)', 'O(n log n)']
+    - ['Average case', 'O(n log n)']
+    - ['Worst case (sorted input, last-item pivot)', 'O(n²)']
+  space: O(log n) recursion on average, O(n) worst
+  stable: false
+  inPlace: true
+  note: Picking a **random** or **median-of-three** pivot makes the worst case very unlikely. In practice quick sort is often the fastest comparison sort.
+videos:
+  - id: '7h1s2SojIRw'
+    why: Abdul Bari's classic. Partition traced by hand with i and j.
+  - id: 'Hoixgm4-P4M'
+    why: A 4-minute visual recap.
+exam:
+  questions:
+    - Explain divide and conquer using quick sort.
+    - 'Partition `10, 80, 30, 90, 40, 50, 70` around the last item. Show i, j and every swap.'
+    - What is the worst case of quick sort? Which input causes it with a last-item pivot?
+    - Write partition() and quickSort() in C++.
+  mistakes:
+    - Recursing on `(lo, p)` instead of `(lo, p − 1)`. The pivot is already in place.
+    - Forgetting the final `swap(a[i + 1], a[hi])` that puts the pivot in place.
+    - Saying quick sort is always O(n log n).
+    - Calling it stable.
+quiz:
+  - q: After one partition, the pivot is…
+    options: ['at index 0', 'in its final sorted position', 'at the end', 'removed']
+    answer: 1
+    explain: Everything left is smaller and everything right is bigger, so it never moves again.
+  - q: Last-item pivot on an already sorted array gives…
+    options: ['O(n)', 'O(n log n)', 'O(n²)', 'O(log n)']
+    answer: 2
+    explain: Every partition peels off just one item, so n levels of O(n) work.
+  - q: 'Partition `3, 8, 2, 5, 4` around pivot 4 (Lomuto). Result?'
+    options: ['`3 2 4 5 8`', '`2 3 4 8 5`', '`3 2 4 8 5`', '`4 3 8 2 5`']
+    answer: 0
+    explain: '3 stays (i=0), 8 skipped, 2 swaps with 8 → `3 2 8 5 4`, 5 skipped. Then the pivot swaps with a[2] → `3 2 4 5 8`.'
+  - q: Quick sort is…
+    options: ['stable, not in-place', 'in-place, not stable', 'stable and in-place', 'neither']
+    answer: 1
+    explain: It only uses the recursion stack, but long-distance swaps break stability.
+practice:
+  trace:
+    task: 'Run quick sort (Lomuto, last-item pivot) on `10, 80, 30, 90, 40, 50, 70`. Write the array after each partition and the pivot''s final index.'
+    solution: |
+      - pivot 70 → index 4: `10 30 40 50 70 90 80`
+      - pivot 50 → index 3: `10 30 40 50 70 90 80`
+      - pivot 40 → index 2 (left side `10 30 40`)
+      - pivot 30 → index 1
+      - pivot 80 → index 5: `10 30 40 50 70 80 90`
+  implement:
+    task: Make quick sort pick a random pivot (swap a random item in [lo, hi] with a[hi] before partitioning). Compare comparison counts on a sorted array of 1,000.
+    hint: '`int r = lo + rand() % (hi - lo + 1); swap(a[r], a[hi]);` at the start of partition.'
+  problems:
+    - name: Sort an Array
+      url: https://leetcode.com/problems/sort-an-array/
+      level: medium
+      hint: A plain last-item pivot can time out on sorted tests. Use a random pivot.
+    - name: Kth Largest Element in an Array
+      url: https://leetcode.com/problems/kth-largest-element-in-an-array/
+      level: medium
+      hint: Quickselect. Partition once and recurse into only the side that holds index n − k.
+checklist:
+  - I can partition an array around a pivot by hand.
+  - I can write partition and quickSort from memory.
+  - I can explain best, average and worst case.
+  - I know quick sort is in-place and not stable.
+slides: []
+---
+
+A teacher wants to sort exam papers. She picks one paper, say **score 70**, as the **pivot**. Everyone below 70 goes on the left pile, everyone above on the right pile, and 70 sits in the middle, **already in its final place**. Then she does the same with each pile. Piles of one paper are done.
+
+That is **divide and conquer**: split the problem, solve the parts, and (here) there is nothing to combine.
+
+### Partition (Lomuto)
+
+Use the last item as the pivot. Keep `i` as the end of the "smaller than pivot" zone.
+
+```cpp
+int pivot = a[hi], i = lo - 1;
+for (int j = lo; j < hi; j++)
+    if (a[j] < pivot) swap(a[++i], a[j]);
+swap(a[i + 1], a[hi]);   // pivot into place
+return i + 1;
+```
+
+Then sort `lo .. p − 1` and `p + 1 .. hi`.
+
+### Best vs worst
+
+- **Good pivot** (near the median): each level halves the array, so log n levels of O(n) work gives **O(n log n)**.
+- **Bad pivot** (the smallest or largest every time, e.g. sorted input with a last-item pivot): each level removes one item, so n levels gives **O(n²)**.
+
+A random pivot makes the bad case very unlikely.

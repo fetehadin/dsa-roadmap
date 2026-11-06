@@ -1,0 +1,111 @@
+---
+title: Merge Sort
+chapter: 8
+order: 3
+time: 50
+difficulty: medium
+summary: Split the array in half, sort each half recursively, then merge the two sorted halves. Always O(n log n), stable, but needs O(n) extra space.
+keywords: [merge sort, merge, divide and conquer, stable, recursion]
+viz:
+  - id: merge-sort
+    title: Merge sort split and merge tree
+    caption: The array splits down to single items, then merges back up. Watch the two-finger merge at each level.
+code:
+  - file: merge-sort
+    title: merge-sort.cpp
+complexity:
+  rows:
+    - ['Best case', 'O(n log n)']
+    - ['Average case', 'O(n log n)']
+    - ['Worst case', 'O(n log n)']
+  space: O(n) for the temporary array
+  stable: true
+  inPlace: false
+  note: log₂ n levels of splitting, and each level does O(n) merging work, so **n log n** whatever the input.
+videos:
+  - id: mB5HXBb_HY8
+    why: Abdul Bari draws the full recursion tree and derives n log n.
+  - id: '4VqmGXwpLqc'
+    why: The 3-minute visual version.
+exam:
+  questions:
+    - 'Show the split and merge tree of merge sort on `38, 27, 43, 3, 9, 82, 10`.'
+    - Write the merge function. Why is merge sort O(n log n) in every case?
+    - Compare merge sort and quick sort (time, space, stability).
+  mistakes:
+    - Forgetting to copy the leftover items after one half runs out.
+    - Using `<` instead of `<=` in merge, which breaks stability.
+    - Base case `lo > hi` only. A single item (`lo == hi`) must also stop the recursion.
+    - Calling merge sort in-place.
+quiz:
+  - q: Merge `2 5 9` and `1 5 7`. Result and number of comparisons?
+    options: ['`1 2 5 5 7 9`, 5 comparisons', '`1 2 5 5 7 9`, 6 comparisons', '`2 5 9 1 5 7`, 0', '`1 2 5 7 9`, 5']
+    answer: 0
+    explain: 'Comparisons: 2/1, 2/5, 5/5, 9/5, 9/7. Then 9 is copied without comparing.'
+  - q: Worst-case time of merge sort?
+    options: ['O(n)', 'O(n log n)', 'O(n²)', 'O(log n)']
+    answer: 1
+    explain: The splits are always even, whatever the data.
+  - q: Main disadvantage of merge sort compared with quick sort?
+    options: ['Worse worst case', 'Needs O(n) extra memory', 'Not stable', 'Only works on linked lists']
+    answer: 1
+    explain: The merge step writes into a temporary array.
+practice:
+  trace:
+    task: 'Trace merge sort on `38, 27, 43, 3, 9, 82, 10`. Write every merge in the order it happens.'
+    solution: |
+      - merge [0..1]: `27 38`
+      - merge [2..3]: `3 43`
+      - merge [0..3]: `3 27 38 43`
+      - merge [4..5]: `9 82`
+      - merge [4..6]: `9 10 82`
+      - merge [0..6]: `3 9 10 27 38 43 82`
+  implement:
+    task: Count inversions (pairs i < j with a[i] > a[j]) by modifying merge sort.
+    hint: When you take from the right half, every item left in the left half is bigger, so add `mid − i + 1`.
+  problems:
+    - name: Merge Sorted Array
+      url: https://leetcode.com/problems/merge-sorted-array/
+      level: easy
+      hint: Merge from the back so you don't overwrite nums1.
+    - name: Sort List
+      url: https://leetcode.com/problems/sort-list/
+      level: medium
+      hint: Merge sort on a linked list. Find the middle with fast/slow pointers, split, sort, merge.
+checklist:
+  - I can draw the split/merge tree by hand.
+  - I can write merge() and mergeSort() from memory.
+  - I can explain why it is always O(n log n).
+  - I know it is stable but needs O(n) extra space.
+slides: []
+---
+
+Two people each hold a **sorted pile** of cards. To combine them, look at the top card of each pile, take the smaller one, and repeat. That **merge** is easy and takes one look per card.
+
+Merge sort uses that trick recursively:
+
+1. **Divide**: split the array into two halves.
+2. **Conquer**: sort each half (recursively, until a piece has 1 item, which is already sorted).
+3. **Combine**: merge the two sorted halves.
+
+### The merge
+
+```cpp
+while (i <= mid && j <= hi)
+    tmp.push_back(a[i] <= a[j] ? a[i++] : a[j++]);
+// then copy whatever is left of either half
+```
+
+Using `<=` takes the **left** item when two are equal, so equal items keep their order: merge sort is **stable**.
+
+### Why always n log n
+
+Halving n repeatedly reaches 1 after **log₂ n** levels. Each level merges n items in total. So the cost is **n log n**, for sorted, reversed or random data alike. The price is the **O(n) temporary array**.
+
+### Merge vs quick
+
+| | Merge sort | Quick sort |
+| --- | --- | --- |
+| Worst case | O(n log n) | O(n²) |
+| Extra space | O(n) | O(log n) |
+| Stable | yes | no |

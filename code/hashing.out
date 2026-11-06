@@ -1,0 +1,11 @@
+chaining:
+  0: 14 21
+  1:
+  2: 23 30
+  3:
+  4:
+  5: 12
+  6:
+linear probing: 14 21 23 30 _ 12 _ 
+search 21: chain found, probe index 1
+search 5:  chain missing, probe index -1

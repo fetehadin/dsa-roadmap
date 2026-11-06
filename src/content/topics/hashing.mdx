@@ -1,0 +1,113 @@
+---
+title: Hashing Basics
+chapter: 8
+order: 5
+time: 45
+difficulty: medium
+summary: A hash function turns a key into an array index, so search is O(1) on average. Collisions, separate chaining, linear probing and the load factor.
+keywords: [hashing, hash table, hash function, collision, chaining, linear probing, load factor, unordered_map]
+viz:
+  - id: hash-chain
+    title: Separate chaining
+    caption: Insert 21 and 28. Both land in bucket 0 with 14 and join its chain.
+  - id: hash-probe
+    title: Linear probing
+    caption: Insert 21; slot 0 is taken, so it probes to slot 1. Then search for a key that is missing.
+code:
+  - file: hashing
+    title: hashing.cpp
+complexity:
+  rows:
+    - ['search / insert / delete, average', 'O(1)']
+    - ['search / insert / delete, worst (all keys collide)', 'O(n)']
+  space: O(M + n)
+  note: 'Keep the **load factor** α = n / M low (under ~0.7 for probing) so chains and probe runs stay short.'
+videos:
+  - id: KyUTuwz_b7Q
+    why: Hash functions, collisions, chaining and open addressing, with clear diagrams.
+exam:
+  questions:
+    - What is hashing? What makes a good hash function?
+    - 'Insert 14, 23, 12, 21, 30 into a table of size 7 with h(k) = k mod 7 using (a) chaining, (b) linear probing.'
+    - What is a collision? Describe two ways to resolve it.
+    - What is the load factor and why does it matter?
+  mistakes:
+    - With linear probing, stopping a search at a slot holding a **different** key. Only an **empty** slot means "not found".
+    - Forgetting to wrap around with `% M` when probing.
+    - Claiming hashing is always O(1). The worst case is O(n).
+quiz:
+  - q: 'M = 7, h(k) = k % 7. Which two keys collide: 15, 22, 9, 31?'
+    options: ['15 and 22', '9 and 31', '15 and 31', 'none']
+    answer: 0
+    explain: 15 % 7 = 1 and 22 % 7 = 1. 9 → 2 and 31 → 3.
+  - q: Linear probing on a collision at index i tries…
+    options: ['i − 1', '(i + 1) % M, then (i + 2) % M, …', 'a random slot', 'a new table']
+    answer: 1
+    explain: Step forward one slot at a time, wrapping around.
+  - q: Average search cost in a well-sized hash table?
+    options: ['O(1)', 'O(log n)', 'O(n)', 'O(n log n)']
+    answer: 0
+    explain: The hash function jumps straight to (almost) the right place.
+  - q: The load factor is…
+    options: ['M / n', 'n / M', 'collisions / n', 'the hash of the key']
+    answer: 1
+    explain: Items stored divided by table size.
+practice:
+  trace:
+    task: 'M = 7, h(k) = k % 7. Insert 14, 23, 12, 21, 30 with (a) chaining and (b) linear probing.'
+    solution: |
+      (a) Chaining: bucket 0 → `14, 21` · bucket 2 → `23, 30` · bucket 5 → `12`
+
+      (b) Probing: 14 → 0 · 23 → 2 · 12 → 5 · 21 → 0 taken → **1** · 30 → 2 taken, 3 free → **3**
+
+      Table: `14 21 23 30 _ 12 _`
+  implement:
+    task: Write a string hash `h(s) = (sum of s[i] × 31^i) % M` and use it in a chained table of words. Then count word frequencies with `std::unordered_map<string, int>`.
+    hint: 'Compute it like Horner: `h = (h * 31 + c) % M` for each character.'
+  problems:
+    - name: Two Sum
+      url: https://leetcode.com/problems/two-sum/
+      level: easy
+      hint: For each x, look up `target − x` in an unordered_map of value → index.
+    - name: Contains Duplicate
+      url: https://leetcode.com/problems/contains-duplicate/
+      level: easy
+      hint: Insert into an unordered_set; if the key is already there, you found a duplicate.
+    - name: Valid Anagram
+      url: https://leetcode.com/problems/valid-anagram/
+      level: easy
+      hint: Count letters of s, subtract letters of t, check every count is 0.
+checklist:
+  - I can explain hashing with a hash function and a table.
+  - I can insert keys by hand with chaining and with linear probing.
+  - I can explain collisions and the load factor.
+  - I know average O(1) and worst O(n).
+slides: []
+---
+
+A **library** puts every book on a shelf chosen by the first letter of the author's surname. To find "Tamassia" you walk straight to shelf **T**. You don't search the whole library. That shelf rule is a **hash function**.
+
+### The idea
+
+A **hash function** `h(key)` turns a key into an index of an array (the **hash table**) of size M. A common simple one:
+
+```cpp
+int h(int key) { return key % M; }   // M is often a prime
+```
+
+Store the key at `table[h(key)]`; to search, look in the same place. **No scanning**, so it is O(1) on average.
+
+A good hash function is **fast** and **spreads keys evenly**.
+
+### Collisions
+
+Two keys can map to the same index (14 and 21 both give 0 when M = 7). Two classic fixes:
+
+- **Separate chaining**: each slot holds a **linked list**. Colliding keys join the list.
+- **Open addressing (linear probing)**: if the slot is taken, try the **next** one, `(h + 1) % M`, then `(h + 2) % M`, … until an empty slot. Searching stops at an **empty** slot.
+
+### Load factor
+
+**α = n / M**: how full the table is. As α grows, chains get longer and probe runs get longer. With probing, α must stay below 1 (keep it under about 0.7). With chaining, the table can still work above 1, but it gets slower.
+
+> In C++, `std::unordered_map` and `std::unordered_set` are hash tables.
