@@ -1,0 +1,5 @@
+forward:  5 10 20 30 
+backward: 30 20 10 5 
+after deletes: 5 10 
+tail is now 10
+empty: yes

@@ -1,0 +1,113 @@
+---
+title: Doubly Linked List
+chapter: 4
+order: 3
+time: 50
+difficulty: medium
+summary: Each node points both forward and backward. You can walk in both directions and delete a node knowing only its address, at the cost of one extra pointer per node.
+keywords: [doubly linked list, prev, next, tail, bidirectional]
+viz:
+  - id: dll
+    title: Doubly linked list playground
+    caption: Delete a middle node and watch two arrows change. Then print backward from the tail.
+code:
+  - file: doubly-linked-list
+    title: doubly-linked-list.cpp
+complexity:
+  rows:
+    - ['Insert / delete at front or end (with tail)', 'O(1)']
+    - ['Delete a node you already have a pointer to', 'O(1): no need to find prev']
+    - ['Search / delete by value', 'O(n)']
+    - ['Traverse backward', 'O(n): impossible in a singly list without extra memory']
+  space: O(n), with 2 pointers per node
+  note: 'The trade-off: more memory and more pointers to update (4 instead of 2 on insert), in exchange for two-way movement.'
+videos:
+  - id: JdQeNxWCguQ
+    why: A short intro to the node structure and insert/print in both directions.
+  - id: vcQIFT79_50
+    why: Revisit the singly version first if the pointer updates feel shaky.
+exam:
+  questions:
+    - Write the node structure of a doubly linked list.
+    - Write a function to insert a node at the front of a doubly linked list.
+    - Write a function to delete a given node from a doubly linked list.
+    - Compare singly and doubly linked lists.
+  mistakes:
+    - Updating `next` but forgetting `prev` (or the reverse). Each insert or delete touches **both** directions.
+    - 'Forgetting `cur->next->prev` when `cur->next` is `nullptr` (deleting the tail) → crash.'
+    - Not updating `tail` when deleting the last node.
+quiz:
+  - q: 'Deleting node `cur` from the middle requires:'
+    options: ['`cur->prev->next = cur->next;` only', '`cur->next->prev = cur->prev;` only', 'both of the above, then `delete cur`', '`delete cur` only']
+    answer: 2
+    explain: Both neighbours must skip over cur.
+  - q: Main advantage over a singly linked list?
+    options: ['Less memory', 'Traversal in both directions and O(1) delete given the node', 'Faster search', 'Random access']
+    answer: 1
+    explain: It knows its own predecessor.
+  - q: 'In a list 5 ⇄ 10 ⇄ 20 with tail at 20, after inserting 30 at the end, `tail->prev->data` is…'
+    options: ['10', '20', '30', '5']
+    answer: 1
+    explain: 30 is now tail; its prev is 20.
+practice:
+  trace:
+    task: 'Start empty. insertFront 10, insertEnd 20, insertFront 5, delete 10. Write all prev and next pointers at the end.'
+    solution: |
+      Final list: `5 ⇄ 20`.
+
+      - 5: prev = null, next = 20
+      - 20: prev = 5, next = null
+      - head = 5, tail = 20
+  implement:
+    task: Write `insertAfter(DNode* node, int x)` that inserts a new node right after `node` (update the tail if needed).
+    hint: Four pointers to set (n->prev, n->next, node->next, and the old next's prev). Do the new node's pointers first.
+    solution: |
+      ```cpp
+      void insertAfter(DNode*& tail, DNode* node, int x) {
+          DNode* n = new DNode{x, node, node->next};
+          if (node->next) node->next->prev = n;
+          else tail = n;
+          node->next = n;
+      }
+      ```
+  problems:
+    - name: Design Linked List
+      url: https://leetcode.com/problems/design-linked-list/
+      level: medium
+      hint: Implement it again, doubly linked, with dummy head AND dummy tail. All the edge cases vanish.
+    - name: Palindrome Linked List
+      url: https://leetcode.com/problems/palindrome-linked-list/
+      level: easy
+      hint: With prev pointers you could walk from both ends. With a singly list, use fast & slow pointers and reverse the second half (see Level Up).
+checklist:
+  - I can write the DNode struct.
+  - I can insert at the front and end, updating prev, next, head and tail.
+  - I can delete any node, including the head and tail.
+  - I can compare singly and doubly linked lists.
+slides: [1UbdePhTxVSLqzw-OPSKJiLvqI8pvdHGJMEnOGhzKN38]
+---
+
+A **train**: every carriage is coupled to the one in front **and** the one behind. You can walk through the train in either direction, and to unhook a carriage you only need that carriage, because it knows both neighbours.
+
+```cpp
+struct DNode {
+    int data;
+    DNode* prev;
+    DNode* next;
+};
+```
+
+We usually keep both **`head`** and **`tail`**, which makes inserting and deleting at **either end O(1)**.
+
+### Updating both directions
+
+Every insert or delete updates up to four pointers. A safe order for inserting `n` between `A` and `B`:
+
+1. `n->prev = A; n->next = B;` (the new node first; nothing is lost yet)
+2. `A->next = n; B->prev = n;`
+
+For deleting `cur`: `cur->prev->next = cur->next;` and `cur->next->prev = cur->prev;`, and check for `nullptr` at the head and the tail.
+
+### When to use it
+
+Browser back/forward history, music playlists (previous/next), undo/redo, and any "delete this node now" situation. Pay the extra pointer when you need to move backwards.

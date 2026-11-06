@@ -1,0 +1,149 @@
+---
+title: Singly Linked List
+chapter: 4
+order: 2
+time: 75
+difficulty: medium
+summary: Nodes on the heap, each pointing to the next. Insert at front, end or a position, delete by value, search and traverse, plus the dummy-node trick and the classic pitfalls.
+keywords: [linked list, node, head, insert, delete, traverse, dummy node, sentinel]
+viz:
+  - id: sll
+    title: Linked list playground
+    caption: 'Try: insert front 9, insert at pos 2, delete the head, then "Delete (dummy)" on the new head. Notice the dummy needs no special case.'
+code:
+  - file: singly-linked-list
+    title: singly-linked-list.cpp
+complexity:
+  rows:
+    - ['Insert at front', 'O(1)']
+    - ['Insert at end', 'O(n), or O(1) with a tail pointer']
+    - ['Insert at position k', 'O(k)']
+    - ['Delete by value / search', 'O(n)']
+    - ['Access the i-th item', 'O(n): no random access']
+  space: O(n) plus one pointer per node
+  note: Compared with an array, a linked list wins at **inserting and deleting** (no shifting) and loses at **indexing** (must walk) and cache-friendliness.
+videos:
+  - id: NobHlGUjV3g
+    why: Why linked lists exist and how they compare with arrays.
+  - id: vcQIFT79_50
+    why: Writes the C/C++ node struct and insertion functions line by line.
+  - id: B31LgI4Y4DQ
+    why: The full freeCodeCamp version of mycodeschool's course; includes insert at nth position and delete.
+exam:
+  questions:
+    - Write a function to insert a node at the beginning, at the end and at a given position of a singly linked list.
+    - Write a function that deletes the first node with a given value.
+    - Compare arrays and linked lists (memory, access, insertion, deletion).
+    - What is a dummy (sentinel) node and why does it simplify deletion?
+    - What happens if you write `head = n; n->next = head;` (wrong order)?
+  mistakes:
+    - Losing the list by updating `head` before linking the new node (`head = n;` first).
+    - Dereferencing `temp->next` without checking `temp != nullptr`.
+    - Forgetting the empty-list and delete-the-head special cases.
+    - Not calling `delete` on removed nodes (memory leak).
+    - Passing `Node* head` by value to a function that changes head. Use `Node*& head`.
+quiz:
+  - q: Correct order to insert node n at the front?
+    options: ['`head = n; n->next = head;`', '`n->next = head; head = n;`', '`n->next = nullptr; head = n;`', '`head->next = n;`']
+    answer: 1
+    explain: Link to the old head first, then move head. The other order makes n point to itself and loses the list.
+  - q: To delete a node in a singly linked list you need a pointer to…
+    options: ['the node itself only', 'the node BEFORE it', 'the tail', 'the head only']
+    answer: 1
+    explain: The previous node's `next` is the arrow you must change.
+  - q: 'What does this print? List: 3 → 8 → 5'
+    code: "int c = 0;\nfor (Node* t = head; t; t = t->next) c += t->data;\ncout << c;"
+    options: ['3', '16', '5', 'crash']
+    answer: 1
+    explain: A traversal summing 3 + 8 + 5.
+  - q: Why use a dummy node?
+    options: ['It saves memory', 'Every real node then has a previous node, so deleting the head needs no special case', 'It makes search O(1)', 'It sorts the list']
+    answer: 1
+    explain: The dummy sits before head, and at the end `head = dummy.next`.
+  - q: Why must `insertFront` take `Node*& head`?
+    options: ['For speed', 'So the change to head is visible to the caller', 'References are required for pointers', 'It doesn''t need to']
+    answer: 1
+    explain: A plain `Node*` parameter is a copy; assigning to it would not update the caller's head.
+practice:
+  trace:
+    task: 'Start empty. Do insertEnd 4, insertFront 7, insertAt(1, 2), insertEnd 9, delete 7, delete 9. Write the list after each step.'
+    solution: |
+      - insertEnd 4 → `4`
+      - insertFront 7 → `7 → 4`
+      - insertAt(1, 2) → `7 → 2 → 4`
+      - insertEnd 9 → `7 → 2 → 4 → 9`
+      - delete 7 (head case) → `2 → 4 → 9`
+      - delete 9 → `2 → 4`
+  implement:
+    task: Write `reverse(Node*& head)` (iterative, O(1) extra space), `length(Node* head)` and `deleteAt(Node*& head, int pos)`.
+    hint: 'Reverse: keep `prev = nullptr`, `cur = head`. Each step: save `next = cur->next`, set `cur->next = prev`, move `prev = cur`, `cur = next`. Finally `head = prev`.'
+    solution: |
+      ```cpp
+      void reverse(Node*& head) {
+          Node* prev = nullptr;
+          Node* cur = head;
+          while (cur) {
+              Node* next = cur->next;
+              cur->next = prev;
+              prev = cur;
+              cur = next;
+          }
+          head = prev;
+      }
+      ```
+  problems:
+    - name: Reverse Linked List
+      url: https://leetcode.com/problems/reverse-linked-list/
+      level: easy
+      hint: Three pointers, prev / cur / next. Draw it.
+    - name: Remove Duplicates from Sorted List
+      url: https://leetcode.com/problems/remove-duplicates-from-sorted-list/
+      level: easy
+      hint: While `cur->next` has the same value as `cur`, unlink it.
+    - name: Merge Two Sorted Lists
+      url: https://leetcode.com/problems/merge-two-sorted-lists/
+      level: easy
+      hint: A dummy node plus a tail pointer. Always attach the smaller head.
+      solution: '`ListNode d; ListNode* t = &d; while (a && b) { if (a->val <= b->val) { t->next = a; a = a->next; } else { t->next = b; b = b->next; } t = t->next; } t->next = a ? a : b; return d.next;`'
+    - name: Reverse Linked List II
+      url: https://leetcode.com/problems/reverse-linked-list-ii/
+      level: medium
+      hint: Walk to the node before position `left`, then reverse the sublist with the same three-pointer trick. A dummy node saves you when left = 1.
+checklist:
+  - I can insert at the front, the end and a position without losing the list.
+  - I can delete by value, including the head and not-found cases.
+  - I can use a dummy node to remove special cases.
+  - I can reverse a linked list iteratively.
+  - I free every removed node with delete.
+slides: [1UbdePhTxVSLqzw-OPSKJiLvqI8pvdHGJMEnOGhzKN38]
+---
+
+A **treasure hunt**: each clue tells you where the next clue is hidden. You can't jump to clue #7. You must follow clues 1 → 2 → … → 7. But adding a new clue in the middle is easy: change one clue to point to the new one, and the new one to point onward.
+
+That is a **singly linked list**: nodes scattered around the heap, each holding **data** and a **pointer to the next node**. The program only keeps **`head`**, the address of the first node. The last node's `next` is `nullptr`.
+
+```cpp
+struct Node {
+    int data;
+    Node* next;
+};
+```
+
+### The golden rule of rewiring
+
+When inserting, **connect the new node first, then redirect the old pointer**. If you move `head` (or `temp->next`) first, you lose the rest of the list.
+
+### Deleting needs the node before
+
+To remove node X you change the arrow that points **to** X, and that arrow belongs to the **previous** node. So deletion walks with a `prev` pointer. Deleting the head is a special case: there is no previous node.
+
+### The dummy (sentinel) node
+
+Put a fake node **before** the head: `Node dummy{0, head};`. Now every real node, including the first, has a previous node, so one loop handles all cases. At the end, `head = dummy.next`.
+
+### Pitfalls checklist
+
+- Check `nullptr` before every `->`.
+- Handle the **empty list**, **one node**, **head** and **tail** cases.
+- `delete` every node you unlink.
+- Never move `head` to traverse. Use a `temp` copy.

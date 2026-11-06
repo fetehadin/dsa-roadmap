@@ -1,0 +1,120 @@
+---
+title: Pointers, new/delete & the Heap
+chapter: 4
+order: 1
+time: 45
+difficulty: medium
+summary: A pointer holds an address. new asks the heap for memory that lives until you delete it. Master this and linked lists become easy.
+keywords: [pointer, address, dereference, new, delete, stack, heap, memory leak, dangling pointer, nullptr]
+viz:
+  - id: stack-heap
+    title: Stack vs heap, step by step
+code:
+  - file: pointers
+    title: pointers.cpp
+complexity:
+  rows:
+    - ['`&x`, `*p`, `p->field`', 'O(1)']
+    - ['`new` / `delete` one object', 'O(1) (amortised; done by the allocator)']
+    - ['Stack memory', 'automatic: freed when the function returns']
+    - ['Heap memory', 'manual: lives until `delete`']
+  note: Linked lists, trees and graphs are built from heap nodes connected by pointers. Every bug in Chapters 4–7 is a pointer bug in disguise.
+videos:
+  - id: h-HBipu_1P0
+    why: The clearest 10-minute introduction to `&`, `*` and what a pointer really stores.
+  - id: _8-ht2AKyH4
+    why: Explains stack vs heap with diagrams. This is exactly what the visualizer above animates.
+exam:
+  questions:
+    - What is a pointer? Explain `&` and `*` with an example.
+    - Differentiate between stack and heap memory.
+    - What is a memory leak? Write code that causes one and fix it.
+    - What is a dangling pointer and how do you avoid it?
+  mistakes:
+    - Dereferencing `nullptr` or an uninitialised pointer, which crashes (segmentation fault).
+    - Using memory after `delete` (dangling pointer). Set the pointer to `nullptr` right after.
+    - '`new[]` paired with `delete` instead of `delete[]`.'
+    - Overwriting the only pointer to heap memory before deleting it, which leaks it forever.
+quiz:
+  - q: What does this print?
+    code: "int x = 3;\nint* p = &x;\n*p = *p + 4;\ncout << x;"
+    options: ['3', '4', '7', 'an address']
+    answer: 2
+    explain: '`*p` IS x, so x becomes 3 + 4.'
+  - q: Memory from `new` is freed…
+    options: ['when the function returns', 'when you call delete', 'never', 'when the pointer goes out of scope']
+    answer: 1
+    explain: Heap memory is manual. If the pointer disappears first, you have a leak.
+  - q: Which line causes a leak?
+    code: "int* p = new int(5);   // A\np = new int(6);       // B\ndelete p;             // C"
+    options: ['A', 'B', 'C', 'none']
+    answer: 1
+    explain: The address of the 5 is lost at line B, so it can never be deleted.
+  - q: 'For a pointer `Node* n`, `n->data` is the same as…'
+    options: ['`*n.data`', '`(*n).data`', '`&n.data`', '`n.data`']
+    answer: 1
+    explain: Arrow = dereference, then access the member.
+practice:
+  trace:
+    task: |
+      Draw the stack and heap after each line and say what is printed:
+      ```cpp
+      int a = 2;
+      int* p = &a;
+      int* q = new int(a * 5);
+      *p = *q + 1;
+      cout << a << " " << *q;
+      delete q;
+      ```
+    solution: |
+      - stack: a = 2, p → a; heap: (none)
+      - `q = new int(10)`: heap gets 10, q → it
+      - `*p = *q + 1` sets a = 11
+      - prints **11 10**
+      - `delete q` frees the heap int (q is now dangling, so set it to `nullptr`)
+  implement:
+    task: Write `int* makeArray(int n)` that returns a heap array filled with 1..n, use it in `main`, print the sum, and free it correctly.
+    hint: '`int* a = new int[n];` … `delete[] a;`. Check with `g++ -fsanitize=address` that there is no leak.'
+  problems:
+    - name: Design Linked List
+      url: https://leetcode.com/problems/design-linked-list/
+      level: medium
+      hint: The best pointer workout. Start with addAtHead and get; draw boxes and arrows on paper for every line.
+    - name: Pointers in C (HackerRank)
+      url: https://www.hackerrank.com/challenges/c-tutorial-pointer/problem
+      level: easy
+      hint: Modify two values through pointers. Warm-up for `*` and `&`.
+checklist:
+  - I can explain `&`, `*` and `->` with a drawing.
+  - I can explain the difference between stack and heap memory.
+  - I can pair every `new` with exactly one `delete` (and `new[]` with `delete[]`).
+  - I can spot leaks and dangling pointers in code.
+slides: [1UbdePhTxVSLqzw-OPSKJiLvqI8pvdHGJMEnOGhzKN38]
+---
+
+A variable is a **house**; its value is the **person living there**; its address is the **street address**. A **pointer** is a slip of paper with an address written on it. It doesn't hold the person, it tells you where to find them.
+
+```cpp
+int x = 5;      // a house with 5 in it
+int* p = &x;    // & = "address of": p holds x's address
+*p = 10;        // * = "go to that address": changes x to 10
+```
+
+### Stack vs heap
+
+- **Stack**: local variables. Created when a function starts, destroyed automatically when it returns. Fast, but small, and its size is fixed at compile time.
+- **Heap**: memory you request at run time with **`new`**. It stays alive until **you** call **`delete`**. This is how we make data structures that grow while the program runs.
+
+```cpp
+Node* n = new Node{7, nullptr};   // lives on the heap
+delete n;                          // give it back
+n = nullptr;                       // don't keep a stale address
+```
+
+### Three classic bugs
+
+1. **Null dereference**: `*p` when `p == nullptr`. Crash.
+2. **Dangling pointer**: using `p` after `delete p`. Random behaviour.
+3. **Memory leak**: losing the last pointer to heap memory, so it can never be freed.
+
+> Rule of thumb: every `new` has exactly one matching `delete`. After deleting, set the pointer to `nullptr`.
