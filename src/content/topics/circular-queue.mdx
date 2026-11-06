@@ -1,0 +1,105 @@
+---
+title: Circular Queue
+chapter: 5
+order: 5
+time: 40
+difficulty: medium
+summary: Let front and rear wrap around with the modulo operator, so freed slots are reused. All operations O(1) on a fixed array.
+keywords: [circular queue, ring buffer, modulo, wrap around, front, rear, count]
+viz:
+  - id: circular-queue
+    title: Circular queue ring
+    caption: Fill it, dequeue two, then enqueue two more. Watch rear wrap from 4 back to 0.
+code:
+  - file: circular-queue
+    title: circular-queue.cpp
+complexity:
+  rows:
+    - ['enqueue', 'O(1)']
+    - ['dequeue', 'O(1)']
+    - ['front / isEmpty / isFull', 'O(1)']
+  space: O(N), and every slot is usable
+  note: The magic line is `rear = (rear + 1) % N`. When `rear` is N − 1, the next slot is 0.
+videos:
+  - id: 'okr-XE8yTO8'
+    why: Walks from the linear array queue to the circular version and derives the modulo formula.
+  - id: XuCbpw6Bj1U
+    why: Queue basics refresher.
+exam:
+  questions:
+    - What problem of the linear array queue does a circular queue solve?
+    - Write enqueue and dequeue for a circular queue of size N.
+    - 'N = 5, front = 3, rear = 1. How many items are in the queue? Which indices?'
+    - Give two ways to tell a full circular queue from an empty one.
+  mistakes:
+    - Writing `rear++` instead of `rear = (rear + 1) % N`.
+    - Testing `front == rear` for both empty and full. Without a `count` (or one spare slot) they look the same.
+    - Printing from `0` to `rear` instead of starting at `front` and wrapping.
+quiz:
+  - q: 'N = 6, rear = 5. After one enqueue, rear is…'
+    options: ['6', '0', '5', '-1']
+    answer: 1
+    explain: (5 + 1) % 6 = 0. The rear wraps to the start.
+  - q: 'N = 5, front = 3, count = 4. Which indices hold items, in queue order?'
+    options: ['3, 4, 5, 6', '3, 4, 0, 1', '0, 1, 2, 3', '1, 2, 3, 4']
+    answer: 1
+    explain: Start at 3 and wrap. 3, 4, then 0, 1.
+  - q: Why keep a `count` variable?
+    options: ['To make enqueue faster', 'To tell full from empty, since front and rear alone can look identical', 'It is required by C++', 'To sort the queue']
+    answer: 1
+    explain: Another option is to leave one slot always empty, so full means `(rear + 1) % N == front`.
+  - q: Which real system is a circular buffer?
+    options: ['A keyboard input buffer', 'An undo history', 'A binary search tree', 'A hash map']
+    answer: 0
+    explain: Keystrokes are written into a fixed ring and read in the same order.
+practice:
+  trace:
+    task: 'N = 4. Start front 0, rear −1, count 0. Do: enq A, enq B, enq C, deq, deq, enq D, enq E, enq F, enq G. Write front, rear, count after each.'
+    solution: |
+      - enq A → f0 r0 c1 · enq B → f0 r1 c2 · enq C → f0 r2 c3
+      - deq (A) → f1 r2 c2 · deq (B) → f2 r2 c1
+      - enq D → f2 r3 c2 · enq E → f2 **r0** c3 · enq F → f2 r1 c4 (full)
+      - enq G → **rejected**, queue is full
+  implement:
+    task: Rewrite the circular queue **without** a count variable, keeping one slot empty.
+    hint: 'Start with front = rear = 0. Empty: `front == rear`. Full: `(rear + 1) % N == front`. Enqueue writes `q[rear]` then advances rear.'
+  problems:
+    - name: Design Circular Queue
+      url: https://leetcode.com/problems/design-circular-queue/
+      level: medium
+      hint: This page's class, plus Front() and Rear(). Rear item is at index `rear`.
+    - name: Design Circular Deque
+      url: https://leetcode.com/problems/design-circular-deque/
+      level: medium
+      hint: 'Moving front backwards: `front = (front - 1 + k) % k`. Add k before taking % so it never goes negative.'
+checklist:
+  - I can explain why the circular queue exists.
+  - I can write enqueue and dequeue with modulo wrap-around.
+  - I can tell full from empty.
+  - I can trace front and rear as they wrap.
+slides: [1RrPRDycXJ0Fh3djRVLo2bzNNHx4ljGC4IDvWyIVOvIM]
+---
+
+Picture a **revolving sushi belt** with N plates. The chef places food on the next empty plate; diners take food from the oldest plate. When the chef reaches the end of the belt, they just carry on at the start. Nothing is wasted.
+
+A circular queue is the same fixed array as before, but we treat it as a **ring**. When an index reaches the last slot, the next step takes it back to **0**:
+
+```cpp
+rear  = (rear + 1) % N;   // enqueue
+front = (front + 1) % N;  // dequeue
+```
+
+So the slots freed by dequeue are reused by later enqueues. Every operation is still **O(1)**.
+
+### Full or empty?
+
+With only `front` and `rear`, a full ring and an empty ring can look the same. Two common fixes:
+
+1. **Keep a `count`** (this page): empty when `count == 0`, full when `count == N`.
+2. **Leave one slot unused**: empty when `front == rear`, full when `(rear + 1) % N == front`.
+
+Your instructor may use either. Know both.
+
+### Printing in order
+
+Start at `front` and step `count` times: `k = (k + 1) % N`. Do not just print `q[0..rear]`.

@@ -1,0 +1,4 @@
+{[()()]} -> balanced
+([)] -> not balanced
+(( -> not balanced
+a*(b+c) -> balanced

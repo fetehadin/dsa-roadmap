@@ -1,0 +1,136 @@
+---
+title: Stacks with an Array
+chapter: 5
+order: 1
+time: 45
+difficulty: easy
+summary: Last in, first out. The stack ADT (push, pop, peek, isEmpty, isFull) built on a fixed array with a top index, plus overflow and underflow.
+keywords: [stack, LIFO, push, pop, peek, top, overflow, underflow]
+viz:
+  - id: stack-array
+    title: Array stack playground
+    caption: Push until isFull() is true, then push once more to see overflow. Pop everything and pop again for underflow.
+code:
+  - file: stack-array
+    title: stack-array.cpp
+complexity:
+  rows:
+    - ['push', 'O(1)']
+    - ['pop', 'O(1)']
+    - ['peek / isEmpty / isFull', 'O(1)']
+    - ['search for a value', 'O(n): not a stack operation']
+  space: O(MAX), fixed when the array is declared
+  note: Every stack operation touches only `st[top]`, so all of them are **O(1)**. The price of an array is a **fixed capacity**.
+videos:
+  - id: F1F2imiOJfk
+    why: The stack ADT and LIFO idea with everyday examples, before any code.
+  - id: sFVxsglODoo
+    why: Builds the array stack in C/C++ with a `top` index, exactly like this page.
+exam:
+  questions:
+    - Define a stack. Why is it called a LIFO structure?
+    - Write push and pop for an array stack, including overflow and underflow checks.
+    - 'Show the stack after: push 3, push 7, pop, push 2, push 9, pop. What does peek return?'
+    - What does `top = -1` mean? What is the condition for a full stack?
+    - Give three real applications of a stack.
+  mistakes:
+    - Writing `st[top++] = x` with `top = -1` (writes to index −1). Use `st[++top] = x`.
+    - Popping without checking `isEmpty()` (underflow).
+    - Pushing without checking `isFull()` (writes past the array).
+    - Thinking `pop` must erase the value. Moving `top` down is enough.
+quiz:
+  - q: 'Start empty. push 4, push 8, pop, push 1, push 6, pop. What is on top?'
+    options: ['4', '8', '1', '6']
+    answer: 2
+    explain: Stack after each step - [4], [4,8], [4], [4,1], [4,1,6], [4,1]. The top is 1.
+  - q: With `int st[MAX]; int top = -1;` the stack is full when…
+    options: ['`top == MAX`', '`top == MAX - 1`', '`top == 0`', '`top == -1`']
+    answer: 1
+    explain: The last valid index is MAX − 1.
+  - q: Popping from an empty stack is called…
+    options: ['overflow', 'underflow', 'a memory leak', 'a segmentation fault, always']
+    answer: 1
+    explain: Underflow. Overflow is pushing onto a full stack.
+  - q: Which of these naturally uses a stack?
+    options: ['A printer queue', 'The undo button', 'A ticket line', 'Round-robin scheduling']
+    answer: 1
+    explain: Undo reverses the most recent action first. The other three are first-come, first-served (queues).
+practice:
+  trace:
+    task: 'MAX = 3. Do push 5, push 2, push 8, push 1, pop, pop, peek, pop, pop. Write the array, `top`, and anything printed after each step.'
+    solution: |
+      - push 5 → `[5]`, top 0
+      - push 2 → `[5,2]`, top 1
+      - push 8 → `[5,2,8]`, top 2 (now full)
+      - push 1 → **Overflow**, nothing changes
+      - pop → returns 8, top 1
+      - pop → returns 2, top 0
+      - peek → 5
+      - pop → returns 5, top −1
+      - pop → **Underflow**
+  implement:
+    task: Use your array stack to reverse a string, and to print a number in binary (push `n % 2`, then pop everything).
+    hint: Push every character, then pop them all. The last one in is the first one out, so the order flips.
+    solution: |
+      ```cpp
+      string reverseStr(const string& s) {
+          char st[100]; int top = -1;
+          for (char c : s) st[++top] = c;
+          string r;
+          while (top != -1) r += st[top--];
+          return r;
+      }
+      ```
+  problems:
+    - name: Valid Parentheses
+      url: https://leetcode.com/problems/valid-parentheses/
+      level: easy
+      hint: Push opening brackets. On a closing bracket the top must be its partner. At the end the stack must be empty.
+    - name: Backspace String Compare
+      url: https://leetcode.com/problems/backspace-string-compare/
+      level: easy
+      hint: Build each string with a stack. `#` means pop (if not empty). Compare the results.
+    - name: Evaluate Reverse Polish Notation
+      url: https://leetcode.com/problems/evaluate-reverse-polish-notation/
+      level: medium
+      hint: Numbers are pushed. An operator pops b, then a, and pushes a op b. Order matters for − and /.
+      solution: '`for (auto& t : tokens) { if (t is an operator) { int b = s.top(); s.pop(); int a = s.top(); s.pop(); s.push(apply(a, t, b)); } else s.push(stoi(t)); } return s.top();`'
+checklist:
+  - I can explain LIFO with a real example.
+  - I can write push, pop, peek, isEmpty and isFull for an array stack.
+  - I can trace a sequence of stack operations by hand.
+  - I always check for overflow before push and underflow before pop.
+slides: [1RrPRDycXJ0Fh3djRVLo2bzNNHx4ljGC4IDvWyIVOvIM]
+---
+
+Think of a **stack of plates** in the cafeteria. You put a clean plate on **top**, and you take a plate from the **top**. The plate at the bottom was put there first and comes out last. That rule is **LIFO**: Last In, First Out.
+
+A stack is an **ADT**: it is defined by its operations, not by how it is stored.
+
+| Operation | Meaning |
+| --- | --- |
+| `push(x)` | put x on top |
+| `pop()` | remove and return the top item |
+| `peek()` / `top()` | look at the top item without removing it |
+| `isEmpty()` | is there nothing on the stack? |
+| `isFull()` | no room left (array version only) |
+
+### Building it on an array
+
+Keep an array `st[MAX]` and one integer **`top`**, the index of the top item. An empty stack has `top = -1`.
+
+- **push**: `st[++top] = x;` moves top up, then writes.
+- **pop**: `return st[top--];` reads, then moves top down.
+
+The old value stays in the array after a pop, but it no longer counts. Only `0..top` is the stack.
+
+### Overflow and underflow
+
+- **Overflow**: push when `top == MAX - 1`. The array has no room.
+- **Underflow**: pop when `top == -1`. There is nothing to take.
+
+Always check before you act. These two checks are the most common exam marks on this topic.
+
+### Where stacks show up
+
+Undo/redo, the browser back button, **checking balanced brackets**, evaluating postfix expressions, and the **call stack** that makes recursion work (Chapter 3).

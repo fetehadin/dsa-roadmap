@@ -1,0 +1,103 @@
+---
+title: std::stack, std::queue & std::deque
+chapter: 5
+order: 6
+time: 25
+difficulty: easy
+summary: The standard library versions you will use in real code and on LeetCode, their method names, and the classic traps (pop returns void, empty checks).
+keywords: [STL, std::stack, std::queue, std::deque, push_front, push_back, top, front]
+viz:
+  - id: deque
+    title: Deque, a double-ended queue
+    caption: push and pop at both ends. A stack uses one end; a queue adds at one end and removes at the other.
+code:
+  - file: stl-containers
+    title: stl-containers.cpp
+complexity:
+  rows:
+    - ['stack push / pop / top', 'O(1)']
+    - ['queue push / pop / front / back', 'O(1)']
+    - ['deque push/pop at either end', 'O(1)']
+    - ['deque d[i]', 'O(1)']
+  space: O(n)
+  note: '`std::stack` and `std::queue` are **adapters**: they wrap a `std::deque` by default and only expose the allowed operations.'
+videos:
+  - id: F1F2imiOJfk
+    why: Recap of the stack idea behind std::stack.
+  - id: XuCbpw6Bj1U
+    why: Recap of the queue idea behind std::queue.
+exam:
+  questions:
+    - Write C++ that pushes 1, 2, 3 onto a std::stack and prints them in pop order.
+    - What does `s.pop()` return in std::stack?
+    - What is a deque? How is it different from a queue?
+  mistakes:
+    - Writing `int x = s.pop();`. It does not compile; `pop()` returns `void`. Read `top()` first.
+    - Calling `top()` / `front()` / `pop()` on an empty container (undefined behaviour). Check `empty()`.
+    - Using `q.top()` on a queue (it is `front()`), or `s.front()` on a stack (it is `top()`).
+quiz:
+  - q: How do you remove and keep the top of a `std::stack<int> s`?
+    options: ['`int x = s.pop();`', '`int x = s.top(); s.pop();`', '`int x = s.front(); s.pop();`', '`int x = s.back();`']
+    answer: 1
+    explain: '`pop()` returns void, so read `top()` first.'
+  - q: What does this print?
+    code: "queue<int> q;\nq.push(1); q.push(2); q.push(3);\nq.pop();\ncout << q.front() << q.back();"
+    options: ['13', '23', '12', '31']
+    answer: 1
+    explain: 1 leaves; the front is 2 and the back is 3.
+  - q: Which container lets you add and remove at both ends in O(1)?
+    options: ['std::stack', 'std::queue', 'std::deque', 'std::vector']
+    answer: 2
+    explain: A vector is O(1) only at the back; inserting at its front is O(n).
+practice:
+  trace:
+    task: 'Predict the output: `deque<int> d = {5}; d.push_front(3); d.push_back(8); d.push_front(1); d.pop_back(); for (int x : d) cout << x << " ";`'
+    solution: '`{5}` → `{3,5}` → `{3,5,8}` → `{1,3,5,8}` → `{1,3,5}`. Prints `1 3 5`.'
+  implement:
+    task: Solve the bracket checker and the "recent calls" counter again, this time using std::stack and std::queue.
+    hint: Same logic as your own classes. Only the method names change (`top`, `front`, `empty`).
+  problems:
+    - name: Valid Parentheses
+      url: https://leetcode.com/problems/valid-parentheses/
+      level: easy
+      hint: '`stack<char>`; check `empty()` before `top()`.'
+    - name: Implement Stack using Queues
+      url: https://leetcode.com/problems/implement-stack-using-queues/
+      level: easy
+      hint: After pushing x, rotate the queue size − 1 times so x comes to the front.
+    - name: Design Circular Deque
+      url: https://leetcode.com/problems/design-circular-deque/
+      level: medium
+      hint: Build it on an array with modulo, then compare with std::deque.
+checklist:
+  - I know the method names of std::stack, std::queue and std::deque.
+  - I always read top()/front() before pop(), and check empty() first.
+  - I can explain what a deque is.
+slides: []
+---
+
+You have built stacks and queues yourself, which is what the exam asks for. In real C++ code (and on LeetCode) you use the **Standard Template Library** versions. Same ideas, ready-made.
+
+| | `std::stack<T>` | `std::queue<T>` | `std::deque<T>` |
+| --- | --- | --- | --- |
+| add | `push(x)` | `push(x)` (at back) | `push_front(x)`, `push_back(x)` |
+| remove | `pop()` | `pop()` (from front) | `pop_front()`, `pop_back()` |
+| look | `top()` | `front()`, `back()` | `front()`, `back()`, `d[i]` |
+| size | `size()`, `empty()` | `size()`, `empty()` | `size()`, `empty()` |
+
+### Trap 1: pop() returns nothing
+
+`s.pop()` removes the top, but **returns `void`**. Read first, then pop:
+
+```cpp
+int x = s.top();
+s.pop();
+```
+
+### Trap 2: empty containers
+
+Calling `top()`, `front()` or `pop()` on an empty container is **undefined behaviour**. It may crash or print garbage. Check `empty()` first.
+
+### What is a deque?
+
+A **d**ouble-**e**nded **que**ue (say "deck"): add or remove at **both** ends in O(1). A stack uses one end; a queue uses both ends, but each for one job. A deque can do both jobs, so it can act as either.

@@ -1,0 +1,4 @@
+[front=0 rear=4 count=5] 10 20 30 40 50 
+enqueue 60 when full: rejected
+dequeued 10 and 20
+[front=2 rear=1 count=5] 30 40 50 60 70 

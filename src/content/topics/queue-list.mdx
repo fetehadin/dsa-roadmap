@@ -1,0 +1,91 @@
+---
+title: Queues with a Linked List
+chapter: 5
+order: 4
+time: 30
+difficulty: easy
+summary: Keep two pointers, front and rear. Enqueue at the rear and dequeue at the front, both O(1), with no capacity limit.
+keywords: [queue, linked list, front, rear, enqueue, dequeue]
+viz:
+  - id: queue-list
+    title: Linked-list queue
+    caption: Dequeue until the queue is empty and watch rear reset to nullptr too.
+code:
+  - file: queue-list
+    title: queue-list.cpp
+complexity:
+  rows:
+    - ['enqueue (insert after rear)', 'O(1)']
+    - ['dequeue (delete front)', 'O(1)']
+    - ['peek / isEmpty', 'O(1)']
+  space: O(n)
+  note: Both ends are O(1) only because we keep a **rear** pointer. Without it, enqueue would have to walk the whole list.
+videos:
+  - id: A5_XdiK4J8A
+    why: Explains why you need both front and rear, and writes enqueue/dequeue in C/C++.
+exam:
+  questions:
+    - Implement a queue with a singly linked list. Which end is front, which is rear, and why?
+    - What must happen to `rear` when the last node is dequeued?
+    - Compare array and linked-list queues.
+  mistakes:
+    - Dequeuing from the tail (needs the previous node, so O(n)).
+    - Forgetting `rear = nullptr` when the queue becomes empty. The next enqueue then writes through a dangling pointer.
+    - Enqueue into an empty queue without setting **both** front and rear.
+    - Forgetting `delete` in dequeue.
+quiz:
+  - q: Where does a linked-list queue insert and delete?
+    options: ['insert at front, delete at rear', 'insert at rear, delete at front', 'both at front', 'both at rear']
+    answer: 1
+    explain: Deleting the head is O(1); inserting after a known tail is O(1). Deleting the tail would be O(n).
+  - q: 'The queue has one node. After dequeue, what must be true?'
+    options: ['front == rear, both pointing at freed memory', 'front == nullptr and rear == nullptr', 'only front == nullptr', 'rear->next == nullptr']
+    answer: 1
+    explain: If rear still points to the deleted node, the next enqueue writes to freed memory.
+  - q: Without a rear pointer, enqueue costs…
+    options: ['O(1)', 'O(log n)', 'O(n)', 'O(n²)']
+    answer: 2
+    explain: You would have to walk from front to the last node every time.
+practice:
+  trace:
+    task: 'Draw front, rear and the nodes after: enqueue 4, enqueue 9, dequeue, dequeue, enqueue 1.'
+    solution: |
+      - enqueue 4 → `4`, front = rear = node(4)
+      - enqueue 9 → `4 → 9`, rear = node(9)
+      - dequeue → returns 4, list `9`, front = rear = node(9)
+      - dequeue → returns 9, list empty, **front = rear = nullptr**
+      - enqueue 1 → `1`, front = rear = node(1)
+  implement:
+    task: Add `int size()` in O(1) and a `print()` to the queue class.
+    hint: Keep a `count` member. Increment it in enqueue, decrement it in dequeue.
+  problems:
+    - name: Number of Recent Calls
+      url: https://leetcode.com/problems/number-of-recent-calls/
+      level: easy
+      hint: A queue of timestamps. Drop the old ones from the front.
+    - name: Implement Queue using Stacks
+      url: https://leetcode.com/problems/implement-queue-using-stacks/
+      level: easy
+      hint: Two stacks. Amortised O(1) per operation.
+checklist:
+  - I can implement enqueue and dequeue with front and rear pointers.
+  - I can handle the empty-queue and one-node cases.
+  - I can explain why front is the head and rear is the tail.
+slides: [1RrPRDycXJ0Fh3djRVLo2bzNNHx4ljGC4IDvWyIVOvIM]
+---
+
+Picture a **conga line**. Each dancer holds the shoulders of the dancer in front. New dancers join at the back; the leader leaves from the front.
+
+A linked-list queue keeps **two pointers**:
+
+- **`front`** → the head node. Dequeue removes it: O(1).
+- **`rear`** → the last node. Enqueue links a new node after it: `rear->next = n; rear = n;`, O(1).
+
+Why not the other way round? Removing the **tail** of a singly linked list needs the node **before** it, and finding that node means walking the whole list.
+
+### The two edge cases
+
+1. **Enqueue into an empty queue**: there is no `rear->next` to set. Point **both** `front` and `rear` at the new node.
+2. **Dequeue the last node**: `front` becomes `nullptr`. Set **`rear = nullptr`** too, or it will dangle.
+
+There is no `isFull()`, and no wasted slots.

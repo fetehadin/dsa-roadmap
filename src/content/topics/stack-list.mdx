@@ -1,0 +1,108 @@
+---
+title: Stacks with a Linked List
+chapter: 5
+order: 2
+time: 35
+difficulty: easy
+summary: The same stack ADT, but the top is the head of a linked list. No fixed capacity, push and pop stay O(1), and the bracket-matching application.
+keywords: [stack, linked list, push, pop, balanced brackets, parentheses]
+viz:
+  - id: stack-list
+    title: Linked-list stack
+    caption: Each push creates a node in front of the old top. Each pop unlinks the top node and deletes it.
+code:
+  - file: stack-list
+    title: stack-list.cpp
+complexity:
+  rows:
+    - ['push (insert at head)', 'O(1)']
+    - ['pop (delete head)', 'O(1)']
+    - ['peek / isEmpty', 'O(1)']
+  space: O(n), one node (data + pointer) per item
+  note: Use the **head** as the top. Pushing and popping at the tail of a singly linked list would be O(n), because you would need the node before the tail.
+videos:
+  - id: MuwxQ2IB8lQ
+    why: Shows why the head (not the tail) must be the top, and writes push/pop in C/C++.
+  - id: F1F2imiOJfk
+    why: A recap of the stack ADT if you skipped the array version.
+exam:
+  questions:
+    - Implement a stack using a singly linked list. Which end is the top and why?
+    - Compare array and linked-list stacks (capacity, memory, speed).
+    - Use a stack to check whether `{[()]}` and `([)]` are balanced. Show the stack at each step.
+    - Why does the linked-list stack have no `isFull()`?
+  mistakes:
+    - Using the tail as the top, making pop O(n).
+    - Forgetting `delete` in pop (memory leak).
+    - Reading `top->data` after deleting the node. Save the value first.
+    - In bracket matching, forgetting that the stack must be **empty** at the end (`((` is not balanced).
+quiz:
+  - q: In a linked-list stack, push is the same as…
+    options: ['insert at the end', 'insert at the front (head)', 'insert at a position', 'sorting the list']
+    answer: 1
+    explain: The head is the top, so push is an O(1) insert at the front.
+  - q: 'Bracket check on `([)]`: what happens at `)`?'
+    options: ['top is `(`, match', 'top is `[`, mismatch, so not balanced', 'stack is empty', 'it is skipped']
+    answer: 1
+    explain: After `(` and `[` the top is `[`, which does not match `)`.
+  - q: What is wrong with this pop?
+    code: "Node* temp = top;\ndelete temp;\nint x = top->data;\ntop = top->next;"
+    options: ['Nothing', 'It reads freed memory after delete', 'It never moves top', 'It leaks memory']
+    answer: 1
+    explain: Read the data and move top first, then delete.
+  - q: Main advantage of the linked-list stack over the array stack?
+    options: ['Faster push', 'No fixed capacity', 'Less memory per item', 'Random access']
+    answer: 1
+    explain: It grows as needed. The cost is an extra pointer per item.
+practice:
+  trace:
+    task: 'Run the bracket checker on `{[()()]}` and `a*(b+c))`. Write the stack after each bracket.'
+    solution: |
+      `{[()()]}`: `{` → `{[` → `{[(` → `{[` → `{[(` → `{[` → `{` → empty. **Balanced.**
+
+      `a*(b+c))`: `(` → empty (matched) → second `)` finds an **empty stack**. **Not balanced.**
+  implement:
+    task: Write `string toPostfix(string infix)` for single-letter operands with `+ - * /` and brackets, using your stack.
+    hint: Letters go straight to output. `(` is pushed. `)` pops until `(`. An operator pops every operator of higher or equal precedence first, then is pushed. Pop the rest at the end.
+  problems:
+    - name: Valid Parentheses
+      url: https://leetcode.com/problems/valid-parentheses/
+      level: easy
+      hint: This page's `balanced()` function, almost unchanged.
+    - name: Simplify Path
+      url: https://leetcode.com/problems/simplify-path/
+      level: medium
+      hint: Split by `/`. Push folder names, pop on `..`, ignore `.` and empty parts. Join what is left.
+    - name: Score of Parentheses
+      url: https://leetcode.com/problems/score-of-parentheses/
+      level: medium
+      hint: Push a 0 for each `(`. On `)`, pop v; add `max(2*v, 1)` to the new top.
+checklist:
+  - I can implement push and pop on a linked list in O(1).
+  - I can explain why the head is the top.
+  - I can check balanced brackets with a stack and trace it.
+  - I can compare array and linked-list stacks.
+slides: [1RrPRDycXJ0Fh3djRVLo2bzNNHx4ljGC4IDvWyIVOvIM]
+---
+
+An array stack is a box with a fixed number of slots. A linked-list stack is a **pile that can grow forever**: each new plate is a new node, linked to the plate under it.
+
+The trick is choosing **which end is the top**. In a singly linked list, the **head** is the only end where both insert and delete are O(1). So:
+
+- **push(x)** = insert at the front: `top = new Node{x, top};`
+- **pop()** = delete the front: save `top`, move `top = top->next`, `delete` the old node.
+
+There is **no `isFull()`**. The list only fills up if the whole heap runs out.
+
+### Array or linked list?
+
+| | Array stack | Linked-list stack |
+| --- | --- | --- |
+| Capacity | fixed (MAX) | grows as needed |
+| Memory per item | just the value | value + pointer |
+| Speed | O(1), cache-friendly | O(1), one `new`/`delete` each |
+| Can overflow? | yes | no (until the heap is exhausted) |
+
+### Application: balanced brackets
+
+Scan the string left to right. Push every **opening** bracket. At a **closing** bracket the stack's top must be its partner; pop it. Fail if the stack is empty or the partner is wrong. At the end the stack **must be empty**.

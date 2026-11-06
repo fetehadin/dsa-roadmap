@@ -1,0 +1,7 @@
+stack top: 3, size: 3
+after pop, top: 2
+queue front: Abel, back: Liya
+after pop, front: Hana
+deque: 1 3 6 9 12 | d[2] = 6
+after pops: front 3, back 9
+empty stack handled safely

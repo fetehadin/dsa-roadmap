@@ -1,0 +1,107 @@
+---
+title: Queues with an Array
+chapter: 5
+order: 3
+time: 40
+difficulty: easy
+summary: First in, first out. Why a naive array queue makes dequeue O(n), how a front index makes it O(1), and the wasted-slot problem that leads to the circular queue.
+keywords: [queue, FIFO, enqueue, dequeue, front, rear, shifting]
+viz:
+  - id: queue-naive
+    title: Naive queue (dequeue shifts)
+    caption: Fill the queue, then dequeue. Count how many elements move each time.
+  - id: queue-front
+    title: Queue with a front index
+    caption: Dequeue a few times, then try to enqueue. It says full, although the front slots are empty.
+code:
+  - file: queue-array
+    title: queue-array.cpp
+complexity:
+  rows:
+    - ['enqueue (at rear)', 'O(1)']
+    - ['dequeue, naive (shift left)', 'O(n)']
+    - ['dequeue, with front index', 'O(1)']
+    - ['front / isEmpty', 'O(1)']
+  space: O(MAX)
+  note: The front-index version is fast but **cannot reuse** the slots it leaves behind. The **circular queue** fixes that.
+videos:
+  - id: XuCbpw6Bj1U
+    why: The queue ADT, FIFO and real examples, before code.
+  - id: 'okr-XE8yTO8'
+    why: Builds the array queue, shows the wasted space, and then the circular fix.
+exam:
+  questions:
+    - Define a queue and its operations. What does FIFO mean?
+    - Why is dequeue O(n) in a naive array queue? How does a front index make it O(1)?
+    - 'Show front, rear and the array after: enqueue 5, enqueue 3, dequeue, enqueue 8.'
+    - Explain why a linear array queue can report "full" when it has free slots.
+  mistakes:
+    - Confusing front and rear (items enter at the rear, leave at the front).
+    - Dequeuing without checking for empty.
+    - With a front index, testing `rear == -1` for empty. The correct test is `front > rear`.
+    - Forgetting that the naive shift costs n − 1 moves on every dequeue.
+quiz:
+  - q: 'enqueue 1, enqueue 2, enqueue 3, dequeue, enqueue 4. Which item is at the front?'
+    options: ['1', '2', '3', '4']
+    answer: 1
+    explain: 1 left first, so 2 is the oldest item still waiting.
+  - q: Why is naive dequeue O(n)?
+    options: ['It searches for the item', 'Every remaining item shifts one place left', 'It sorts the queue', 'It allocates memory']
+    answer: 1
+    explain: Removing q[0] and keeping the front at index 0 means moving everything else.
+  - q: 'MAX = 4 front-index queue: enqueue ×4, dequeue ×2, enqueue 9. Result?'
+    options: ['9 is stored at index 0', '"Full", because rear is already MAX − 1', '9 replaces the front', 'it crashes']
+    answer: 1
+    explain: The rear cannot move past MAX − 1, so slots 0 and 1 are wasted.
+  - q: Which is a queue, not a stack?
+    options: ['Undo', 'Browser back button', 'Printer jobs', 'Function calls']
+    answer: 2
+    explain: Print jobs are served in the order they arrive.
+practice:
+  trace:
+    task: 'Naive queue, MAX = 5. enqueue 10, 20, 30, 40; dequeue; dequeue; enqueue 50. Write the array, rear, and the number of element moves after each dequeue.'
+    solution: |
+      - after 4 enqueues: `[10,20,30,40]`, rear 3
+      - dequeue → 10, array `[20,30,40]`, rear 2, **3 moves**
+      - dequeue → 20, array `[30,40]`, rear 1, **2 moves**
+      - enqueue 50 → `[30,40,50]`, rear 2
+  implement:
+    task: Add `int size()` and `void print()` to the front-index queue, and make `enqueue` reset `front = 0, rear = -1` whenever the queue becomes empty.
+    hint: Size is `rear - front + 1`. The reset is a cheap trick that recovers space only when the queue empties completely.
+  problems:
+    - name: Number of Recent Calls
+      url: https://leetcode.com/problems/number-of-recent-calls/
+      level: easy
+      hint: Enqueue every ping time; dequeue from the front while it is older than `t - 3000`. Return the size.
+    - name: Implement Queue using Stacks
+      url: https://leetcode.com/problems/implement-queue-using-stacks/
+      level: easy
+      hint: An `in` stack for push and an `out` stack for pop. Only move items from in to out when out is empty.
+checklist:
+  - I can explain FIFO and name the front and rear.
+  - I can explain why naive dequeue is O(n) and a front index makes it O(1).
+  - I can trace front and rear through a sequence of operations.
+  - I can explain the wasted-slot problem.
+slides: [1RrPRDycXJ0Fh3djRVLo2bzNNHx4ljGC4IDvWyIVOvIM]
+---
+
+A **queue** is a line at the bank. New people join at the **rear**. The person at the **front** is served and leaves. Whoever arrived first is served first: **FIFO**, First In, First Out.
+
+| Operation | Meaning |
+| --- | --- |
+| `enqueue(x)` | add x at the rear |
+| `dequeue()` | remove and return the front item |
+| `front()` / `peek()` | look at the front item |
+| `isEmpty()` / `isFull()` | the usual checks |
+
+### Attempt 1: keep the front at index 0
+
+Enqueue is easy: `q[++rear] = x`. But on dequeue, the front leaves and **everyone shuffles forward**: `q[0] = q[1]; q[1] = q[2]; …`. That is **n − 1 moves per dequeue, so O(n)**. It is like a line where every customer takes a step each time someone is served.
+
+### Attempt 2: move the front instead
+
+Keep a **`front`** index. Dequeue just returns `q[front++]`. No one moves, so it is **O(1)**. It is like the cashier walking down the line instead of the line walking up.
+
+The catch: `front` and `rear` only ever move right. After a few dequeues, the slots before `front` are empty, but `rear` hits `MAX - 1` and the queue says **"full"**. Those slots are wasted forever.
+
+The fix is to let the indices **wrap around** to 0. That is the **circular queue**, next.

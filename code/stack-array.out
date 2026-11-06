@@ -1,0 +1,4 @@
+Overflow! cannot push 60
+peek: 50
+pop:  50 40 30 20 10 
+Underflow!
