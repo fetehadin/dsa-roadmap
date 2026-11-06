@@ -3,16 +3,7 @@ import { FONTS_URL, googleFonts } from '@/lib/fonts';
 import '@/styles/global.css';
 import { catalog } from '@/lib/catalog';
 import { phases, CORE_RULE } from '@/data/chapters';
-import {
-  Search,
-  Sun,
-  Moon,
-  Menu,
-  Keyboard,
-  ArrowUpRight,
-  MessageCircle,
-  Star,
-} from '@lucide/astro';
+import { Search, Sun, Moon, Menu, Keyboard, ArrowUpRight, Mail, Star } from '@lucide/astro';
 
 interface Props {
   title: string;
@@ -256,8 +247,8 @@ const nav = [
             >
               See my work <ArrowUpRight size={16} />
             </a>
-            <a href="https://t.me/Fete64" target="_blank" rel="noopener" class="btn">
-              <MessageCircle size={16} /> Send feedback
+            <a href="mailto:fetehadinnegash@gmail.com?subject=DSA%20Roadmap%20feedback" class="btn">
+              <Mail size={16} /> Send feedback
             </a>
           </div>
         </div>
