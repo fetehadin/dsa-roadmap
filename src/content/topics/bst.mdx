@@ -1,0 +1,131 @@
+---
+title: Binary Search Tree
+chapter: 6
+order: 2
+time: 55
+difficulty: medium
+summary: Left is smaller, right is bigger. Insert, search, find min and max by walking one path, and why the tree's shape decides whether that is O(log n) or O(n).
+keywords: [BST, binary search tree, insert, search, min, max, balanced, skewed]
+viz:
+  - id: bst
+    title: BST playground
+    caption: Insert 45 and watch it go left, right, left. Then try the "Skewed" preset to see a tree turn into a list.
+code:
+  - file: bst
+    title: bst.cpp
+complexity:
+  rows:
+    - ['search / insert, balanced', 'O(log n)']
+    - ['search / insert, skewed', 'O(n)']
+    - ['min / max', 'O(h)']
+    - ['inorder (sorted output)', 'O(n)']
+  space: O(n) for the nodes, O(h) recursion
+  note: Every operation walks **one root-to-leaf path**, so the cost is the height **h**. Balanced trees have h ≈ log₂ n; inserting sorted data gives h = n − 1.
+videos:
+  - id: pYT9F8_LFTM
+    why: The BST property and why it gives fast search, compared with arrays and lists.
+  - id: COZK7NATh4k
+    why: Writes recursive insert and search in C/C++ step by step.
+exam:
+  questions:
+    - 'Insert 50, 30, 70, 20, 40, 60, 80 into an empty BST. Draw it.'
+    - Write recursive `insert` and `search` for a BST.
+    - How do you find the minimum and maximum of a BST?
+    - What is the worst-case time of BST search? Give an input that causes it.
+    - Why does inorder traversal of a BST give sorted output?
+  mistakes:
+    - Writing `insert(root->left, x);` without assigning the result back to `root->left`.
+    - Checking only a node's children, not the whole subtree, when asked "is this a BST?".
+    - Forgetting the `nullptr` check before reading `root->data`.
+    - Saying BST search is always O(log n). That only holds for a balanced tree.
+quiz:
+  - q: 'In the BST built from 50, 30, 70, 20, 40, 60, 80, where does 45 go?'
+    options: ['left child of 20', 'right child of 40', 'left child of 60', 'right child of 80']
+    answer: 1
+    explain: 45 < 50 go left; 45 > 30 go right; 45 > 40 go right of 40.
+  - q: The minimum value in a BST is…
+    options: ['the root', 'the leftmost node', 'any leaf', 'the rightmost node']
+    answer: 1
+    explain: Keep going left until there is no left child.
+  - q: Inserting 10, 20, 30, 40, 50 into an empty BST produces…
+    options: ['a balanced tree of height 2', 'a right-skewed chain of height 4', 'a complete tree', 'an error']
+    answer: 1
+    explain: Each value is bigger than all before it, so it always goes right. Search becomes O(n).
+  - q: Why must you write `root->left = insert(root->left, x);`?
+    options: ['Style only', 'When root->left is null, insert returns the new node, and the parent must link to it', 'For speed', 'To balance the tree']
+    answer: 1
+    explain: Without the assignment, the new node is created but never attached.
+practice:
+  trace:
+    task: 'Insert 40, 20, 60, 10, 30, 50, 70, 25 into an empty BST. Then trace search(25) and search(55), listing every node visited.'
+    solution: |
+      ```text
+              40
+            /    \
+          20      60
+         /  \    /  \
+        10  30  50  70
+           /
+          25
+      ```
+      - search(25): 40 → 20 → 30 → 25 **found** (4 nodes)
+      - search(55): 40 → 60 → 50 → right of 50 is null, **not found**
+  implement:
+    task: Write iterative `bool search(Node* root, int x)` (no recursion), and `int countInRange(Node* r, int lo, int hi)`.
+    hint: 'Iterative: `while (root) { if (x == root->data) return true; root = x < root->data ? root->left : root->right; }`. Range: skip the left subtree when `r->data < lo`.'
+  problems:
+    - name: Search in a Binary Search Tree
+      url: https://leetcode.com/problems/search-in-a-binary-search-tree/
+      level: easy
+      hint: This page's search, returning the node instead of a bool.
+    - name: Insert into a Binary Search Tree
+      url: https://leetcode.com/problems/insert-into-a-binary-search-tree/
+      level: medium
+      hint: Exactly `insert()` from this page. It is rated medium but it is a 5-line function.
+    - name: Validate Binary Search Tree
+      url: https://leetcode.com/problems/validate-binary-search-tree/
+      level: medium
+      hint: 'Pass down allowed bounds: `valid(node, lo, hi)`. Left gets `(lo, node->val)`, right gets `(node->val, hi)`. Use long long for the bounds.'
+checklist:
+  - I can build a BST from a list of numbers by hand.
+  - I can write recursive insert and search.
+  - I can find the min and max.
+  - I can explain why BST operations are O(h) and when h becomes n.
+slides: []
+---
+
+Think of a **guessing game**: "I'm thinking of a number. Is it 50?" "Lower." "30?" "Higher." Each answer throws away half the possibilities. That is **binary search** (Chapter 3), but stored as a tree so that **inserting** is also fast.
+
+### The BST property
+
+For **every** node:
+
+- everything in its **left** subtree is **smaller**,
+- everything in its **right** subtree is **bigger**.
+
+(Duplicates: this site ignores them. Some courses send them right. Say which rule you use.)
+
+### Search, insert, min, max
+
+All four start at the root and walk **down one path**:
+
+- **search(x)**: equal → found; smaller → go left; bigger → go right; hit `nullptr` → not found.
+- **insert(x)**: search for x; where you fall off the tree (`nullptr`), put the new node.
+- **min**: keep going **left**. **max**: keep going **right**.
+
+```cpp
+Node* insert(Node* root, int x) {
+    if (!root) return new Node{x, nullptr, nullptr};
+    if (x < root->data) root->left = insert(root->left, x);
+    else if (x > root->data) root->right = insert(root->right, x);
+    return root;
+}
+```
+
+### The shape matters
+
+Each step goes down one level, so the cost is the **height h**. A bushy, balanced tree has h ≈ log₂ n (a million items in about 20 steps). But inserting **already-sorted** data makes every node go right. The "tree" becomes a linked list, and search is **O(n)**. (Self-balancing trees fix this, but they are beyond this course.)
+
+### A free sort
+
+**Inorder** traversal (left, node, right) visits a BST in **sorted order**. See the Traversals topic.

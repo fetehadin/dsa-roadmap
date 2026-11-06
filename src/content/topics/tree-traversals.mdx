@@ -1,0 +1,122 @@
+---
+title: Tree Traversals
+chapter: 6
+order: 4
+time: 45
+difficulty: medium
+summary: Preorder, inorder and postorder (depth-first, recursive) and level order (breadth-first, with a queue). Know them by hand and in code.
+keywords: [traversal, preorder, inorder, postorder, level order, BFS, DFS, recursion]
+viz:
+  - id: traversals
+    title: Traversal animator
+    caption: Run all four on the same tree. Watch the call stack for the DFS orders and the queue for level order.
+code:
+  - file: traversals
+    title: traversals.cpp
+complexity:
+  rows:
+    - ['pre / in / post order', 'O(n): every node once']
+    - ['level order', 'O(n)']
+  space: O(h) recursion for DFS; O(w) queue for level order (w = widest level)
+  note: All four visit every node exactly once. They only differ in **when** a node is printed.
+videos:
+  - id: gm8DUJJhmY4
+    why: Preorder, inorder, postorder with recursion, traced on a real tree.
+  - id: '86g8jAQug04'
+    why: Level order with a queue. This is the same idea as BFS in Chapter 7.
+exam:
+  questions:
+    - Give the preorder, inorder, postorder and level-order traversals of a drawn tree.
+    - Write recursive functions for preorder, inorder and postorder.
+    - Which traversal of a BST gives sorted output?
+    - Which data structure does level-order traversal use, and why?
+    - Given preorder and inorder sequences, rebuild the tree.
+  mistakes:
+    - Mixing the orders. Remember where the **N**ode goes - **pre** = N L R, **in** = L N R, **post** = L R N.
+    - Forgetting that "left before right" is the same in all three.
+    - Using a stack for level order (that gives a DFS order instead).
+quiz:
+  - q: 'Tree: root 1, left 2 (children 4, 5), right 3. Preorder?'
+    options: ['1 2 4 5 3', '4 2 5 1 3', '4 5 2 3 1', '1 2 3 4 5']
+    answer: 0
+    explain: Node, then the whole left subtree (2 4 5), then right (3).
+  - q: Same tree. Postorder?
+    options: ['1 2 4 5 3', '4 2 5 1 3', '4 5 2 3 1', '1 3 2 5 4']
+    answer: 2
+    explain: Left subtree (4 5 2), right subtree (3), then root (1).
+  - q: Same tree. Level order?
+    options: ['1 2 4 5 3', '1 2 3 4 5', '4 5 2 3 1', '4 2 5 1 3']
+    answer: 1
+    explain: Level 0 → 1; level 1 → 2 3; level 2 → 4 5.
+  - q: Which traversal would you use to delete every node of a tree safely?
+    options: ['preorder', 'inorder', 'postorder', 'any of them']
+    answer: 2
+    explain: Postorder frees both children before the parent, so you never use a freed pointer.
+practice:
+  trace:
+    task: 'Using the BST from 50, 30, 70, 20, 40, 60, 80, 35: write all four traversals.'
+    solution: |
+      - Preorder: `50 30 20 40 35 70 60 80`
+      - Inorder: `20 30 35 40 50 60 70 80` (sorted)
+      - Postorder: `20 35 40 30 60 80 70 50`
+      - Level order: `50 30 70 20 40 60 80 35`
+  implement:
+    task: Rebuild a tree from preorder `A B D E C F` and inorder `D B E A F C`, then write its postorder.
+    hint: The first preorder item is the root. Find it in the inorder list; everything to its left is the left subtree. Repeat.
+    solution: |
+      Root A. Inorder left `D B E`, right `F C`. Left root B (children D, E). Right root C (left child F).
+
+      Postorder: `D E B F C A`
+  problems:
+    - name: Binary Tree Inorder Traversal
+      url: https://leetcode.com/problems/binary-tree-inorder-traversal/
+      level: easy
+      hint: Recursive first. Then try it with an explicit stack.
+    - name: Binary Tree Preorder Traversal
+      url: https://leetcode.com/problems/binary-tree-preorder-traversal/
+      level: easy
+      hint: Same template, print before recursing.
+    - name: Binary Tree Level Order Traversal
+      url: https://leetcode.com/problems/binary-tree-level-order-traversal/
+      level: medium
+      hint: Inside the queue loop, process `q.size()` nodes at a time. That batch is one level.
+checklist:
+  - I can write all four traversals of a tree by hand.
+  - I can write recursive pre/in/postorder from memory.
+  - I can write level order with a queue.
+  - I know inorder of a BST is sorted.
+slides: []
+---
+
+You are visiting every room in a building. **Depth-first** means you go down one corridor to the end before trying the next. **Breadth-first** means you visit every room on floor 1 before going to floor 2.
+
+### The three depth-first orders
+
+All three go **left before right**. They differ only in **when you visit the node itself**:
+
+| Order | Rule | Memory trick |
+| --- | --- | --- |
+| **Preorder** | **N**ode, Left, Right | node comes **pre** (before) |
+| **Inorder** | Left, **N**ode, Right | node is **in** the middle |
+| **Postorder** | Left, Right, **N**ode | node comes **post** (after) |
+
+```cpp
+void inorder(Node* r) {
+    if (!r) return;
+    inorder(r->left);
+    cout << r->data << " ";
+    inorder(r->right);
+}
+```
+
+Move the `cout` line up for preorder, down for postorder.
+
+### What each is good for
+
+- **Preorder**: copying a tree, printing folder structures.
+- **Inorder**: a BST in **sorted order**.
+- **Postorder**: deleting a tree (children before parent), evaluating expression trees.
+
+### Level order (breadth-first)
+
+Use a **queue**: push the root; repeatedly pop a node, print it, push its left and right children. The queue makes sure nodes come out level by level, left to right. This is BFS, which you will meet again on graphs in Chapter 7.

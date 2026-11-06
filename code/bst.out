@@ -1,0 +1,4 @@
+inorder (sorted): 20 30 40 45 50 60 70 80 
+search 45: found
+search 65: not found
+min: 20, max: 80

@@ -1,0 +1,111 @@
+---
+title: BST Delete (3 Cases)
+chapter: 6
+order: 3
+time: 45
+difficulty: hard
+summary: Deleting a leaf, a node with one child, and a node with two children by copying the inorder successor. The most-asked BST exam question.
+keywords: [BST, delete, remove, inorder successor, predecessor, three cases]
+viz:
+  - id: bst-delete
+    title: BST delete, all three cases
+    caption: Delete 20 (leaf), then 60 (one child), then 50 (two children). Watch 65 move up to the root.
+code:
+  - file: bst-delete
+    title: bst-delete.cpp
+complexity:
+  rows:
+    - ['delete, balanced', 'O(log n)']
+    - ['delete, skewed', 'O(n)']
+  space: O(h) recursion
+  note: Case 3 walks down twice (to find the node, then to its successor), but both walks are on one path, so it is still **O(h)**.
+videos:
+  - id: gcULXE7ViZw
+    why: Draws all three cases, then writes the recursive delete in C/C++. Exactly this page.
+exam:
+  questions:
+    - Explain the three cases of deleting a node from a BST, with a diagram for each.
+    - 'Delete 50 (the root) from the BST of 50, 30, 70, 20, 40, 60, 80. Draw the result.'
+    - What is the inorder successor? Why does replacing with it keep the BST property?
+    - Write a recursive function to delete a node from a BST.
+  mistakes:
+    - 'Case 3: copying the successor value but forgetting to delete the successor node itself (you get a duplicate).'
+    - 'Case 3: searching for the successor in the left subtree. Successor = **min of the right** subtree.'
+    - Not returning the new subtree root, so the parent still points at the deleted node.
+    - Forgetting `delete`, or using the node after deleting it.
+quiz:
+  - q: Deleting a node with **one** child means…
+    options: ['delete its whole subtree', 'connect its parent directly to its child', 'replace it with the root', 'it cannot be deleted']
+    answer: 1
+    explain: The child (with its subtree) moves up one level.
+  - q: The inorder successor of a node with two children is…
+    options: ['its left child', 'the max of its left subtree', 'the min of its right subtree', 'its parent']
+    answer: 2
+    explain: Go right once, then left as far as possible.
+  - q: 'BST 50, 30, 70, 60, 80, 65. After deleting 50, the root is…'
+    options: ['30', '60', '65', '70']
+    answer: 1
+    explain: The min of the right subtree (70 → 60) is 60. Its value is copied to the root, then the old 60 node is removed (65 moves up into its place).
+  - q: Can the inorder successor (in case 3) have a left child?
+    options: ['Yes, always', 'No; it is the leftmost node of that subtree, so its own removal is case 1 or 2', 'Only in skewed trees', 'Only if it is a leaf']
+    answer: 1
+    explain: That is why the recursive call to remove it is easy.
+practice:
+  trace:
+    task: 'Build the BST from 50, 30, 70, 20, 40, 60, 80, 35, 45, 65. Delete 20, then 30, then 50. Draw the tree after each.'
+    solution: |
+      - Delete 20 (leaf): 30's left becomes null.
+      - Delete 30: now 30 has only a right child (40), so case 2: 50's left becomes 40 (with 35 and 45 below it).
+      - Delete 50 (two children): successor = min of right = 60. Copy 60 to the root, then delete old 60 (case 2: 70's left becomes 65).
+
+      ```text
+              60
+            /    \
+          40      70
+         /  \    /  \
+        35  45  65  80
+      ```
+  implement:
+    task: Rewrite delete using the inorder **predecessor** (max of the left subtree) instead of the successor.
+    hint: Swap `findMin(root->right)` for `findMax(root->left)`, and recurse into `root->left` to remove it.
+  problems:
+    - name: Delete Node in a BST
+      url: https://leetcode.com/problems/delete-node-in-a-bst/
+      level: medium
+      hint: This page's `remove()` function, using TreeNode.
+    - name: Kth Smallest Element in a BST
+      url: https://leetcode.com/problems/kth-smallest-element-in-a-bst/
+      level: medium
+      hint: Inorder traversal with a counter. Stop when the counter reaches k.
+checklist:
+  - I can delete a leaf from a BST.
+  - I can delete a node with one child.
+  - I can delete a node with two children using the inorder successor.
+  - I can write the recursive delete function from memory.
+slides: []
+---
+
+Removing someone from an **org chart**. If they manage nobody, just remove them. If they manage one person, that person reports to their old boss. If they manage two teams, you need a replacement who fits between both teams. That is the whole idea.
+
+First **search** for the node like normal. Then:
+
+### Case 1: a leaf (no children)
+
+Just remove it. The parent's pointer becomes `nullptr`.
+
+### Case 2: one child
+
+**Bypass** it: the parent points directly to the node's only child. The whole subtree moves up one level and the BST property still holds.
+
+### Case 3: two children
+
+You cannot bypass a node with two children. Instead, find a value that can **sit in its place**: bigger than everything on the left, smaller than everything on the right. That is the **inorder successor**, the **smallest value in the right subtree** (go right once, then left until you can't).
+
+1. Copy the successor's value into the node.
+2. Delete the successor from the right subtree. It has no left child, so this is case 1 or 2.
+
+(Using the **inorder predecessor**, the largest on the left, also works. Use whichever your instructor uses.)
+
+### Why the code is short
+
+The recursive version returns the **new root of each subtree**. Cases 1 and 2 merge into one: "if there is no left child, return the right child (which may be `nullptr`)".

@@ -1,0 +1,5 @@
+start:        20 30 35 40 50 60 65 70 80 
+delete 20 (leaf):       30 35 40 50 60 65 70 80 
+delete 60 (one child):  30 35 40 50 65 70 80 
+delete 50 (two children): 30 35 40 65 70 80 
+new root: 65

@@ -1,0 +1,106 @@
+---
+title: General Trees (Left-Child, Right-Sibling)
+chapter: 6
+order: 5
+time: 30
+difficulty: medium
+summary: Trees where a node can have any number of children, stored with only two pointers per node using the left-child/right-sibling representation.
+keywords: [general tree, n-ary tree, left child right sibling, first child next sibling]
+viz:
+  - id: general-tree
+    title: General tree → binary tree
+    caption: Watch each node keep a pointer to its first child, and each child point to its next sibling.
+code:
+  - file: general-tree
+    title: general-tree.cpp
+complexity:
+  rows:
+    - ['visit all nodes', 'O(n)']
+    - ['find the k-th child', 'O(k)']
+    - ['count the children of a node', 'O(degree)']
+  space: O(n), exactly two pointers per node
+  note: A node with d children needs d pointers in the "array of children" design, but only 2 in left-child/right-sibling, whatever d is.
+videos:
+  - id: O8rDi6a5R3g
+    why: Builds the left-child/right-sibling form of an n-ary tree step by step.
+  - id: 'TE2-Zs2QTTw'
+    why: A 5-minute drill on converting a general tree to a binary tree, the usual exam question.
+exam:
+  questions:
+    - What is a general tree? Why is a fixed number of child pointers a problem?
+    - Convert a drawn general tree into its left-child/right-sibling binary tree.
+    - Write the Node struct for the left-child/right-sibling representation.
+  mistakes:
+    - Linking a node's second child to the **parent** instead of to the first child's `nextSibling`.
+    - Drawing siblings as "right child of the parent".
+    - Forgetting that the root has no siblings.
+quiz:
+  - q: In left-child/right-sibling, the `nextSibling` of node B points to…
+    options: ["B's first child", "B's next brother (same parent)", "B's parent", 'the root']
+    answer: 1
+    explain: Children of one parent form a linked list through `nextSibling`.
+  - q: 'A has children B, C, D. In the binary form, C is…'
+    options: ["A's left child", "B's right pointer (nextSibling)", "D's left child", "A's right child"]
+    answer: 1
+    explain: A → first child B; B → next sibling C; C → next sibling D.
+  - q: How many pointers per node does this representation need?
+    options: ['1', '2', 'as many as the children', 'log n']
+    answer: 1
+    explain: firstChild and nextSibling.
+practice:
+  trace:
+    task: 'General tree: R has children A, B, C. A has D, E. C has F. Write firstChild and nextSibling for every node.'
+    solution: |
+      | node | firstChild | nextSibling |
+      | --- | --- | --- |
+      | R | A | – |
+      | A | D | B |
+      | B | – | C |
+      | C | F | – |
+      | D | – | E |
+      | E | – | – |
+      | F | – | – |
+  implement:
+    task: Write `int height(GNode* n)` and `int countLeaves(GNode* n)` for the left-child/right-sibling tree.
+    hint: 'Height: 1 + max over children (loop over `firstChild` → `nextSibling`). A leaf is a node with `firstChild == nullptr`.'
+  problems:
+    - name: N-ary Tree Preorder Traversal
+      url: https://leetcode.com/problems/n-ary-tree-preorder-traversal/
+      level: easy
+      hint: Visit the node, then each child in order.
+    - name: Maximum Depth of N-ary Tree
+      url: https://leetcode.com/problems/maximum-depth-of-n-ary-tree/
+      level: easy
+      hint: 1 + the max depth over all children.
+checklist:
+  - I can explain what a general tree is.
+  - I can convert a general tree to left-child/right-sibling form.
+  - I can write the GNode struct and traverse it.
+slides: []
+---
+
+A **folder on your computer** can hold any number of files and sub-folders. A **company** boss can manage 2 people or 20. These are **general trees** (also called n-ary trees): a node can have **any number** of children.
+
+### The storage problem
+
+A binary tree node has exactly two child pointers. For a general tree, how many should we reserve? Ten? Most would be `nullptr` and wasted, and an eleventh child would not fit.
+
+### The fix: left-child, right-sibling
+
+Give each node just **two** pointers:
+
+```cpp
+struct GNode {
+    char data;
+    GNode* firstChild;    // the leftmost child
+    GNode* nextSibling;   // the next brother to the right
+};
+```
+
+Each parent points only to its **first** child. The children of one parent are chained together like a **linked list** through `nextSibling`.
+
+So "A has children B, C, D" becomes: `A.firstChild = B`, `B.nextSibling = C`, `C.nextSibling = D`.
+
+### It's secretly a binary tree
+
+Rename `firstChild` to `left` and `nextSibling` to `right` and you have a binary tree. That is why this is also called the **binary tree representation of a general tree**. Exams often ask you to draw it: children go **down-left**, siblings go **across to the right**.

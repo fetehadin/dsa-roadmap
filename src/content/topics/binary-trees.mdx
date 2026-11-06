@@ -1,0 +1,139 @@
+---
+title: Binary Trees & Tree Terms
+chapter: 6
+order: 1
+time: 45
+difficulty: easy
+summary: Root, parent, child, leaf, sibling, depth, height, level, subtree; full, complete and perfect binary trees; and the Node struct with recursive count and height.
+keywords: [tree, binary tree, root, leaf, height, depth, level, degree, full, complete, perfect]
+viz:
+  - id: tree-terms
+    title: Tree vocabulary tour
+    caption: Step through to see each term highlighted on the same tree.
+code:
+  - file: binary-tree
+    title: binary-tree.cpp
+complexity:
+  rows:
+    - ['count nodes / leaves', 'O(n): visits every node once']
+    - ['height', 'O(n)']
+    - ['find a value (no ordering)', 'O(n)']
+  space: O(h) recursion stack, where h is the height
+  note: 'A binary tree with n nodes has height between ⌊log₂ n⌋ (perfectly balanced) and n − 1 (a straight line). A perfect tree of height h has 2^(h+1) − 1 nodes.'
+videos:
+  - id: H5JubkIy_p8
+    why: Every tree term, plus full/complete/perfect binary trees, with clear drawings.
+exam:
+  questions:
+    - 'Define: root, leaf, internal node, sibling, ancestor, descendant, depth, height, level, degree.'
+    - Draw a full, a complete and a perfect binary tree. How do they differ?
+    - What is the maximum number of nodes at level k? In a binary tree of height h?
+    - Write recursive functions to count the nodes and compute the height of a binary tree.
+  mistakes:
+    - 'Mixing up depth (from the root down to a node) and height (from a node down to its deepest leaf).'
+    - Not stating your height convention. Here, a single node has height 0 and an empty tree −1. Some books count nodes instead of edges.
+    - Thinking "complete" and "full" mean the same thing.
+    - Forgetting the `nullptr` base case in recursive tree functions.
+quiz:
+  - q: 'In the tree on this page (1 at the root, 7 and 8 under 5), what is the depth of node 7?'
+    options: ['1', '2', '3', '4']
+    answer: 2
+    explain: 'Path 1 → 2 → 5 → 7 has 3 edges.'
+  - q: A node with no children is a…
+    options: ['root', 'leaf', 'sibling', 'internal node']
+    answer: 1
+    explain: Leaves sit at the bottom. Nodes with at least one child are internal.
+  - q: Maximum number of nodes in a binary tree of height 3?
+    options: ['7', '8', '15', '16']
+    answer: 2
+    explain: 2^(3+1) − 1 = 15, which is a perfect tree with levels of 1, 2, 4 and 8 nodes.
+  - q: A complete binary tree is one where…
+    options: ['every node has 0 or 2 children', 'every level is full except possibly the last, filled from the left', 'all leaves are at the same depth', 'it is sorted']
+    answer: 1
+    explain: '"0 or 2 children" is full. "All levels completely full" is perfect.'
+practice:
+  trace:
+    task: 'Draw the tree: A has children B, C. B has D, E. C has right child F. E has left child G. List leaves, internal nodes, the height of the tree, the depth of G, and the siblings of D.'
+    solution: |
+      - Leaves: D, G, F
+      - Internal: A, B, C, E
+      - Height: 3 (A → B → E → G)
+      - Depth of G: 3
+      - Sibling of D: E
+  implement:
+    task: Write `int countInternal(Node* r)` and `int sumAll(Node* r)`, and `bool isFull(Node* r)` (every node has 0 or 2 children).
+    hint: 'Each one is "handle nullptr, handle this node, recurse on left and right". For isFull: a node with exactly one child returns false.'
+    solution: |
+      ```cpp
+      bool isFull(Node* r) {
+          if (!r) return true;
+          if (!r->left != !r->right) return false;   // exactly one child
+          return isFull(r->left) && isFull(r->right);
+      }
+      ```
+  problems:
+    - name: Maximum Depth of Binary Tree
+      url: https://leetcode.com/problems/maximum-depth-of-binary-tree/
+      level: easy
+      hint: Like `height()`, but LeetCode counts nodes, so return 0 for nullptr.
+    - name: Same Tree
+      url: https://leetcode.com/problems/same-tree/
+      level: easy
+      hint: Both null → true; one null → false; else compare values and recurse on both sides.
+    - name: Invert Binary Tree
+      url: https://leetcode.com/problems/invert-binary-tree/
+      level: easy
+      hint: Swap left and right, then recurse on both.
+checklist:
+  - I can define every tree term and point to it on a drawing.
+  - I can tell full, complete and perfect binary trees apart.
+  - I can write recursive count, leaves and height functions.
+  - I can compute the maximum number of nodes for a given height.
+slides: []
+---
+
+A **family tree** turned upside down. At the top is one ancestor, the **root**. Each person can have children, those children have children, and so on. Unlike a linked list, a tree **branches**: it is **non-linear** and **hierarchical**.
+
+In a **binary tree**, each node has **at most two** children: a **left** and a **right**.
+
+```cpp
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
+};
+```
+
+### The vocabulary
+
+| Term | Meaning |
+| --- | --- |
+| **Root** | the top node; it has no parent |
+| **Parent / child** | a node and the nodes directly below it |
+| **Siblings** | children of the same parent |
+| **Leaf** | a node with no children |
+| **Internal node** | a node with at least one child |
+| **Ancestor / descendant** | anything on the path up / down |
+| **Subtree** | a node plus all its descendants |
+| **Degree** | number of children of a node |
+| **Depth** of a node | edges from the root down to it (root depth = 0) |
+| **Level** | all nodes at the same depth |
+| **Height** of a node | edges on the longest path down to a leaf |
+| **Height of the tree** | height of the root |
+
+### Special shapes
+
+- **Full**: every node has **0 or 2** children.
+- **Complete**: every level is full **except possibly the last**, which is filled **from the left**. (Heaps in Chapter 8 are complete trees.)
+- **Perfect**: every level is completely full. A perfect tree of height h has **2^(h+1) − 1** nodes.
+
+### Thinking recursively
+
+Every tree is "a root plus a left subtree plus a right subtree". So most tree functions look like this:
+
+```cpp
+int f(Node* r) {
+    if (r == nullptr) return /* base value */;
+    return /* combine */ (r, f(r->left), f(r->right));
+}
+```
