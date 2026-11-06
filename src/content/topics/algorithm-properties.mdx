@@ -1,0 +1,103 @@
+---
+title: Algorithms & Their Properties
+chapter: 2
+order: 1
+time: 30
+difficulty: easy
+summary: An algorithm is a finite, unambiguous sequence of steps that solves a problem. Learn the 11 properties every correct algorithm must have.
+keywords: [algorithm, properties, finiteness, definiteness, effectiveness, correctness]
+viz:
+  - id: find-max
+    title: Properties spotted in findMax
+code:
+  - file: find-max
+    title: find-max.cpp
+complexity:
+  rows:
+    - ['findMax: comparisons', 'exactly n − 1']
+    - ['findMax: time', 'O(n), and best = worst']
+  space: O(1)
+  note: Efficiency is one of the 11 properties. Chapter 2 is about measuring it precisely.
+videos:
+  - id: 0IAPZzGSbME
+    why: Abdul Bari covers what an algorithm is, its characteristics and how it differs from a program.
+exam:
+  questions:
+    - Define algorithm. List and explain any five properties of an algorithm.
+    - What is the difference between finiteness and effectiveness?
+    - Why must an algorithm be language independent?
+    - Give an example of a set of steps that is NOT an algorithm and say which property it breaks.
+  mistakes:
+    - Confusing **definiteness** (each step has one clear meaning) with **finiteness** (the algorithm stops).
+    - Saying an algorithm needs at least one input. It needs **zero or more** inputs but **at least one** output.
+    - Treating "a program" and "an algorithm" as the same. A program may run forever (an OS); an algorithm must terminate.
+quiz:
+  - q: '"Add a pinch of salt" breaks which property?'
+    options: ['Finiteness', 'Definiteness', 'Generality', 'Sequence']
+    answer: 1
+    explain: '"A pinch" can mean different amounts to different people. Each step must have exactly one meaning.'
+  - q: An algorithm must produce…
+    options: ['zero or more outputs', 'at least one output', 'exactly one input', 'at least one input']
+    answer: 1
+    explain: Zero or more inputs, but at least one output. Otherwise it achieved nothing.
+  - q: '`while (true) { }` violates which property?'
+    options: ['Finiteness', 'Feasibility', 'Language independence', 'Input']
+    answer: 0
+    explain: It never terminates.
+  - q: '"Works for any array size, not just 5 items" describes…'
+    options: ['Correctness', 'Generality', 'Effectiveness', 'Completeness']
+    answer: 1
+    explain: A general algorithm solves every instance of the problem, not one special case.
+practice:
+  trace:
+    task: 'Here is a "recipe": (1) pick a random number, (2) if it is the answer, stop; otherwise go to (1). Which properties does it break?'
+    solution: |
+      - **Finiteness**: it may never stop.
+      - **Definiteness**: "pick a random number" is not one exact action.
+      - **Efficiency**: there is no bound on the number of steps.
+  implement:
+    task: Write `findMin` and a `main()` that tests it on an array of negative numbers. Then write which property your test checks.
+    hint: Start with `min = a[0]`, not `min = 0`. With `0` the algorithm is incorrect for all-positive arrays. That's the *correctness* property.
+  problems:
+    - name: Find Greatest Common Divisor of Array
+      url: https://leetcode.com/problems/find-greatest-common-divisor-of-array/
+      level: easy
+      hint: Find min and max in one pass, then apply Euclid's algorithm (a classic finite, definite algorithm).
+      solution: '`int g(int a, int b){ return b == 0 ? a : g(b, a % b); }` applied to min and max.'
+    - name: Find the Highest Altitude
+      url: https://leetcode.com/problems/find-the-highest-altitude/
+      level: easy
+      hint: A running sum and a running max. Write the steps in plain English first, then code.
+checklist:
+  - I can define an algorithm.
+  - I can list and explain the 11 properties.
+  - I can say which property a broken "algorithm" violates.
+  - I can explain the difference between an algorithm and a program.
+slides: []
+---
+
+An **algorithm** is a recipe precise enough for a machine: *a finite sequence of well-defined steps that takes some input and produces the correct output.*
+
+A cooking recipe that says "bake until it looks good" is fine for humans, but it isn't an algorithm. A computer can't judge "looks good". Every step must be exact.
+
+### The 11 properties
+
+| Property | Meaning |
+|---|---|
+| **Finiteness** | It must stop after a finite number of steps. |
+| **Definiteness** | Every step is clear and has exactly one meaning. |
+| **Sequence** | Steps run in a defined order; each step has a unique next step. |
+| **Feasibility** | Every step can actually be carried out with the available resources. |
+| **Correctness** | It produces the right output for every valid input. |
+| **Language independence** | The steps can be written in any language (C++, Python, pseudocode). |
+| **Completeness** | It solves the whole problem, including edge cases. |
+| **Effectiveness** | Each step is basic enough to do exactly, in finite time, even by hand. |
+| **Efficiency** | It uses as little time and memory as possible. |
+| **Generality** | It works for a whole class of problems, not one fixed input. |
+| **Input / Output** | Zero or more inputs; at least one output. |
+
+> Memory trick: **"Fine Dogs Sit, Feel Calm, Learn Commands; Every Excited Good I/O."** Silly, but it sticks.
+
+### Algorithm vs program
+
+A **program** is an algorithm written in a specific language and run on a machine. A program may run forever (a web server); an algorithm must finish.

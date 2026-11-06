@@ -1,0 +1,4 @@
+slow: 8 checks
+fast: 3 checks
+same result: 252 == 252
+max = 25

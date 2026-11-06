@@ -1,0 +1,105 @@
+---
+title: Measuring Efficiency
+chapter: 2
+order: 2
+time: 35
+difficulty: easy
+summary: Empirical vs theoretical analysis, qualitative vs quantitative, the three classic avoidable inefficiencies, and the time–space trade-off.
+keywords: [empirical, theoretical, qualitative, quantitative, inefficiency, trade-off]
+viz:
+  - id: late-termination
+    title: Late loop termination
+    caption: Search for a value near the front, then for one that is missing. When does breaking early help?
+code:
+  - file: inefficiencies
+    title: fixing the three inefficiencies
+complexity:
+  rows:
+    - ['Search with late termination', 'always n checks']
+    - ['Search that breaks early', '1 … n checks']
+    - ['Duplicate check with nested loops', 'O(n²) time, O(1) space']
+    - ['Duplicate check with a set', 'O(n) time, O(n) space ← trade-off']
+  note: Trading memory for speed (or the reverse) is the **time–space trade-off**. Neither side is free.
+videos:
+  - id: 9TlHvipP5yA
+    why: Explains why we count steps instead of timing with a stopwatch.
+  - id: v4cd1O4zkGw
+    why: A short, clear intuition for why growth rate matters more than exact seconds.
+exam:
+  questions:
+    - Compare empirical and theoretical analysis. Give two drawbacks of empirical analysis.
+    - What is the difference between qualitative and quantitative analysis of an algorithm?
+    - Explain three avoidable inefficiencies with a code example of each.
+    - Explain the time–space trade-off with an example.
+  mistakes:
+    - Saying empirical analysis is useless. It is useful, but its results depend on the machine, compiler, language and inputs.
+    - Mixing up "redundant computation" (recomputing the same value in a loop) with "repeated array referencing" (reading `a[i]` many times).
+    - Thinking the faster algorithm is always better. It may need far more memory.
+quiz:
+  - q: Running two programs and timing them with a stopwatch is…
+    options: ['theoretical analysis', 'empirical analysis', 'asymptotic analysis', 'qualitative analysis']
+    answer: 1
+    explain: Empirical = by experiment. Results depend on hardware, compiler and test inputs.
+  - q: 'Readability, simplicity and maintainability are part of…'
+    options: ['quantitative analysis', 'qualitative analysis', 'empirical analysis', 'Big-O analysis']
+    answer: 1
+    explain: Qualitative analysis judges the quality of the design. Quantitative analysis measures time and space numerically.
+  - q: Which inefficiency is in this loop?
+    code: "for (int i = 0; i < n; i++)\n    total += a[i] * sqrt(x);"
+    options: ['Late termination', 'Redundant computation', 'Repeated array referencing', 'None']
+    answer: 1
+    explain: '`sqrt(x)` never changes, but it is recomputed n times. Compute it once before the loop.'
+  - q: Using a hash set to find duplicates in O(n) instead of O(n²) is an example of…
+    options: ['the time–space trade-off', 'late termination', 'empirical analysis', 'definiteness']
+    answer: 0
+    explain: We spend O(n) extra memory to save time.
+practice:
+  trace:
+    task: 'Spot every avoidable inefficiency: `for (i = 0; i < n; i++) { if (a[i] > a[i] * k * k / 2) found = true; }` (we only need to know whether at least one such item exists).'
+    solution: |
+      1. **Redundant computation**: `k * k / 2` is recomputed every iteration; compute `half = k*k/2` once.
+      2. **Repeated array referencing**: `a[i]` is read twice; store it in `int v = a[i];`.
+      3. **Late termination**: once `found` is true we should `break`.
+  implement:
+    task: Write a program that checks whether an array has two equal items in two ways (nested loops, and a `std::set`). Count the comparisons each method makes on 1000 random numbers.
+    hint: Use a global counter, incremented before each comparison. Nested loops make about n²/2 comparisons.
+  problems:
+    - name: Contains Duplicate
+      url: https://leetcode.com/problems/contains-duplicate/
+      level: easy
+      hint: Brute force is O(n²) time and O(1) space. A set is O(n) time and O(n) space. Sorting first is O(n log n) time with little extra space. Three points on the trade-off curve.
+    - name: Two Sum
+      url: https://leetcode.com/problems/two-sum/
+      level: easy
+      hint: The textbook time–space trade-off. Write the O(n²) version first, then the hash-map version.
+checklist:
+  - I can compare empirical and theoretical analysis.
+  - I can explain qualitative vs quantitative analysis.
+  - I can spot and fix redundant computation, late termination and repeated array referencing.
+  - I can explain the time–space trade-off with an example.
+slides: []
+---
+
+How do you decide which of two algorithms is "better"? There are two ways to find out.
+
+### Empirical vs theoretical
+
+- **Empirical analysis** = *run it and measure*. Implement both, time them on test data. It is easy to understand, but the result depends on the **computer, compiler, language, other running programs and the inputs you chose**. A fast laptop can make a bad algorithm look good.
+- **Theoretical analysis** = *count the steps on paper* as a function of the input size **n**. It is independent of the machine and covers **all** inputs. This is what the rest of the chapter teaches.
+
+### Qualitative vs quantitative
+
+- **Qualitative**: Is it simple? Readable? Easy to maintain and modify? Does it handle errors?
+- **Quantitative**: How much **time** (number of operations) and **space** (memory) does it use?
+
+### Avoidable inefficiencies
+
+These are "free" speed-ups that don't change the algorithm's idea:
+
+1. **Redundant computation**: computing the same value again and again inside a loop. Move it out of the loop.
+2. **Late loop termination**: continuing to loop after the answer is already known. `break` or `return` early.
+3. **Repeated array referencing**: reading `a[i]` several times in one iteration. Read it once into a local variable.
+
+### The time–space trade-off
+
+You can often buy speed with memory: a lookup table, a set of seen values, a prefix-sum array. Or save memory by recomputing. Good design picks the balance the problem needs. On a phone with little memory you may choose differently than on a server.

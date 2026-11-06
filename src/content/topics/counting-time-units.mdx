@@ -1,0 +1,141 @@
+---
+title: Counting Time Units
+chapter: 2
+order: 3
+time: 50
+difficulty: medium
+summary: Turn code into a formula T(n) using the instructor's counting rules. Loops become sums, and nested loops multiply.
+keywords: [time units, T(n), counting rules, summation, loops, nested loops]
+viz:
+  - id: time-units
+    title: 'Counting: for loop → T(n) = 4n + 3'
+    caption: Change n and watch each rule add its units.
+  - id: time-units-nested
+    title: 'Counting: nested loop → T(n) = 3n² + 4n + 3'
+code:
+  - file: time-units
+    title: counting by instrumenting the code
+complexity:
+  rows:
+    - ['Single loop `for(i=0;i<n;i++) k=k+1; cout<<k;`', 'T(n) = 4n + 3 → O(n)']
+    - ['Nested n × n loop with `k++`', 'T(n) = 3n² + 4n + 3 → O(n²)']
+    - ['Loop where i doubles (`i *= 2`)', '≈ log₂ n iterations → O(log n)']
+  note: The exact T(n) depends on the counting rules; the **growth rate** (Big-O) does not. Use your instructor's rules on the exam.
+videos:
+  - id: 9TlHvipP5yA
+    why: Abdul Bari counts statements in loops step by step, the same skill as here.
+exam:
+  questions:
+    - 'Calculate T(n) for: `int k=0; for(int i=0;i<n;i++) k=k+1; cout<<k;`'
+    - 'Calculate T(n) for a nested loop where both loops run n times and the body is `sum++`.'
+    - 'Express the loop `for(i=1;i<=n;i++) for(j=1;j<=i;j++) x++;` as a summation and simplify it.'
+    - State the counting rules for if-statements, loops and function calls.
+  mistakes:
+    - Counting the loop test n times instead of **n + 1** (the last, failing test counts too).
+    - 'Counting `k = k + 1` as 1 unit. It is **2**: one addition and one assignment.'
+    - 'For `if/else`, adding both branches. Count the condition **plus the larger branch only**.'
+    - Forgetting the initialization of the loop (1 unit, done once).
+quiz:
+  - q: 'Using the course rules, T(n) for `for(i=0;i<n;i++) k=k+1; cout<<k;` is:'
+    options: ['3n + 2', '4n + 3', '4n + 2', '2n + 3']
+    answer: 1
+    explain: 1 (init) + (n+1) tests + n increments + 2n (add + assign) + 1 (cout) = 4n + 3.
+  - q: How many times is the condition `i < n` evaluated in `for (i = 0; i < n; i++)`?
+    options: ['n − 1', 'n', 'n + 1', '2n']
+    answer: 2
+    explain: True n times plus the final false test.
+  - q: 'An `if (x > 0) a = b + c; else a = 0;` costs:'
+    options: ['1 + 2 + 1 = 4', '1 + 2 = 3', '2 + 1 = 3', '1']
+    answer: 1
+    explain: Condition (1) + the larger branch (`a = b + c` = 2).
+  - q: 'The summation $\sum_{i=1}^{n} i$ equals:'
+    options: ['n', 'n²', 'n(n+1)/2', '2ⁿ']
+    answer: 2
+    explain: Gauss's formula. It is why a loop whose inner part runs i times is O(n²).
+  - q: 'What is the order of growth of `for (i = 1; i < n; i *= 2) count++;`?'
+    options: ['O(1)', 'O(log n)', 'O(n)', 'O(n log n)']
+    answer: 1
+    explain: i takes values 1, 2, 4, 8, … so it reaches n after about log₂ n iterations.
+practice:
+  trace:
+    task: |
+      Compute T(n) with the course rules:
+      ```cpp
+      int sum = 0;
+      for (int i = 0; i < n; i++)
+          sum = sum + i;
+      return sum;
+      ```
+    solution: |
+      - `sum = 0`: 1
+      - loop: 1 (init) + (n + 1) (tests) + n (increments)
+      - body `sum = sum + i`: 2 per iteration → 2n
+      - `return sum`: 1
+
+      **T(n) = 1 + 1 + (n+1) + n + 2n + 1 = 4n + 4 → O(n)**
+  implement:
+    task: Add a global `long long t` counter to `selectionSort` that counts every comparison and assignment. Print t for n = 10, 100, 1000 and check that it grows like n².
+    hint: When n is ×10, a quadratic count should be ≈ ×100.
+  problems:
+    - name: Count Odd Numbers in an Interval Range
+      url: https://leetcode.com/problems/count-odd-numbers-in-an-interval-range/
+      level: easy
+      hint: A loop from low to high is O(n). Can you find a formula that is O(1)? Count units for both versions.
+      solution: '`(high + 1) / 2 - low / 2`, a constant number of operations.'
+    - name: Sqrt(x)
+      url: https://leetcode.com/problems/sqrtx/
+      level: easy
+      hint: Trying i = 1, 2, 3… is O(√x). Binary search over [0, x] is O(log x). Count iterations of each for x = 10⁶.
+checklist:
+  - I can apply the counting rules for assignments, I/O, operators, if, loops and calls.
+  - I can get T(n) = 4n + 3 for the standard single loop without notes.
+  - I can count a nested loop and write it as a summation.
+  - I can simplify Σ1, Σi and Σi² sums.
+slides: []
+---
+
+Instead of timing code with a stopwatch, we **count operations**. Each simple operation costs **1 time unit**. Then T(n), the total as a function of input size n, tells us how the work grows.
+
+### The rules (use exactly these on the exam)
+
+1. **1 unit** each for: an assignment, a single input/output, a Boolean operation (`<`, `==`, `&&`, …), an arithmetic operation (`+`, `-`, `*`, `/`, `%`, `++`), and a `return`.
+2. **if / switch**: time of the condition **+ the time of the largest branch**.
+3. **Loops**: the loop header costs **1** (initialization) **+ (n + 1)** (tests: n true plus one false) **+ n** (increments). The body costs *(body time) × (number of iterations)*.
+4. **Nested loops**: multiply. The inner body runs (outer iterations) × (inner iterations) times.
+5. **Function call**: **1** (call setup) **+ the parameters + the time of the body**.
+
+### Worked example
+
+```cpp
+for (i = 0; i < n; i++)
+    k = k + 1;
+cout << k;
+```
+
+| Part | Units |
+|---|---|
+| `i = 0` | 1 |
+| `i < n` | n + 1 |
+| `i++` | n |
+| `k = k + 1` (add + assign) | 2n |
+| `cout << k` | 1 |
+
+$$T(n) = 1 + (n+1) + n + 2n + 1 = 4n + 3$$
+
+### Loops → summations
+
+When the inner loop depends on the outer variable, write the count as a sum:
+
+```cpp
+for (i = 1; i <= n; i++)
+    for (j = 1; j <= i; j++)
+        x++;
+```
+
+The body runs $\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$ times, so it grows like n².
+
+Three sums to memorise:
+
+- $\sum_{i=1}^{n} 1 = n$
+- $\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$
+- $\sum_{i=1}^{n} i^2 = \frac{n(n+1)(2n+1)}{6}$

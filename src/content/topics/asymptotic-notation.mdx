@@ -1,0 +1,133 @@
+---
+title: Asymptotic Notation & Big-O Proofs
+chapter: 2
+order: 5
+time: 60
+difficulty: medium
+summary: O, Ω, Θ, o and ω describe how fast T(n) grows for large n. Learn the definitions, the order of growth, and how to prove f(n) = O(g(n)) by finding c and k.
+keywords: [Big-O, Omega, Theta, little-o, little-omega, growth rate, proof, c and k]
+viz:
+  - id: growth-chart
+  - id: big-o-proof
+    title: Big-O proof stepper
+    caption: Try the 10n+5 and 3n²+4n+1 presets, then your own coefficients.
+code:
+  - file: growth
+    title: growth table + numeric check of a proof
+complexity:
+  rows:
+    - ['O(1)', 'constant: array access, push/pop']
+    - ['O(log n)', 'logarithmic: binary search']
+    - ['O(n)', 'linear: linear search, traversal']
+    - ['O(n log n)', 'linearithmic: merge sort, heap sort']
+    - ['O(n²)', 'quadratic: bubble, selection, insertion sort']
+    - ['O(n³)', 'cubic: three nested loops']
+    - ['O(2ⁿ)', 'exponential: all subsets, naive Fibonacci']
+  note: 'Order to memorise: **1 < log n < n < n log n < n² < n³ < 2ⁿ < n!**'
+videos:
+  - id: A03oI0znAoc
+    why: The clearest explanation of O, Ω and Θ with the c and n₀ definition, exactly what proofs need.
+  - id: v4cd1O4zkGw
+    why: Eight-minute intuition with code examples; good before tackling proofs.
+exam:
+  questions:
+    - Define Big-O, Big-Omega and Big-Theta formally.
+    - Show that f(n) = 10n + 5 is O(n). State your c and k.
+    - Show that f(n) = 3n² + 4n + 1 is O(n²).
+    - Arrange in increasing order of growth — n², log n, 2ⁿ, n, n log n, 1.
+    - What is the difference between O(g(n)) and o(g(n))?
+  mistakes:
+    - 'Forgetting to state c and k explicitly. A proof without numbers gets partial marks.'
+    - 'Claiming 3n² = O(n). False: no constant c makes 3n² ≤ c·n for all large n.'
+    - Thinking Big-O means "worst case". Big-O is an **upper bound** on a function; you can give an upper bound for the best case too.
+    - Keeping constants or lower terms. O(2n² + n) should be written O(n²).
+quiz:
+  - q: 'To prove f(n) = O(g(n)) you must find…'
+    options: ['c > 0 and k such that f(n) ≤ c·g(n) for all n ≥ k', 'c such that f(n) = c·g(n)', 'k such that f(k) = g(k)', 'the limit of f(n)']
+    answer: 0
+    explain: That is the definition. Any valid pair works.
+  - q: 'Which pair (c, k) proves 10n + 5 = O(n)?'
+    options: ['c = 10, k = 1', 'c = 15, k = 1', 'c = 5, k = 1', 'c = 1, k = 10']
+    answer: 1
+    explain: For n ≥ 1, 5 ≤ 5n, so 10n + 5 ≤ 15n. (c = 10 fails because 10n + 5 > 10n for every n.)
+  - q: 'Θ(g(n)) means f(n) is…'
+    options: ['only bounded above by g', 'only bounded below by g', 'bounded above AND below by constant multiples of g', 'strictly smaller than g']
+    answer: 2
+    explain: Θ is a tight bound, both O and Ω.
+  - q: Which grows fastest?
+    options: ['n³', 'n log n', '2ⁿ', 'n²']
+    answer: 2
+    explain: Exponential beats any polynomial for large n. Drag the chart's slider to n = 30.
+  - q: 'n is o(n²) because…'
+    options: ['n ≤ n² only for n = 1', 'n grows strictly slower: n/n² → 0', 'they are equal', 'n² is o(n)']
+    answer: 1
+    explain: Little-o is a strict upper bound. The ratio f/g goes to 0.
+practice:
+  trace:
+    task: Prove that f(n) = 5n² + 3n + 2 is O(n²). Show c and k and check one value.
+    solution: |
+      For n ≥ 1: 3n ≤ 3n² and 2 ≤ 2n². So
+      5n² + 3n + 2 ≤ 5n² + 3n² + 2n² = **10n²**.
+
+      Choose **c = 10, k = 1**. Check n = 2: 20 + 6 + 2 = 28 ≤ 40 ✓. Therefore f(n) = O(n²). ∎
+  implement:
+    task: Extend `growth.cpp` to check numerically, for n from 1 to 10 000, that 5n² + 3n + 2 ≤ 10n². Then try c = 5 and see where it fails.
+    hint: With c = 5 it fails for every n ≥ 1, because 3n + 2 > 0. A numeric check doesn't replace a proof, but it does catch wrong constants.
+  problems:
+    - name: Fibonacci Number
+      url: https://leetcode.com/problems/fibonacci-number/
+      level: easy
+      hint: Naive recursion is O(2ⁿ). A simple loop with two variables is O(n). Time both for n = 40.
+      solution: '`int a = 0, b = 1; for (int i = 0; i < n; i++) { int c = a + b; a = b; b = c; } return a;`'
+    - name: Climbing Stairs
+      url: https://leetcode.com/problems/climbing-stairs/
+      level: easy
+      hint: Same recurrence as Fibonacci. Which growth rate does your solution have?
+    - name: Power of Two
+      url: https://leetcode.com/problems/power-of-two/
+      level: easy
+      hint: Dividing by 2 until you reach 1 is O(log n). There is also an O(1) bit trick `n > 0 && (n & (n-1)) == 0`.
+checklist:
+  - I can state the definitions of O, Ω, Θ, o and ω.
+  - I can prove 10n + 5 = O(n) and 3n² + 4n + 1 = O(n²) with explicit c and k.
+  - I can order the common growth rates from slowest to fastest.
+  - I can simplify any T(n) to its Big-O class.
+slides: []
+---
+
+T(n) = 4n + 3 and T(n) = 7n + 100 look different, but for a million items both grow **in a straight line**. Asymptotic notation throws away constants and small terms and keeps only the **shape of growth** for large n. Think of describing a car as "fast" rather than "214.3 km/h".
+
+### The five notations
+
+Let f(n) be the running time and g(n) a simple function like n or n².
+
+| Notation | Read as | Meaning | Like |
+|---|---|---|---|
+| f = **O**(g) | big-oh | f(n) ≤ c·g(n) for all n ≥ k | ≤ (upper bound) |
+| f = **Ω**(g) | big-omega | f(n) ≥ c·g(n) for all n ≥ k | ≥ (lower bound) |
+| f = **Θ**(g) | big-theta | both O(g) and Ω(g) | = (tight bound) |
+| f = **o**(g) | little-oh | f grows strictly slower: f/g → 0 | &lt; |
+| f = **ω**(g) | little-omega | f grows strictly faster: f/g → ∞ | &gt; |
+
+### How to prove f(n) = O(g(n))
+
+The definition says: find constants **c > 0** and **k ≥ 1** with
+
+$$f(n) \le c \cdot g(n) \quad \text{for all } n \ge k$$
+
+The recipe for polynomials:
+
+1. For n ≥ 1, replace every smaller power of n by g(n) (it can only get bigger).
+2. Add the coefficients. That sum is **c**.
+3. The bound holds from n = 1, so **k = 1**.
+
+**Example 1.** f(n) = 10n + 5. For n ≥ 1, 5 ≤ 5n, so 10n + 5 ≤ 15n. **c = 15, k = 1** ⇒ O(n).
+
+**Example 2.** f(n) = 3n² + 4n + 1. For n ≥ 1, 4n ≤ 4n² and 1 ≤ n², so f(n) ≤ 8n². **c = 8, k = 1** ⇒ O(n²).
+
+### Simplifying rules
+
+- Drop constant factors: O(5n) = O(n).
+- Keep the dominant term: O(n² + n + 1) = O(n²).
+- Sequential code adds: O(n) + O(n²) = O(n²).
+- Nested code multiplies: a loop of n around a loop of n = O(n²).

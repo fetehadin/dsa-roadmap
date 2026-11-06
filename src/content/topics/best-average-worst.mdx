@@ -1,0 +1,99 @@
+---
+title: Best, Average & Worst Case
+chapter: 2
+order: 4
+time: 30
+difficulty: easy
+summary: The same algorithm can be fast or slow depending on the input. We analyse the best, average and worst case, and usually report the worst.
+keywords: [best case, worst case, average case, linear search, input dependence]
+viz:
+  - id: search-cases
+    title: Linear search in three scenarios
+code:
+  - file: best-worst
+    title: counting comparisons per case
+complexity:
+  rows:
+    - ['Linear search: best (key is first)', 'O(1): 1 comparison']
+    - ['Linear search: average (key present)', '(n + 1) / 2 comparisons → O(n)']
+    - ['Linear search: worst (last or missing)', 'n comparisons → O(n)']
+    - ['Bubble sort with flag: best / worst', 'O(n) / O(n²)']
+  space: O(1)
+  note: The **worst case** is an upper bound you can promise to a user, which is why it is the one usually reported.
+videos:
+  - id: 9TlHvipP5yA
+    why: Works through how the same code takes different numbers of steps for different inputs.
+  - id: A03oI0znAoc
+    why: Links the three cases to the notations you meet next (O, Ω, Θ).
+exam:
+  questions:
+    - Define best, worst and average case complexity with linear search as the example.
+    - Why is worst-case analysis used more often than average-case analysis?
+    - Give an input that produces the best case and the worst case for insertion sort.
+    - Show that the average number of comparisons for a successful linear search is (n + 1)/2.
+  mistakes:
+    - '"Best case is when n is small." No: best case is about the **arrangement** of the input for a given n, never about a small n.'
+    - Thinking the average case is (best + worst) / 2. It is an expected value over all inputs.
+    - Mixing up the case with the notation. "Worst case" is not the same thing as "Big-O".
+quiz:
+  - q: For linear search, the worst case happens when the key is…
+    options: ['in the middle', 'the first item', 'the last item or not present', 'repeated']
+    answer: 2
+    explain: Then every item must be compared.
+  - q: Best-case input for insertion sort is…
+    options: ['a reversed array', 'an already sorted array', 'all equal except one', 'random']
+    answer: 1
+    explain: Each new key is already ≥ the item before it, so the inner while loop never runs. That gives O(n).
+  - q: Why do we usually report the worst case?
+    options: ['It is the easiest to compute', 'It guarantees an upper limit for every input', 'It is always the average', 'It is the most common input']
+    answer: 1
+    explain: Whatever the input, the algorithm will never be slower than this.
+  - q: The best case of an algorithm depends on…
+    options: ['n being 1', 'the input arrangement for a given n', 'the computer speed', 'the language']
+    answer: 1
+    explain: For a fixed size n, which arrangement of the data makes it fastest?
+practice:
+  trace:
+    task: Count comparisons for linear search in `[4, 9, 2, 7, 5]` with keys 4, 2, 5 and 8. Which is the best case and which is the worst?
+    solution: |
+      - key 4: 1 comparison (**best**)
+      - key 2: 3 comparisons
+      - key 5: 5 comparisons
+      - key 8: 5 comparisons, not found (**worst**, tied with 5)
+  implement:
+    task: Add a comparison counter to insertion sort and print it for a sorted, a reversed and a random array of 10 items.
+    hint: Sorted → 9 comparisons (n − 1). Reversed → 45 (n(n−1)/2). Random falls somewhere in between.
+  problems:
+    - name: Search Insert Position
+      url: https://leetcode.com/problems/search-insert-position/
+      level: easy
+      hint: Write the linear version first and name its best and worst case. Then do it in O(log n) with binary search.
+    - name: Find Numbers with Even Number of Digits
+      url: https://leetcode.com/problems/find-numbers-with-even-number-of-digits/
+      level: easy
+      hint: Counting digits by dividing by 10 depends on the value. What is the worst case per number?
+checklist:
+  - I can define best, average and worst case.
+  - I can give the input that triggers each case for linear search and insertion sort.
+  - I can derive (n + 1)/2 for the average successful linear search.
+  - I can explain why we usually analyse the worst case.
+slides: []
+---
+
+Looking for your keys in a row of 10 pockets: if they're in the **first** pocket you're done in one check; if they're in the **last** pocket (or not there at all) you check all 10. Same algorithm, same n, very different effort.
+
+### The three cases
+
+- **Best case**: the input arrangement that needs the **fewest** steps. Linear search: key at index 0 → **1 comparison**.
+- **Worst case**: the arrangement that needs the **most** steps. Linear search: key last or missing → **n comparisons**.
+- **Average case**: the expected steps over all inputs (assuming each is equally likely). Linear search, key present: on average $\frac{1 + 2 + \dots + n}{n} = \frac{n+1}{2}$ comparisons.
+
+### Which one do we report?
+
+Usually the **worst case**, because:
+
+- it is a **guarantee**: the algorithm will never be slower;
+- it often happens in practice (searching for something that isn't there);
+- the average case needs assumptions about the input that may not hold.
+
+> The case is about the **input arrangement** for a fixed n. "n = 1" is not the best case. A sorted array of size 1,000,000 can be the best case for insertion sort.

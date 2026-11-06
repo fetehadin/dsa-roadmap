@@ -1,0 +1,4 @@
+best  (first item): key 8 -> index 0 after 1 comparisons
+middle: key 6 -> index 3 after 4 comparisons
+worst (missing): key 99 -> index -1 after 8 comparisons
+average when found: 36/8 = 4.5
