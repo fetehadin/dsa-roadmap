@@ -1,0 +1,113 @@
+---
+title: Pointer Sort
+chapter: 3
+order: 4
+time: 30
+difficulty: medium
+summary: When records are big, don't move them. Sort an array of pointers (or indices) to the records instead, and only small addresses get swapped.
+keywords: [pointer sort, index sort, indirect sort, records, struct]
+viz:
+  - id: pointer-sort
+    title: Sorting pointers, not records
+    caption: The "records" row never changes. Only the p[ ] row moves.
+code:
+  - file: pointer-sort
+    title: pointer-sort.cpp
+complexity:
+  rows:
+    - ['Comparisons', 'same as the underlying sort (here selection: n(n−1)/2)']
+    - ['Data moved per swap', 'one pointer (8 bytes) instead of one whole record']
+    - ['Time', 'O(n²) with selection sort; O(n log n) with a fast sort']
+  space: O(n) for the pointer array
+  stable: false
+  inPlace: false
+  note: Pointer sort is a **technique**, not a new algorithm. Any sort (selection, insertion, quick…) can be made indirect.
+videos:
+  - id: h-HBipu_1P0
+    why: You need pointers for this; mycodeschool's intro is the best 10-minute refresher.
+  - id: GUDLRan2DWM
+    why: The underlying sort in our example is selection sort.
+exam:
+  questions:
+    - What is pointer sort and why is it used?
+    - Write a function that sorts an array of pointers to `Student` records by score.
+    - After pointer-sorting, how do you print records in sorted order? Has the original array changed?
+    - Compare the cost of a swap in normal sorting vs pointer sorting for 1 KB records.
+  mistakes:
+    - Swapping the records (`swap(*p[i], *p[min])`) instead of the pointers (`swap(p[i], p[min])`). That defeats the purpose.
+    - Comparing the pointers themselves (`p[j] < p[min]`) instead of what they point to (`p[j]->score`).
+    - Forgetting to initialise `p[i] = &s[i]` before sorting.
+quiz:
+  - q: In pointer sort, what gets swapped?
+    options: ['The records', 'The pointers (or indices) to the records', 'The keys only', 'Nothing']
+    answer: 1
+    explain: Records stay put; only small addresses move.
+  - q: 'Which line correctly compares scores through pointers?'
+    options: ['`if (p[j] < p[min])`', '`if (p[j]->score < p[min]->score)`', '`if (*p[j] < *p[min])`', '`if (&p[j] < &p[min])`']
+    answer: 1
+    explain: '`->` follows the pointer to the struct and reads its `score`.'
+  - q: After pointer sort, the original `Student s[]` array is…
+    options: ['sorted', 'unchanged', 'reversed', 'deleted']
+    answer: 1
+    explain: Only the pointer array p[] is in sorted order.
+  - q: Main benefit of pointer sort?
+    options: ['Fewer comparisons', 'Less data copied per swap', 'O(n log n) time', 'No extra memory']
+    answer: 1
+    explain: Comparisons are the same; the saving is in how much data each swap moves.
+practice:
+  trace:
+    task: 'Records: `[0] Abel 72, [1] Bethel 95, [2] Dawit 58`. Show `p[]` (as indices) after each pass of pointer selection sort by score.'
+    solution: |
+      - Start: `p = [0, 1, 2]`
+      - Pass 1: min score 58 at p[2] → swap p[0], p[2] → `p = [2, 1, 0]`
+      - Pass 2: compare Bethel 95 vs Abel 72 → swap → `p = [2, 0, 1]`
+
+      Sorted order: Dawit, Abel, Bethel. The records array is untouched.
+  implement:
+    task: Rewrite pointer sort using an `int idx[]` array of indices instead of pointers, and sort by **name** alphabetically.
+    hint: Compare `s[idx[j]].name < s[idx[min]].name`, swap `idx[i]` and `idx[min]`.
+    solution: |
+      ```cpp
+      void indexSort(Student s[], int idx[], int n) {
+          for (int i = 0; i < n; i++) idx[i] = i;
+          for (int i = 0; i < n - 1; i++) {
+              int min = i;
+              for (int j = i + 1; j < n; j++)
+                  if (s[idx[j]].name < s[idx[min]].name) min = j;
+              swap(idx[i], idx[min]);
+          }
+      }
+      ```
+  problems:
+    - name: Sort the People
+      url: https://leetcode.com/problems/sort-the-people/
+      level: easy
+      hint: Exactly pointer/index sort. Sort an index array by `heights[i]` (descending), then output `names[idx[k]]`.
+    - name: Rank Transform of an Array
+      url: https://leetcode.com/problems/rank-transform-of-an-array/
+      level: easy
+      hint: Sort indices by value, then walk them to assign ranks without disturbing the original order.
+checklist:
+  - I can explain why we sort pointers instead of records.
+  - I can write pointer sort with `->` comparisons and pointer swaps.
+  - I can print records in sorted order through the pointer array.
+  - I can do the same with an index array.
+slides: [1anH6KfsTG4Y6j0oMo4lCd2os1ce-HlGhJ4tzOl9jHn0]
+---
+
+A library has 10,000 heavy books on shelves. To list them by title you don't **carry the books around**. You sort the **index cards** that say where each book is. The books never move; the cards do.
+
+That is **pointer sort** (also called *indirect* or *index* sort).
+
+### The problem it solves
+
+Each swap in a normal sort copies whole items. If each item is a big `struct` (name, ID, address, photo…), every swap copies hundreds of bytes three times. That's slow.
+
+### The trick
+
+1. Make an array of pointers: `p[i] = &records[i]`.
+2. Run any sort on **p**, but compare through the pointers: `p[j]->score < p[min]->score`.
+3. Swap **pointers**: `swap(p[i], p[min])`. Each swap moves 8 bytes.
+4. Read records in order through p: `p[0]->name`, `p[1]->name`, …
+
+The original array keeps its order. You can even keep **several pointer arrays** (by name, by score, by ID) over the same data at once.

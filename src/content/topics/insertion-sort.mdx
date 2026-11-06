@@ -1,0 +1,105 @@
+---
+title: Insertion Sort
+chapter: 3
+order: 3
+time: 40
+difficulty: easy
+summary: Grow a sorted part on the left by inserting each new item into its correct place, like sorting cards in your hand. Fast on nearly sorted data.
+keywords: [sorting, insertion, shift, stable, adaptive]
+viz:
+  - id: insertion-sort
+    title: Insertion sort step by step
+    caption: Compare the "Sorted" preset (n − 1 comparisons) with "Reversed".
+code:
+  - file: insertion-sort
+    title: insertion-sort.cpp
+complexity:
+  rows:
+    - ['Best case (already sorted)', 'O(n): n − 1 comparisons, 0 shifts']
+    - ['Average case', 'O(n²)']
+    - ['Worst case (reversed)', 'O(n²): n(n−1)/2 comparisons and shifts']
+  space: O(1)
+  stable: true
+  inPlace: true
+  note: Insertion sort is **adaptive** (faster on nearly sorted input) and **online** (it can sort items as they arrive). Real libraries use it for small sub-arrays.
+videos:
+  - id: i-SKeOcBwko
+    why: Builds the "shift right, then drop the key" loop carefully and analyses the cases.
+  - id: JU767SDMDvA
+    why: Two-minute animation to lock in the picture.
+exam:
+  questions:
+    - Trace insertion sort on `12, 11, 13, 5, 6`, showing the array after each insertion.
+    - What are the best and worst case inputs and complexities of insertion sort?
+    - Why does insertion sort perform well on nearly sorted data?
+    - Compare insertion sort with selection sort.
+  mistakes:
+    - Writing `a[j] >= key` in the while loop. That breaks stability.
+    - 'Forgetting `j >= 0` in the loop condition, which reads `a[-1]`.'
+    - Putting `a[j + 1] = key` inside the while loop. It goes **after** the loop.
+    - Starting the outer loop at `i = 0`. Item 0 alone is already "sorted", so start at 1.
+quiz:
+  - q: 'Insertion sort on `2, 3, 4, 5, 1`: how many shifts happen in total?'
+    options: ['1', '4', '5', '10']
+    answer: 1
+    explain: Only the last key (1) moves, shifting 2, 3, 4 and 5 one place right.
+  - q: Best case of insertion sort?
+    options: ['O(1)', 'O(n)', 'O(n log n)', 'O(n²)']
+    answer: 1
+    explain: Each key is compared once with its left neighbour and stays put.
+  - q: What does the inner while loop do?
+    options: ['Finds the minimum', 'Swaps neighbours until sorted', 'Shifts larger items right to open a gap for key', 'Splits the array']
+    answer: 2
+    explain: Shifting (one assignment each) is cheaper than swapping (three assignments).
+  - q: Which sort is best for an array that is already sorted except for 2 items?
+    options: ['Selection sort', 'Insertion sort', 'All are the same', 'None']
+    answer: 1
+    explain: It is adaptive, so the work is close to O(n). Selection sort would still do n²/2 comparisons.
+practice:
+  trace:
+    task: Trace insertion sort on `12, 11, 13, 5, 6`. Write the array after each value of i.
+    solution: |
+      - i = 1 (key 11): `11 12 13 5 6`
+      - i = 2 (key 13): `11 12 13 5 6` (no shift)
+      - i = 3 (key 5): `5 11 12 13 6` (3 shifts)
+      - i = 4 (key 6): `5 6 11 12 13` (3 shifts)
+  implement:
+    task: Write `insertionSortDesc` (descending order), then a version that sorts an array of `string` names alphabetically.
+    hint: Only the comparison changes. `string` supports `<` and `>` out of the box.
+  problems:
+    - name: Insertion Sort List
+      url: https://leetcode.com/problems/insertion-sort-list/
+      level: medium
+      hint: Same idea on a linked list. Use a dummy head for the sorted list and insert each node after the right predecessor (revisit after Chapter 4).
+    - name: Sort an Array
+      url: https://leetcode.com/problems/sort-an-array/
+      level: medium
+      hint: Insertion sort will time out on the large tests, which shows why O(n²) matters.
+    - name: Insertion Sort - Part 1 (HackerRank)
+      url: https://www.hackerrank.com/challenges/insertionsort1/problem
+      level: easy
+      hint: Print the array after every shift. A great tracing exercise.
+checklist:
+  - I can trace insertion sort and show every shift.
+  - I can write it from memory with the correct while condition.
+  - I can name the best/worst inputs and their complexities.
+  - I can explain why it is stable and adaptive.
+slides: [1anH6KfsTG4Y6j0oMo4lCd2os1ce-HlGhJ4tzOl9jHn0]
+---
+
+You're dealt cards one at a time. Your hand is always sorted: each new card slides left past the bigger ones until it finds its spot. You never re-sort the whole hand. That's insertion sort.
+
+### The idea
+
+- The part `a[0..i-1]` is always **sorted**.
+- Take `key = a[i]`.
+- Walk left from `i - 1`, **shifting** every item bigger than `key` one place right.
+- When you hit an item ≤ key (or the start), drop `key` into the gap.
+
+### Why it's adaptive
+
+If the array is already sorted, every key is ≥ its left neighbour, so the while loop stops at once: **n − 1 comparisons, O(n)**. If it's reversed, every key travels all the way to the front: **n(n−1)/2**, O(n²). The less "out of order" the data, the faster it runs.
+
+### Shift, don't swap
+
+Each step of the while loop is **one assignment** (`a[j+1] = a[j]`), not a three-assignment swap. That's why insertion sort usually beats bubble sort in practice, even though both are O(n²).

@@ -1,0 +1,122 @@
+---
+title: Bubble Sort
+chapter: 3
+order: 2
+time: 35
+difficulty: easy
+summary: Compare neighbours and swap them if they are out of order. After each pass the biggest remaining item has "bubbled" to the end.
+keywords: [sorting, swap, adjacent, early exit]
+viz:
+  - id: bubble-sort
+    title: Bubble sort step by step
+    caption: Try the "Sorted" preset to see the early exit, then "Reversed" for the worst case.
+code:
+  - file: bubble-sort
+    title: bubble-sort.cpp
+complexity:
+  rows:
+    - ['Best case (already sorted)', 'O(n): one pass, no swaps, stop']
+    - ['Average case', 'O(n²)']
+    - ['Worst case (reversed)', 'O(n²): n(n−1)/2 comparisons and swaps']
+  space: O(1)
+  stable: true
+  inPlace: true
+  note: The O(n) best case only exists **because of the `swapped` flag**. Without it, bubble sort always does n(n−1)/2 comparisons.
+videos:
+  - id: Jdtq5uKz-w4
+    why: Slow and careful. Traces every comparison and builds the C code with you.
+  - id: xli_FI7CuzA
+    why: A 2-minute visual recap. Watch it right before an exam.
+exam:
+  questions:
+    - Show every pass of bubble sort on `5, 1, 4, 2, 8`. How many swaps happen?
+    - What is the purpose of the `swapped` flag? What is the best-case complexity with and without it?
+    - Is bubble sort stable? Explain why using the `>` comparison.
+    - How many comparisons does bubble sort make on n items in the worst case?
+  mistakes:
+    - Looping `j` up to `n - 1` in every pass instead of `n - 1 - i`. It still works, but does useless comparisons.
+    - Writing `a[j] >= a[j+1]`. Swapping equal items breaks stability.
+    - Reading past the array with `j < n` and then accessing `a[j + 1]`.
+    - Forgetting to reset `swapped = false` at the start of each pass.
+quiz:
+  - q: 'After the **first** pass of bubble sort on `4, 3, 2, 1`, the array is:'
+    options: ['`3, 2, 1, 4`', '`1, 2, 3, 4`', '`3, 4, 2, 1`', '`1, 4, 3, 2`']
+    answer: 0
+    explain: The 4 bubbles all the way to the end. The rest moves left by one place each.
+  - q: What is the best-case time complexity of bubble sort **with** the early-exit flag?
+    options: ['O(1)', 'O(n)', 'O(n log n)', 'O(n²)']
+    answer: 1
+    explain: On sorted input the first pass makes n−1 comparisons, no swaps, and stops.
+  - q: Which change makes bubble sort **unstable**?
+    options: ['Using `>=` instead of `>`', 'Removing the `swapped` flag', 'Looping `i` from `n-1` down to 1', 'Using `std::swap`']
+    answer: 0
+    explain: With `>=`, two equal items get swapped, so their original order is lost.
+  - q: How many comparisons does bubble sort make on 6 items in the worst case?
+    options: ['6', '15', '30', '36']
+    answer: 1
+    explain: n(n−1)/2 = 6·5/2 = 15.
+practice:
+  trace:
+    task: Trace bubble sort on `5, 1, 4, 2, 8`. Write the array after every pass and count the swaps.
+    solution: |
+      - Pass 1: `1 4 2 5 8` (3 swaps)
+      - Pass 2: `1 2 4 5 8` (1 swap)
+      - Pass 3: `1 2 4 5 8` (0 swaps, so stop early)
+
+      Total: 4 swaps, 4 + 3 + 2 = 9 comparisons.
+  implement:
+    task: Write `bubbleSortDesc(int a[], int n)` that sorts in **descending** order, and make it print the number of passes it actually used.
+    hint: Flip one comparison. Count passes in the outer loop and print after the loop (or after `break`).
+    solution: |
+      ```cpp
+      void bubbleSortDesc(int a[], int n) {
+          int passes = 0;
+          for (int i = 0; i < n - 1; i++) {
+              passes++;
+              bool swapped = false;
+              for (int j = 0; j < n - 1 - i; j++)
+                  if (a[j] < a[j + 1]) { swap(a[j], a[j + 1]); swapped = true; }
+              if (!swapped) break;
+          }
+          cout << "passes: " << passes << "\n";
+      }
+      ```
+  problems:
+    - name: Sort an Array (try bubble sort first, see it time out)
+      url: https://leetcode.com/problems/sort-an-array/
+      level: medium
+      hint: Bubble sort is correct but O(n²) and will hit the time limit. That is the lesson. Come back after Chapter 8 with merge sort.
+    - name: Move Zeroes
+      url: https://leetcode.com/problems/move-zeroes/
+      level: easy
+      hint: Think of zeros as "heavy" items that must sink to the end, like bubble sort, but you can do it in one pass.
+      solution: Keep a write index `w`. For each non-zero `x`, write `a[w++] = x`. Then fill the rest with zeros. O(n).
+    - name: Bubble Sort (HackerRank)
+      url: https://www.hackerrank.com/challenges/ctci-bubble-sort/problem
+      level: easy
+      hint: Count every swap while sorting, then print the count, first and last element.
+checklist:
+  - I can trace bubble sort pass by pass on a small array.
+  - I can write bubble sort from memory, including the swapped flag.
+  - I can explain why the best case is O(n) and the worst case is O(n²).
+  - I can explain why bubble sort is stable.
+slides: []
+---
+
+Imagine bubbles in a glass of water: the **big ones rise to the top**. Bubble sort walks along the array comparing each pair of neighbours. If the left one is bigger, they swap. By the end of one pass, the largest item has floated to the last position, and it never moves again.
+
+So each pass fixes one more item at the end:
+
+- **Pass 1** puts the largest item in the last slot.
+- **Pass 2** puts the second largest in the second-to-last slot.
+- …and after **n − 1 passes**, everything is in place.
+
+### The early-exit trick
+
+If a whole pass makes **no swaps**, every neighbour pair is already in order, so the whole array is sorted. The `swapped` flag lets us stop right there. That is the "avoid late loop termination" idea from Chapter 2, put into practice.
+
+### Why the inner loop shrinks
+
+After pass `i`, the last `i` items are final. So the inner loop only needs to go up to `n - 1 - i`. Comparing against the finished part is wasted work.
+
+> Bubble sort is rarely used in real programs, but it is the easiest sort to reason about and a favourite for exam traces.

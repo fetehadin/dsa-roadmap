@@ -1,0 +1,110 @@
+---
+title: Recursion Primer
+chapter: 3
+order: 7
+time: 45
+difficulty: medium
+summary: A function that calls itself on a smaller problem until it reaches a base case. You need this for trees (Ch 6) and merge/quick sort (Ch 8).
+keywords: [recursion, base case, call stack, factorial, recursive binary search, stack overflow]
+viz:
+  - id: factorial
+    title: factorial(n) on the call stack
+    caption: Watch frames pile up until the base case, then unwind with return values.
+  - id: rec-binary-search
+    title: Recursive binary search
+code:
+  - file: recursion
+    title: recursion.cpp
+complexity:
+  rows:
+    - ['factorial(n): time', 'O(n): n calls, O(1) work each']
+    - ['factorial(n): space', 'O(n) stack frames']
+    - ['recursive binary search: time', 'O(log n)']
+    - ['recursive binary search: space', 'O(log n) stack frames (iterative version: O(1))']
+  note: Every recursive call uses a **stack frame**. Too deep (or no base case) means a stack overflow and a crash.
+videos:
+  - id: mz6tAJMVmfM
+    why: CS50's short is the friendliest explanation of base case, recursive case and the call stack.
+  - id: ngCos392W4w
+    why: A 5-step method for writing recursive functions. It pays off in Ch 6 and Ch 8.
+exam:
+  questions:
+    - What is recursion? What are the two required parts of a recursive function?
+    - Trace `factorial(4)` showing the call stack.
+    - Write a recursive binary search function.
+    - What happens if a recursive function has no base case?
+  mistakes:
+    - No base case, or a base case that is never reached (e.g. `factorial(n + 1)`).
+    - Forgetting to `return` the recursive call's result (`bs(...)` instead of `return bs(...)`).
+    - Thinking recursion is always slower or always better. It trades stack memory for simpler code.
+quiz:
+  - q: What does `f(3)` return?
+    code: "int f(int n) {\n    if (n == 0) return 0;\n    return n + f(n - 1);\n}"
+    options: ['3', '5', '6', '0']
+    answer: 2
+    explain: 3 + 2 + 1 + 0 = 6.
+  - q: The base case of a recursive function…
+    options: ['calls the function again', 'stops the recursion with a direct answer', 'is optional', 'must be the last line']
+    answer: 1
+    explain: Without it the calls never stop.
+  - q: Calling `factorial(5)` creates at most how many frames on the stack at once?
+    options: ['1', '5', '6', '120']
+    answer: 1
+    explain: factorial(5) → (4) → (3) → (2) → (1). Five frames before unwinding.
+  - q: Missing base case usually causes…
+    options: ['a compile error', 'a stack overflow at run time', 'the wrong answer silently', 'nothing']
+    answer: 1
+    explain: Each call adds a frame until the stack memory runs out.
+practice:
+  trace:
+    task: Trace `power(2, 4)` where `power(b, e)` returns 1 if e == 0, else `b * power(b, e - 1)`. Show the calls going down and the values coming back up.
+    solution: |
+      Down: power(2,4) → power(2,3) → power(2,2) → power(2,1) → power(2,0)
+
+      Up: power(2,0) = 1 → power(2,1) = 2 → power(2,2) = 4 → power(2,3) = 8 → power(2,4) = **16**
+  implement:
+    task: Write recursive `sumArray(a, n)`, `reverseString(s, l, r)` and `fib(n)`. Which one is slow for n = 40 and why?
+    hint: '`fib(n) = fib(n-1) + fib(n-2)` recomputes the same values exponentially many times → O(2ⁿ).'
+    solution: |
+      ```cpp
+      int sumArray(const int a[], int n) { return n == 0 ? 0 : a[n - 1] + sumArray(a, n - 1); }
+      void reverseString(string& s, int l, int r) { if (l >= r) return; swap(s[l], s[r]); reverseString(s, l + 1, r - 1); }
+      long long fib(int n) { return n < 2 ? n : fib(n - 1) + fib(n - 2); }   // exponential!
+      ```
+  problems:
+    - name: Fibonacci Number
+      url: https://leetcode.com/problems/fibonacci-number/
+      level: easy
+      hint: Write it recursively first, then notice the repeated work.
+    - name: Power of Two
+      url: https://leetcode.com/problems/power-of-two/
+      level: easy
+      hint: 'Base cases: n == 1 → true; n odd or n ≤ 0 → false. Recursive case: isPowerOfTwo(n / 2).'
+    - name: Reverse String
+      url: https://leetcode.com/problems/reverse-string/
+      level: easy
+      hint: Swap the ends, recurse on the inside. Base case — `l >= r`.
+checklist:
+  - I can name the base case and recursive case of any recursive function.
+  - I can draw the call stack for factorial(4).
+  - I can write recursive binary search.
+  - I can explain stack overflow and the O(n) space of deep recursion.
+slides: []
+---
+
+Russian **matryoshka dolls**: to find the smallest doll you open a doll, and inside is… a smaller doll, which you open the same way. You stop when a doll doesn't open. That last doll is the **base case**.
+
+### Two required parts
+
+1. **Base case**: a small input you can answer directly, with no further calls (`n <= 1` → return 1).
+2. **Recursive case**: solve the problem using the answer to a **smaller** version of itself (`n * factorial(n - 1)`). Each call must move **toward** the base case.
+
+### The call stack
+
+Every call gets its own **stack frame** (its own copy of `n`, its own return address). When `factorial(4)` calls `factorial(3)`, the first call **pauses** and waits. Frames pile up until the base case returns, then they **unwind** one by one, each finishing its multiplication.
+
+That's why recursion uses **O(depth)** memory, and why a missing base case ends in a **stack overflow**.
+
+### When to use it
+
+Recursion shines when a problem naturally contains smaller copies of itself: **trees** (a subtree is a tree), **divide and conquer** sorts (merge and quick sort), and searching by halves.

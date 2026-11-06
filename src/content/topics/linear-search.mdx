@@ -1,0 +1,93 @@
+---
+title: Linear Search
+chapter: 3
+order: 5
+time: 25
+difficulty: easy
+summary: Check every item from left to right until you find the key or run out. Works on any array, sorted or not, but costs O(n).
+keywords: [search, sequential, unsorted, O(n)]
+viz:
+  - id: linear-search
+    title: Linear search
+    caption: Search for a value that is present, then one that is missing.
+code:
+  - file: linear-search
+    title: linear-search.cpp
+complexity:
+  rows:
+    - ['Best case', 'O(1): key at index 0']
+    - ['Average case (found)', '(n + 1)/2 comparisons → O(n)']
+    - ['Worst case', 'O(n): last item or not present']
+    - ['Needs sorted data?', 'No']
+  space: O(1)
+  note: On a linked list, linear search is the **only** option, because you can't jump to the middle.
+videos:
+  - id: j5uXyPJ0Pew
+    why: Starts with linear search, then shows why binary search is a huge improvement.
+exam:
+  questions:
+    - Write a linear search function that returns the index of the key or −1.
+    - What are the best, average and worst case complexities of linear search?
+    - When is linear search preferred over binary search?
+    - Modify linear search to return the index of the LAST occurrence.
+  mistakes:
+    - Returning `-1` inside the loop (in an `else`), which stops after checking only the first item.
+    - Looping with `i <= n`, one past the end.
+    - Forgetting that an unsorted array cannot use binary search.
+quiz:
+  - q: What is wrong here?
+    code: "for (int i = 0; i < n; i++)\n    if (a[i] == key) return i;\n    else return -1;"
+    options: ['Nothing', 'It only ever checks a[0]', 'It loops forever', 'It reads past the end']
+    answer: 1
+    explain: Either branch returns on the first iteration. `return -1` belongs after the loop.
+  - q: Linear search on 1000 items, key not present. Comparisons?
+    options: ['1', '500', '1000', '10']
+    answer: 2
+    explain: Every item must be checked.
+  - q: Linear search is the better choice when…
+    options: ['the data is huge and sorted', 'the data is small or unsorted', 'you search millions of times', 'never']
+    answer: 1
+    explain: Sorting first costs O(n log n). For a single search on unsorted data, just scan.
+practice:
+  trace:
+    task: 'How many comparisons does linear search make on `[7, 2, 9, 4, 9, 1]` for keys 9, 1 and 5?'
+    solution: |
+      - key 9: **3** (first occurrence at index 2)
+      - key 1: **6**
+      - key 5: **6** (not found)
+  implement:
+    task: Write `countOccurrences(a, n, key)` and `lastIndexOf(a, n, key)`.
+    hint: 'For lastIndexOf, loop backwards from `n - 1` and return the first match, or loop forwards and remember the latest match.'
+  problems:
+    - name: Check If N and Its Double Exist
+      url: https://leetcode.com/problems/check-if-n-and-its-double-exist/
+      level: easy
+      hint: For each item, linearly search for its double (O(n²)). Then think about how a set makes it O(n).
+    - name: Find Numbers with Even Number of Digits
+      url: https://leetcode.com/problems/find-numbers-with-even-number-of-digits/
+      level: easy
+      hint: A linear scan with a digit counter.
+checklist:
+  - I can write linear search returning the index or −1.
+  - I can state its best, average and worst case.
+  - I can explain when linear search beats binary search.
+slides: [1anH6KfsTG4Y6j0oMo4lCd2os1ce-HlGhJ4tzOl9jHn0]
+---
+
+Looking for your friend in a queue of strangers, you walk from the front and check **each face** until you see them, or reach the end. That's linear (sequential) search.
+
+### The algorithm
+
+```text
+for each index i from 0 to n-1:
+    if a[i] == key: return i
+return -1        (only after checking everything)
+```
+
+### Strengths and weaknesses
+
+- ✅ Works on **unsorted** data and on **linked lists**.
+- ✅ Dead simple, no preparation needed.
+- ❌ Slow for big data: up to **n** comparisons.
+
+If you'll search the same large array many times, it's worth sorting it **once** and using binary search after that.
