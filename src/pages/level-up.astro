@@ -1,0 +1,10 @@
+---
+import Base from '@/layouts/Base.astro';
+import ChapterPage from '@/components/ChapterPage.astro';
+import { chapterById } from '@/data/chapters';
+const ch = chapterById('levelup');
+---
+
+<Base title="Level Up: Problem Patterns" description={ch.blurb} accent={ch.accent} og="/og/level-up.png">
+  <ChapterPage id="levelup" />
+</Base>

@@ -1,0 +1,72 @@
+---
+import { videos, fmtDuration } from '@/data/videos';
+import { Play } from '@lucide/astro';
+
+interface Props {
+  slug: string;
+  items: { id: string; why: string }[];
+}
+const { slug, items } = Astro.props;
+---
+
+<div class="grid gap-4 sm:grid-cols-2" data-videos data-slug={slug}>
+  {
+    items.map(({ id, why }) => {
+      const v = videos[id];
+      if (!v) throw new Error(`Unknown video id ${id} on ${slug}`);
+      return (
+        <article class="card overflow-hidden">
+          <div class="relative aspect-video bg-black" data-yt={id}>
+            <button class="group absolute inset-0 grid place-items-center" aria-label={`Play: ${v.title} (${fmtDuration(v.seconds)})`}>
+              <img src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`} alt="" loading="lazy" decoding="async" width="480" height="360" class="absolute inset-0 size-full object-cover opacity-80 transition-opacity group-hover:opacity-100" />
+              <span class="relative grid size-14 place-items-center rounded-full bg-black/70 text-white ring-1 ring-white/30 transition-transform group-hover:scale-110"><Play size={22} fill="currentColor" /></span>
+              <span class="absolute right-2 bottom-2 rounded bg-black/80 px-1.5 py-0.5 font-mono text-xs text-white">{fmtDuration(v.seconds)}</span>
+            </button>
+          </div>
+          <div class="grid gap-1.5 p-4">
+            <h3 class="leading-snug font-semibold">{v.title}</h3>
+            <div class="text-xs text-muted">{v.channel} · {fmtDuration(v.seconds)}</div>
+            <p class="text-sm text-muted"><span class="font-medium text-fg">Why this one:</span> {why}</p>
+            <label class="mt-1 flex w-fit cursor-pointer items-center gap-2 text-sm">
+              <input type="checkbox" data-watched={id} class="size-4 accent-[var(--r-done)]" /> Watched
+            </label>
+          </div>
+        </article>
+      );
+    })
+  }
+</div>
+
+<script>
+  import { patchTopic, topic } from '@/lib/progress';
+  document.querySelectorAll<HTMLElement>('[data-videos]').forEach((wrap) => {
+    const slug = wrap.dataset.slug!;
+    const seen = new Set(topic(slug).videos ?? []);
+    wrap.querySelectorAll<HTMLInputElement>('[data-watched]').forEach((cb) => {
+      cb.checked = seen.has(cb.dataset.watched!);
+      cb.addEventListener('change', () => {
+        const s = new Set(topic(slug).videos ?? []);
+        if (cb.checked) s.add(cb.dataset.watched!);
+        else s.delete(cb.dataset.watched!);
+        patchTopic(slug, { videos: [...s] });
+      });
+    });
+    wrap.querySelectorAll<HTMLElement>('[data-yt]').forEach((box) => {
+      box.querySelector('button')?.addEventListener('click', () => {
+        const id = box.dataset.yt!;
+        const f = document.createElement('iframe');
+        f.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+        f.title = box.querySelector('button')?.getAttribute('aria-label') ?? 'YouTube video';
+        f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        f.allowFullscreen = true;
+        f.className = 'absolute inset-0 size-full';
+        box.replaceChildren(f);
+        const cb = wrap.querySelector<HTMLInputElement>(`[data-watched="${id}"]`);
+        if (cb && !cb.checked) {
+          cb.checked = true;
+          cb.dispatchEvent(new Event('change'));
+        }
+      });
+    });
+  });
+</script>
