@@ -1,0 +1,96 @@
+---
+title: Graph Terminology
+chapter: 7
+order: 1
+time: 35
+difficulty: easy
+summary: Vertices and edges, adjacency, degree, paths, cycles, connected graphs, weighted graphs, and how a tree is a special graph.
+keywords: [graph, vertex, edge, degree, path, cycle, connected, weighted, sparse, dense]
+viz:
+  - id: graph-terms
+    title: Graph vocabulary tour
+    caption: Step through each term on one small graph, then on its directed twin.
+code:
+  - file: graph-rep
+    title: graph-rep.cpp
+complexity:
+  rows:
+    - ['max edges, undirected', 'V(V − 1)/2']
+    - ['max edges, directed', 'V(V − 1)']
+    - ['sum of all degrees', '2E (each edge counted at both ends)']
+  space: Depends on the representation (next topic)
+  note: A graph with E close to V² is **dense**; with E close to V it is **sparse**. Road maps and social networks are sparse.
+videos:
+  - id: gXgEDyodOJU
+    why: Graph vocabulary with real examples (social networks, maps), and how graphs differ from trees.
+exam:
+  questions:
+    - 'Define: vertex, edge, adjacent, degree, path, cycle, connected graph, weighted graph.'
+    - What is the maximum number of edges in an undirected graph with V vertices?
+    - Prove that the sum of the degrees of all vertices is 2E.
+    - How is a tree different from a general graph?
+  mistakes:
+    - Counting path length in vertices instead of edges.
+    - Saying every graph is connected.
+    - Forgetting that a cycle must not reuse an edge.
+quiz:
+  - q: 'A graph has degrees 2, 3, 2, 2, 3, 2. How many edges?'
+    options: ['6', '7', '14', '12']
+    answer: 1
+    explain: Sum of degrees = 14 = 2E, so E = 7.
+  - q: A connected graph with V vertices and no cycles has how many edges?
+    options: ['V', 'V − 1', 'V + 1', 'V²']
+    answer: 1
+    explain: That is a tree.
+  - q: Maximum edges in a simple undirected graph with 5 vertices?
+    options: ['5', '10', '20', '25']
+    answer: 1
+    explain: 5 · 4 / 2 = 10.
+practice:
+  trace:
+    task: 'Graph: V = {A, B, C, D, E}, E = {AB, AC, BC, CD}. Give the degree of each vertex, one cycle, a path from A to D, and say whether it is connected.'
+    solution: |
+      - Degrees: A 2, B 2, C 3, D 1, E 0 (sum 8 = 2 × 4 edges)
+      - Cycle: A → B → C → A
+      - Path A → D: A → C → D (length 2)
+      - **Not connected**: E has no edges.
+  implement:
+    task: Read V, E and E pairs of vertices. Print the degree of every vertex and say whether the sum equals 2E.
+    hint: An `int deg[V]` array; each edge (u, v) does `deg[u]++; deg[v]++;`.
+  problems:
+    - name: Find Center of Star Graph
+      url: https://leetcode.com/problems/find-center-of-star-graph/
+      level: easy
+      hint: The center is in every edge. Compare the first two edges.
+    - name: Find the Town Judge
+      url: https://leetcode.com/problems/find-the-town-judge/
+      level: easy
+      hint: Count in-degree and out-degree. The judge has in = n − 1 and out = 0.
+checklist:
+  - I can define every graph term and point to it on a drawing.
+  - I know the sum of degrees equals 2E.
+  - I can explain how a tree is a special graph.
+slides: []
+---
+
+A **map of cities and roads**. The cities are **vertices** (nodes); the roads are **edges**. Unlike a tree, there is no root and no parent: any city can connect to any other, and you can drive in circles.
+
+A graph is written **G = (V, E)**: a set of vertices and a set of edges.
+
+| Term | Meaning |
+| --- | --- |
+| **Adjacent** | two vertices joined by an edge |
+| **Degree** | number of edges at a vertex |
+| **Path** | a sequence of vertices joined by edges; its **length** is the number of edges |
+| **Cycle** | a path that returns to its start without reusing an edge |
+| **Connected** | there is a path between every pair of vertices |
+| **Weighted** | each edge carries a number (distance, cost, time) |
+| **Directed** | edges are one-way arrows (next topics) |
+
+### Trees are graphs too
+
+A **tree** is a connected graph with **no cycles**. It always has exactly **V − 1** edges. Add one more edge and a cycle appears.
+
+### The handshake rule
+
+Every edge has two ends, so it adds 1 to the degree of **two** vertices. The sum of all degrees is therefore **2E**. This is a favourite short-answer question.

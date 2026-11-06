@@ -1,0 +1,98 @@
+---
+title: Directed Graphs
+chapter: 7
+order: 3
+time: 30
+difficulty: easy
+summary: One-way edges, in-degree and out-degree, directed paths and cycles, and how the matrix and list change.
+keywords: [directed graph, digraph, in-degree, out-degree, DAG, arrows]
+viz:
+  - id: graph-rep
+    title: Build a directed graph
+    caption: Press "Build directed". Each edge is stored once, and the matrix is no longer symmetric.
+code:
+  - file: directed-graph
+    title: directed-graph.cpp
+complexity:
+  rows:
+    - ['out-degree of u', 'list O(1) (size of adj[u]) · matrix O(V) (row sum)']
+    - ['in-degree of u', 'list O(V + E) · matrix O(V) (column sum)']
+    - ['space', 'matrix O(V²) · list O(V + E)']
+  note: The sum of all in-degrees equals the sum of all out-degrees, and both equal **E**.
+videos:
+  - id: amaH38_mXK4
+    why: A 4-minute side-by-side of directed and undirected graphs.
+  - id: mXoiHgH4mEE
+    why: Digraph vocabulary (in/out-degree, directed paths and cycles) with clear drawings.
+exam:
+  questions:
+    - What is a directed graph? Give two real examples.
+    - Find the in-degree and out-degree of every vertex in a drawn digraph.
+    - Draw the adjacency matrix of a digraph. Why is it not symmetric?
+    - What is a DAG?
+  mistakes:
+    - Adding both `m[u][v]` and `m[v][u]` for a directed edge.
+    - Following an arrow backwards when tracing a path.
+    - Mixing up in-degree (arrows coming in) and out-degree (arrows going out).
+quiz:
+  - q: In a digraph, the sum of all out-degrees equals…
+    options: ['V', 'E', '2E', 'V²']
+    answer: 1
+    explain: Each arrow leaves exactly one vertex.
+  - q: 'Edges 0→1, 1→2, 2→0, 2→3. In-degree of 0?'
+    options: ['0', '1', '2', '3']
+    answer: 1
+    explain: Only 2 → 0 points into 0.
+  - q: Which is naturally a directed graph?
+    options: ['Facebook friendships', 'Twitter/X follows', 'Two-way roads', 'A handshake network']
+    answer: 1
+    explain: You can follow someone who does not follow you back.
+practice:
+  trace:
+    task: 'Digraph with edges A→B, A→C, B→C, C→A, C→D. Give in- and out-degree for each vertex, the adjacency list, and one directed cycle.'
+    solution: |
+      | vertex | in | out | list |
+      | --- | --- | --- | --- |
+      | A | 1 | 2 | B, C |
+      | B | 1 | 1 | C |
+      | C | 2 | 2 | A, D |
+      | D | 1 | 0 | – |
+
+      Cycle: A → B → C → A (or A → C → A). Totals: in 5 = out 5 = E.
+  implement:
+    task: Given an adjacency list of a digraph, build its **reverse** (every arrow flipped) and compute all in-degrees in O(V + E).
+    hint: 'For every u and every v in adj[u]: `rev[v].push_back(u); in[v]++;`'
+  problems:
+    - name: Find the Town Judge
+      url: https://leetcode.com/problems/find-the-town-judge/
+      level: easy
+      hint: Trust is a directed edge. The judge has in-degree n − 1 and out-degree 0.
+    - name: Course Schedule
+      url: https://leetcode.com/problems/course-schedule/
+      level: medium
+      hint: Courses and prerequisites form a digraph. You can finish all courses iff there is no directed cycle.
+checklist:
+  - I can explain directed vs undirected edges with examples.
+  - I can compute in-degree and out-degree.
+  - I can draw the matrix and list of a digraph.
+slides: []
+---
+
+On Facebook, friendship goes **both ways**. On Instagram, you can **follow** someone who does not follow you back. The first is an undirected graph; the second is a **directed graph** (digraph). Every edge is an **arrow** from u to v.
+
+### What changes
+
+- **Degree splits in two.** **Out-degree** = arrows leaving a vertex; **in-degree** = arrows arriving.
+- **Paths follow the arrows.** 0 → 1 does not let you go from 1 to 0.
+- **Storage**: a directed edge u → v is stored **once**:
+
+```cpp
+m[u][v] = 1;           // not m[v][u]
+adj[u].push_back(v);   // not adj[v]
+```
+
+So the matrix is usually **not symmetric**. Its row sum is the out-degree, and its column sum is the in-degree.
+
+### DAGs
+
+A **D**irected **A**cyclic **G**raph has no directed cycles. Course prerequisites, task schedules and build systems are DAGs: you can always find an order that respects every arrow.

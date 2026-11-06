@@ -1,0 +1,118 @@
+---
+title: Adjacency Matrix & Adjacency List
+chapter: 7
+order: 2
+time: 45
+difficulty: medium
+summary: Two ways to store a graph in memory, what each costs, and when to choose which.
+keywords: [adjacency matrix, adjacency list, representation, sparse, dense, space]
+viz:
+  - id: graph-rep
+    title: Build the matrix and the list
+    caption: Build the undirected graph and toggle between matrix and list. Then build the directed one and see the matrix lose its symmetry.
+code:
+  - file: graph-rep
+    title: graph-rep.cpp
+complexity:
+  rows:
+    - ['space', 'matrix O(V²) · list O(V + E)']
+    - ['is there an edge u–v?', 'matrix O(1) · list O(deg u)']
+    - ['visit all neighbours of u', 'matrix O(V) · list O(deg u)']
+    - ['add an edge', 'matrix O(1) · list O(1)']
+  note: For BFS/DFS the list gives **O(V + E)** and the matrix gives **O(V²)**.
+videos:
+  - id: '9C2cpQZVRBA'
+    why: The adjacency matrix, its cost, and when it wastes space.
+  - id: k1wraWzqtvQ
+    why: The adjacency list and a clear side-by-side cost comparison.
+exam:
+  questions:
+    - Draw the adjacency matrix and adjacency list of a given graph.
+    - Compare the space and time costs of the two representations.
+    - Which representation suits a sparse graph? A dense one? Why?
+    - How do you store a weighted graph in each representation?
+  mistakes:
+    - Setting only `m[u][v]` for an undirected edge. Set `m[v][u]` too.
+    - Saying the list is always better. Edge lookup is O(1) only in the matrix.
+    - Forgetting that an undirected edge appears **twice** in the list.
+quiz:
+  - q: An undirected graph has V = 1000, E = 3000. Which representation uses less memory?
+    options: ['matrix', 'list', 'same', 'depends on the weights']
+    answer: 1
+    explain: Matrix = 1,000,000 cells. List ≈ V + 2E = 7,000 entries.
+  - q: The adjacency matrix of an undirected graph is always…
+    options: ['diagonal', 'symmetric', 'all ones', 'upper triangular']
+    answer: 1
+    explain: m[u][v] = m[v][u] for every edge.
+  - q: Checking "is there an edge between u and v?" is O(1) in…
+    options: ['the matrix', 'the list', 'both', 'neither']
+    answer: 0
+    explain: The list must scan u's neighbours.
+  - q: How many entries does the adjacency list of an undirected graph hold in total?
+    options: ['E', '2E', 'V', 'V²']
+    answer: 1
+    explain: Each edge is stored once at each end.
+practice:
+  trace:
+    task: 'Vertices 0–3, undirected edges 0–1, 0–2, 1–2, 2–3. Write the adjacency matrix and adjacency list.'
+    solution: |
+      ```text
+         0 1 2 3
+      0: 0 1 1 0
+      1: 1 0 1 0
+      2: 1 1 0 1
+      3: 0 0 1 0
+      ```
+      List: `0 → 1 2` · `1 → 0 2` · `2 → 0 1 3` · `3 → 2`
+  implement:
+    task: Store a **weighted** undirected graph both ways. Use `vector<vector<pair<int,int>>>` for the list (neighbour, weight) and 0 for "no edge" in the matrix.
+    hint: '`adj[u].push_back({v, w}); adj[v].push_back({u, w}); m[u][v] = m[v][u] = w;`'
+  problems:
+    - name: Find if Path Exists in Graph
+      url: https://leetcode.com/problems/find-if-path-exists-in-graph/
+      level: easy
+      hint: Build an adjacency list from the edge array, then BFS or DFS from source.
+    - name: Find Center of Star Graph
+      url: https://leetcode.com/problems/find-center-of-star-graph/
+      level: easy
+      hint: Count degrees with a list. The center has degree n − 1.
+checklist:
+  - I can draw both representations of a graph.
+  - I can state the space and time costs of each.
+  - I can choose the right one for a sparse or dense graph.
+  - I can build an adjacency list in C++ with vector<vector<int>>.
+slides: []
+---
+
+Two ways to write down who knows whom in a class.
+
+**A big table** (adjacency matrix): rows and columns are students, and you put a 1 where two students know each other. Checking any pair is instant, but a class of 1,000 needs a million cells, mostly zeros.
+
+**A contact list per student** (adjacency list): each student keeps a list of only the people they know. It is compact, and listing a student's friends is fast. But checking "does A know B?" means scanning A's list.
+
+### Adjacency matrix
+
+```cpp
+int m[V][V] = {};
+m[u][v] = m[v][u] = 1;   // undirected edge u–v
+```
+
+- Space **O(V²)**, whatever the number of edges.
+- Edge check **O(1)**.
+- Symmetric for undirected graphs. For weighted graphs, store the weight instead of 1.
+
+### Adjacency list
+
+```cpp
+vector<vector<int>> adj(V);
+adj[u].push_back(v);
+adj[v].push_back(u);     // undirected: both ends
+```
+
+- Space **O(V + E)**.
+- Looping over neighbours costs only **deg(u)**.
+
+### Which one?
+
+- **Sparse** graphs (most real ones): **list**.
+- **Dense** graphs, or when you need many fast "is there an edge?" checks: **matrix**.
